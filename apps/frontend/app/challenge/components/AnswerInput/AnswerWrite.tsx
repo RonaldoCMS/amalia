@@ -1,0 +1,33 @@
+'use client'
+
+import { useState } from 'react'
+
+interface AnswerWriteProps {
+  onSubmit: (answer: string) => void
+  disabled?: boolean
+}
+
+export function AnswerWrite({ onSubmit, disabled }: AnswerWriteProps) {
+  const [value, setValue] = useState('')
+
+  return (
+    <div className="mb-4">
+      <p className="text-xs text-gray-500 mb-2">Scrivi la tua implementazione:</p>
+      <textarea
+        value={value}
+        onChange={e => setValue(e.target.value)}
+        placeholder="function ..."
+        disabled={disabled}
+        rows={8}
+        className="w-full font-mono text-sm px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-blue-400 disabled:opacity-50 resize-none"
+      />
+      <button
+        onClick={() => value.trim() && onSubmit(value.trim())}
+        disabled={disabled || !value.trim()}
+        className="mt-3 w-full py-2 rounded-lg border border-gray-200 text-sm font-medium hover:bg-gray-50 disabled:opacity-50 transition-colors"
+      >
+        Verifica
+      </button>
+    </div>
+  )
+}

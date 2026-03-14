@@ -1,0 +1,15 @@
+# env
+.env
+.env.local
+
+# node
+node_modules/
+
+# next
+apps/frontend/.next/
+
+# nest
+apps/backend/dist/
+
+# os
+.DS_Store
