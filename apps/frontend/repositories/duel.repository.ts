@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from 'axios'
 import {
   DuelQueueResponse, DuelStateResponse, DuelAnswerRequest, DuelAnswerResponse,
   DuelLeaderboardEntry, DuelLanguageQueueCount, DuelInviteStatusResponse,
-} from '@amelia/shared'
+} from '@amalia/shared'
 
 export class DuelRepository {
   private readonly client: AxiosInstance

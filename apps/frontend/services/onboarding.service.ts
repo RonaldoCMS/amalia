@@ -1,5 +1,5 @@
 import { OnboardingRepository } from '../repositories/onboarding.repository'
-import { OnboardingRequest, OnboardingResponse } from '@amelia/shared'
+import { OnboardingRequest, OnboardingResponse } from '@amalia/shared'
 
 export class OnboardingService {
   private readonly repository: OnboardingRepository

@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios'
-import { NotificationItem, UnreadCountResponse } from '@amelia/shared'
+import { NotificationItem, UnreadCountResponse } from '@amalia/shared'
 
 export class NotificationRepository {
   private readonly client: AxiosInstance

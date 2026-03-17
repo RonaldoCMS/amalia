@@ -7,7 +7,7 @@ import { useAuthContext } from '../context/AuthContext'
 import { useDuel } from '../../hooks/useDuel'
 import { NotificationBell } from '../components/NotificationBell'
 import { Footer } from '../components/Footer'
-import { ChallengeType, DuelRoundResult, DuelLanguageQueueCount } from '@amelia/shared'
+import { ChallengeType, DuelRoundResult, DuelLanguageQueueCount } from '@amalia/shared'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? ''
 

@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios'
-import { ChatMessageItem, SendMessageRequest } from '@amelia/shared'
+import { ChatMessageItem, SendMessageRequest } from '@amalia/shared'
 
 export class ChatRepository {
   private readonly client: AxiosInstance

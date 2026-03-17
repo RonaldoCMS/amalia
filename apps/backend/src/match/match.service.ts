@@ -3,7 +3,7 @@ import { DevMatchRepository } from '../shared/repositories/pg/dev-match.reposito
 import { UserOnboardingRepository } from '../shared/repositories/pg/user-onboarding.repository'
 import { UserRepository } from '../shared/repositories/pg/user.repository'
 import { NotificationService } from '../notifications/notification.service'
-import { MatchSuggestion, MatchItem, LikeResponse, NotificationType } from '@amelia/shared'
+import { MatchSuggestion, MatchItem, LikeResponse, NotificationType } from '@amalia/shared'
 import { UserOnboarding } from '../entities/user-onboarding.entity'
 
 function safe(v: string[] | null | undefined): string[] {

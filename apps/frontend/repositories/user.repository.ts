@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios'
-import { UserProfile, UpdatePasswordRequest, ChallengeHistoryItem } from '@amelia/shared'
+import { UserProfile, UpdatePasswordRequest, ChallengeHistoryItem } from '@amalia/shared'
 
 export class UserRepository {
   private readonly client: AxiosInstance

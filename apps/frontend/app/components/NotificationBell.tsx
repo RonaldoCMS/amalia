@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { useNotifications } from '../context/NotificationContext'
-import { NotificationType } from '@amelia/shared'
+import { NotificationType } from '@amalia/shared'
 export function NotificationBell() {
   const { notifications, unreadCount, markAllRead } = useNotifications()
   const [open, setOpen] = useState(false)

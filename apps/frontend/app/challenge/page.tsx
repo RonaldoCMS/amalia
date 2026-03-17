@@ -19,7 +19,7 @@ import { ConfigurationPanel } from '../components/ConfigurationPanel'
 import { Footer } from '../components/Footer'
 import { AdBanner, AdInterstitial } from '../components/AdBanner'
 import { NotificationBell } from '../components/NotificationBell'
-import { ChallengeType, ChallengeLanguage } from '@amelia/shared'
+import { ChallengeType, ChallengeLanguage } from '@amalia/shared'
 
 const AD_EVERY_N = 5
 

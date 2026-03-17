@@ -2,7 +2,7 @@ import { DuelRepository } from '../repositories/duel.repository'
 import {
   DuelAnswerRequest, DuelAnswerResponse, DuelQueueResponse, DuelStateResponse,
   DuelLeaderboardEntry, DuelLanguageQueueCount, DuelInviteStatusResponse,
-} from '@amelia/shared'
+} from '@amalia/shared'
 
 export class DuelService {
   private readonly repo = new DuelRepository()

@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
-import { MatchSuggestion, MatchItem, LikeResponse } from '@amelia/shared'
+import { MatchSuggestion, MatchItem, LikeResponse } from '@amalia/shared'
 import { MatchService } from '../services/match.service'
 
 interface UseMatchReturn {

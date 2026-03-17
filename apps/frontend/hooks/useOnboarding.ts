@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
-import { OnboardingResponse, OnboardingRequest } from '@amelia/shared'
+import { OnboardingResponse, OnboardingRequest } from '@amalia/shared'
 import { OnboardingService } from '../services/onboarding.service'
 
 interface UseOnboardingReturn {

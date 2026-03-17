@@ -1,5 +1,5 @@
 import { NotificationRepository } from '../repositories/notification.repository'
-import { NotificationItem, UnreadCountResponse } from '@amelia/shared'
+import { NotificationItem, UnreadCountResponse } from '@amalia/shared'
 
 export class NotificationService {
   private readonly repo = new NotificationRepository()

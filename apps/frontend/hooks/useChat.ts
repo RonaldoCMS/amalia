@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
-import { ChatMessageItem } from '@amelia/shared'
+import { ChatMessageItem } from '@amalia/shared'
 import { ChatService } from '../services/chat.service'
 
 interface UseChatReturn {

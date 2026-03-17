@@ -9,7 +9,7 @@ import { useProfile } from '../../../hooks/useProfile'
 import { NotificationBell } from '../../components/NotificationBell'
 import { DuelService } from '../../../services/duel.service'
 import { MatchRepository } from '../../../repositories/match.repository'
-import { ChallengeLanguage, ChatMessageItem, DuelInviteStatusResponse } from '@amelia/shared'
+import { ChallengeLanguage, ChatMessageItem, DuelInviteStatusResponse } from '@amalia/shared'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? ''
 

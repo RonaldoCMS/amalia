@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { UserOnboardingRepository } from '../shared/repositories/pg/user-onboarding.repository'
 import { UserRepository } from '../shared/repositories/pg/user.repository'
-import { OnboardingRequest, OnboardingResponse } from '@amelia/shared'
+import { OnboardingRequest, OnboardingResponse } from '@amalia/shared'
 
 function safe(v: string[] | null | undefined): string[] {
   if (!v || (v.length === 1 && v[0] === '')) return []

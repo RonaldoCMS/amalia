@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react'
-import { NotificationItem } from '@amelia/shared'
+import { NotificationItem } from '@amalia/shared'
 import { NotificationService } from '../../services/notification.service'
 
 interface Snack {

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { ChallengeHistoryItem } from '@amelia/shared'
+import { ChallengeHistoryItem } from '@amalia/shared'
 import { UserService } from '../services/user.service'
 
 interface UseHistoryReturn {

@@ -8,7 +8,7 @@ import * as path from 'path'
 import * as fs from 'fs'
 import { ChatService } from './chat.service'
 import { JwtGuard } from 'src/auth/guards/jwt.guard'
-import { ChatMessageItem, SendMessageRequest } from '@amelia/shared'
+import { ChatMessageItem, SendMessageRequest } from '@amalia/shared'
 
 @Controller('chat')
 @UseGuards(JwtGuard)

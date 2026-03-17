@@ -1,5 +1,5 @@
 import { ChatRepository } from '../repositories/chat.repository'
-import { ChatMessageItem, SendMessageRequest } from '@amelia/shared'
+import { ChatMessageItem, SendMessageRequest } from '@amalia/shared'
 
 export class ChatService {
   private readonly repository: ChatRepository

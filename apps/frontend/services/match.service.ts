@@ -1,5 +1,5 @@
 import { MatchRepository } from '../repositories/match.repository'
-import { MatchSuggestion, MatchItem, LikeResponse } from '@amelia/shared'
+import { MatchSuggestion, MatchItem, LikeResponse } from '@amalia/shared'
 
 export class MatchService {
   private readonly repository: MatchRepository

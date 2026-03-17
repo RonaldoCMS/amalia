@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { DuelLeaderboardEntry } from '@amelia/shared'
+import { DuelLeaderboardEntry } from '@amalia/shared'
 import { DuelService } from '../../../services/duel.service'
 import { NotificationBell } from '../../components/NotificationBell'
 import { Footer } from '../../components/Footer'

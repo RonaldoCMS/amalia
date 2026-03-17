@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Request, UseGuards } from '@nestjs/common'
 import { OnboardingService } from './onboarding.service'
 import { JwtGuard } from 'src/auth/guards/jwt.guard'
-import { OnboardingRequest, OnboardingResponse } from '@amelia/shared'
+import { OnboardingRequest, OnboardingResponse } from '@amalia/shared'
 
 @Controller('onboarding')
 @UseGuards(JwtGuard)

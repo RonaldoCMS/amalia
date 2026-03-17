@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { NotificationRepository } from '../shared/repositories/pg/notification.repository'
-import { NotificationItem, NotificationType } from '@amelia/shared'
+import { NotificationItem, NotificationType } from '@amalia/shared'
 
 @Injectable()
 export class NotificationService {

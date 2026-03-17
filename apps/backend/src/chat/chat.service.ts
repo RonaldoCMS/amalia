@@ -2,7 +2,7 @@ import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/commo
 import { ChatMessageRepository } from '../shared/repositories/pg/chat-message.repository'
 import { DevMatchRepository } from '../shared/repositories/pg/dev-match.repository'
 import { NotificationService } from '../notifications/notification.service'
-import { ChatMessageItem, SendMessageRequest, NotificationType } from '@amelia/shared'
+import { ChatMessageItem, SendMessageRequest, NotificationType } from '@amalia/shared'
 
 @Injectable()
 export class ChatService {

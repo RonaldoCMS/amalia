@@ -7,7 +7,7 @@ import { useOnboarding } from '../../hooks/useOnboarding'
 import {
   DevLanguage, JobType, WorkStyle, DevGoal, Availability,
   EXPERIENCE_LEVELS, OnboardingRequest,
-} from '@amelia/shared'
+} from '@amalia/shared'
 
 // ── Multi-select pill ──────────────────────────────────────────────────
 function Pill({

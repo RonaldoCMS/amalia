@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
-import { UserProfile, UpdatePasswordRequest } from '@amelia/shared'
+import { UserProfile, UpdatePasswordRequest } from '@amalia/shared'
 import { UserService } from '../services/user.service'
 
 interface UseProfileReturn {

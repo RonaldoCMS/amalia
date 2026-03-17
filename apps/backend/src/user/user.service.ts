@@ -4,7 +4,7 @@ import { UpdatePasswordUseCase } from './usecases/update-password.usecase'
 import { DeleteAccountUseCase } from './usecases/delete-account.usecase'
 import { GetHistoryUseCase } from './usecases/get-history.usecase'
 import { UpdateProfilePhotoUseCase } from './usecases/update-profile-photo.usecase'
-import { UserProfile, UpdatePasswordRequest, ChallengeHistoryItem } from '@amelia/shared'
+import { UserProfile, UpdatePasswordRequest, ChallengeHistoryItem } from '@amalia/shared'
 
 @Injectable()
 export class UserService {

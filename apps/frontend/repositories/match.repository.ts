@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios'
-import { MatchSuggestion, MatchItem, LikeResponse } from '@amelia/shared'
+import { MatchSuggestion, MatchItem, LikeResponse } from '@amalia/shared'
 
 export class MatchRepository {
   private readonly client: AxiosInstance

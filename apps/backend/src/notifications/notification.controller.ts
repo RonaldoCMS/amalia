@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Param, Request, UseGuards } from '@nestjs/common'
 import { NotificationService } from './notification.service'
 import { JwtGuard } from 'src/auth/guards/jwt.guard'
-import { NotificationItem, UnreadCountResponse } from '@amelia/shared'
+import { NotificationItem, UnreadCountResponse } from '@amalia/shared'
 
 @Controller('notifications')
 @UseGuards(JwtGuard)

@@ -1,5 +1,5 @@
 import { UserRepository } from '../repositories/user.repository'
-import { UserProfile, UpdatePasswordRequest, ChallengeHistoryItem } from '@amelia/shared'
+import { UserProfile, UpdatePasswordRequest, ChallengeHistoryItem } from '@amalia/shared'
 
 export class UserService {
   private readonly repository: UserRepository

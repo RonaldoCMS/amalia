@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios'
-import { OnboardingRequest, OnboardingResponse } from '@amelia/shared'
+import { OnboardingRequest, OnboardingResponse } from '@amalia/shared'
 
 export class OnboardingRepository {
   private readonly client: AxiosInstance

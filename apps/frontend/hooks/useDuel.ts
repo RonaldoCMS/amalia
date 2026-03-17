@@ -3,7 +3,7 @@ import { DuelService } from '../services/duel.service'
 import {
   DuelStateResponse, DuelAnswerResponse,
   DuelLeaderboardEntry, DuelLanguageQueueCount,
-} from '@amelia/shared'
+} from '@amalia/shared'
 
 type Phase = 'idle' | 'queue' | 'active' | 'completed'
 
