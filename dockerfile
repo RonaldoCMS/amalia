@@ -23,4 +23,5 @@ COPY --from=base /app/apps/backend/package.json ./apps/backend/package.json
 
 EXPOSE 3000
 
+
 CMD ["node", "apps/backend/dist/apps/backend/src/main.js"]
