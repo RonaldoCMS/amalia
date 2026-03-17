@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, ReactNode } from 'react' 
-import { LoginRequest, RegisterRequest } from '@amelia/shared'
+import { LoginRequest, RegisterRequest } from '@amalia/shared'
 import { useAuth } from '@/hooks/useAuth'
 
 interface AuthContextType {

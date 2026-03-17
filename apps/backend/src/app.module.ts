@@ -5,8 +5,21 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from './entities/user.entity';
 import { Challenge } from './entities/challenge.entity';
 import { UserChallenge } from './entities/user-challenge.entity';
+import { UserOnboarding } from './entities/user-onboarding.entity';
+import { DevMatch } from './entities/dev-match.entity';
+import { ChatMessage } from './entities/chat-message.entity';
+import { Notification } from './entities/notification.entity';
+import { Duel } from './entities/duel.entity';
+import { DuelRound } from './entities/duel-round.entity';
+import { AppConfig } from './entities/app-config.entity';
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { OnboardingModule } from './onboarding/onboarding.module';
+import { MatchModule } from './match/match.module';
+import { ChatModule } from './chat/chat.module';
+import { NotificationModule } from './notifications/notification.module';
+import { DuelsModule } from './duels/duels.module';
 
 @Module({
   imports: [
@@ -16,13 +29,19 @@ import { AuthModule } from './auth/auth.module';
       useFactory: (config: ConfigService) => ({
         type: 'postgres',
         url: config.get<string>('DATABASE_URL'),
-        entities: [User, Challenge, UserChallenge],
+        entities: [User, Challenge, UserChallenge, UserOnboarding, DevMatch, ChatMessage, Notification, Duel, DuelRound, AppConfig],
         synchronize: true,
       }),
     }),
     SharedModule,
     AuthModule,
     ChallengesModule,
+    UserModule,
+    OnboardingModule,
+    MatchModule,
+    ChatModule,
+    NotificationModule,
+    DuelsModule,
   ],
 })
 export class AppModule {}

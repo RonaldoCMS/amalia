@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, ReactNode } from 'react'
-import { ChallengeType, ChallengeLevel, ChallengeLanguage } from '@amelia/shared'
+import { ChallengeType, ChallengeLevel, ChallengeLanguage } from '@amalia/shared'
 
 interface ChallengeConfiguration {
   type: ChallengeType

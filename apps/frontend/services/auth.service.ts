@@ -1,5 +1,5 @@
 import { AuthRepository } from '../repositories/auth.repository'
-import { LoginRequest, RegisterRequest, AuthResponse } from '@amelia/shared'
+import { LoginRequest, RegisterRequest, AuthResponse } from '@amalia/shared'
 
 export class AuthService {
   private readonly repository: AuthRepository

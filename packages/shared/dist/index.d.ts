@@ -12,7 +12,155 @@ export declare enum ChallengeLevel {
 export declare enum ChallengeLanguage {
     TypeScript = "TypeScript",
     JavaScript = "JavaScript",
-    Python = "Python"
+    Python = "Python",
+    Dart = "Dart",
+    Flutter = "Flutter",
+    Java = "Java",
+    Go = "Go",
+    Rust = "Rust",
+    Cpp = "C++",
+    CSharp = "C#",
+    PHP = "PHP",
+    Ruby = "Ruby",
+    Swift = "Swift",
+    Kotlin = "Kotlin"
+}
+export declare enum NotificationType {
+    NewMatch = "new_match",
+    NewMessage = "new_message",
+    DuelChallenge = "duel_challenge"
+}
+export interface NotificationItem {
+    id: string;
+    type: NotificationType;
+    title: string;
+    body: string;
+    referenceId: string | null;
+    read: boolean;
+    createdAt: string;
+}
+export interface UnreadCountResponse {
+    count: number;
+}
+export declare enum DevLanguage {
+    TypeScript = "TypeScript",
+    JavaScript = "JavaScript",
+    Python = "Python",
+    Java = "Java",
+    Go = "Go",
+    Rust = "Rust",
+    Cpp = "C++",
+    PHP = "PHP",
+    Ruby = "Ruby",
+    Swift = "Swift",
+    Kotlin = "Kotlin",
+    Dart = "Dart",
+    CSharp = "C#",
+    Scala = "Scala"
+}
+export declare enum JobType {
+    FullStack = "FullStack",
+    Frontend = "Frontend",
+    Backend = "Backend",
+    DevOps = "DevOps",
+    Mobile = "Mobile",
+    DataScience = "DataScience",
+    Security = "Security",
+    QA = "QA",
+    SRE = "SRE",
+    Student = "Student",
+    Other = "Other"
+}
+export declare enum WorkStyle {
+    Remote = "Remote",
+    Office = "Office",
+    Hybrid = "Hybrid"
+}
+export declare enum DevGoal {
+    Learn = "Learn",
+    Network = "Network",
+    Collaborate = "Collaborate",
+    Mentor = "Mentor",
+    GetMentored = "GetMentored",
+    FindJob = "FindJob",
+    Freelance = "Freelance",
+    OpenSource = "OpenSource",
+    StartupIdea = "StartupIdea"
+}
+export declare enum Availability {
+    FullTime = "FullTime",
+    PartTime = "PartTime",
+    FreelanceOnly = "FreelanceOnly",
+    OpenSource = "OpenSource",
+    NotAvailable = "NotAvailable"
+}
+export declare const EXPERIENCE_LEVELS: readonly ["0", "1-2", "3-5", "6-10", "10+"];
+export type ExperienceLevel = (typeof EXPERIENCE_LEVELS)[number];
+export interface OnboardingRequest {
+    email: string;
+    languages: string[];
+    yearsOfExperience: ExperienceLevel;
+    jobType: JobType;
+    goals: string[];
+    workStyle: WorkStyle;
+    availability: Availability;
+    bio?: string;
+    githubUrl?: string;
+}
+export interface OnboardingResponse {
+    completed: boolean;
+    email: string | null;
+    languages: string[];
+    yearsOfExperience: string | null;
+    jobType: string | null;
+    goals: string[];
+    workStyle: string | null;
+    availability: string | null;
+    bio: string | null;
+    githubUrl: string | null;
+}
+export interface MatchSuggestion {
+    userId: string;
+    username: string;
+    profilePhotoUrl: string | null;
+    compatibilityScore: number;
+    jobType: string | null;
+    yearsOfExperience: string | null;
+    languages: string[];
+    goals: string[];
+    workStyle: string | null;
+    bio: string | null;
+    githubUrl: string | null;
+}
+export interface MatchItem {
+    matchId: string;
+    userId: string;
+    username: string;
+    profilePhotoUrl: string | null;
+    compatibilityScore: number;
+    matchedAt: string;
+}
+export interface LikeResponse {
+    matched: boolean;
+    matchId?: string;
+}
+export interface ChatMessageItem {
+    id: string;
+    senderId: string;
+    content: string;
+    imageUrl?: string | null;
+    replyToId?: string | null;
+    isSystemMessage?: boolean;
+    duelInviteId?: string | null;
+    createdAt: string;
+    read: boolean;
+}
+export interface SendMessageRequest {
+    content?: string;
+    replyToId?: string | null;
+}
+export interface UpdateEmailRequest {
+    email: string;
 }
 export interface GenerateChallengeRequest {
     type: ChallengeType;
@@ -27,6 +175,7 @@ export interface EvaluateChallengeRequest {
     userAnswer: string;
 }
 export interface ChallengeResponse {
+    id?: string;
     title: string;
     description: string;
     code: string;
@@ -36,6 +185,12 @@ export interface ChallengeResponse {
 export interface EvaluationResponse {
     correct: boolean;
     feedback: string;
+    score: number;
+}
+export interface UserStats {
+    totalScore: number;
+    correctCount: number;
+    wrongCount: number;
 }
 export interface RegisterRequest {
     username: string;
@@ -47,4 +202,124 @@ export interface LoginRequest {
 }
 export interface AuthResponse {
     accessToken: string;
+}
+export interface UpdatePasswordRequest {
+    currentPassword: string;
+    newPassword: string;
+}
+export interface UserProfile {
+    id: string;
+    username: string;
+    email: string | null;
+    profilePhotoUrl: string | null;
+    createdAt: string;
+    onboardingCompleted: boolean;
+}
+export interface ChallengeHistoryItem {
+    id: string;
+    correct: boolean | null;
+    score: number | null;
+    createdAt: string;
+    challenge: {
+        id: string;
+        title: string;
+        description: string;
+        type: ChallengeType;
+        level: ChallengeLevel;
+        language: ChallengeLanguage;
+    };
+}
+export declare enum DuelStatus {
+    Waiting = "waiting",
+    Active = "active",
+    Completed = "completed",
+    Cancelled = "cancelled"
+}
+export interface DuelPlayerInfo {
+    id: string;
+    username: string;
+    profilePhotoUrl: string | null;
+    totalScore: number;
+}
+export interface DuelCurrentRound {
+    roundNumber: number;
+    type: ChallengeType;
+    level: ChallengeLevel;
+    challenge: {
+        title: string;
+        description: string;
+        code: string;
+        options: string[];
+    };
+    myAnswer: string | null;
+    opponentAnswered: boolean;
+    secondsLeft: number;
+    totalSeconds: number;
+}
+export interface DuelRoundResult {
+    roundNumber: number;
+    type: ChallengeType;
+    level: ChallengeLevel;
+    myCorrect: boolean;
+    opponentCorrect: boolean;
+    myScore: number;
+    opponentScore: number;
+    correctAnswer: string;
+}
+export interface DuelStateResponse {
+    id: string;
+    status: DuelStatus;
+    language: string;
+    me: DuelPlayerInfo;
+    opponent: DuelPlayerInfo | null;
+    currentRoundNumber: number;
+    totalRounds: number;
+    winnerId: string | null;
+    isSuddenDeath: boolean;
+    currentRound: DuelCurrentRound | null;
+    history: DuelRoundResult[];
+    createdAt: string;
+}
+export interface DuelQueueResponse {
+    status: 'waiting' | 'matched' | 'none';
+    duelId?: string;
+    banUntil?: string;
+}
+export interface DuelInviteStatusResponse {
+    status: 'waiting' | 'active' | 'completed' | 'cancelled';
+    challengerId: string;
+    challengerUsername: string;
+    invitedUserId: string | null;
+    invitedUsername: string | null;
+    user1Score: number;
+    user2Score: number;
+    winnerId: string | null;
+    winnerUsername: string | null;
+    createdAt: string;
+}
+export interface DuelAnswerRequest {
+    answer: string;
+}
+export interface DuelAnswerResponse {
+    correct: boolean;
+    score: number;
+}
+export interface DuelLeaderboardEntry {
+    rank: number;
+    userId: string;
+    username: string;
+    profilePhotoUrl: string | null;
+    wins: number;
+    losses: number;
+    draws: number;
+    totalDuels: number;
+    winRate: number;
+    totalScore: number;
+}
+export interface DuelLanguageQueueCount {
+    language: string;
+    count: number;
+}
+export interface DuelJoinQueueRequest {
+    language: string;
 }

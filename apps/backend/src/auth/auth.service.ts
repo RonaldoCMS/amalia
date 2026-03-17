@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { RegisterRequest, LoginRequest, AuthResponse } from '@amelia/shared'
+import { RegisterRequest, LoginRequest, AuthResponse } from '@amalia/shared'
 import { RegisterUseCase } from './usecases/register.usecase'
 import { LoginUseCase } from './usecases/login.usecase'
 

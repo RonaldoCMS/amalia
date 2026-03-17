@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 import { UserChallenge } from './user-challenge.entity'
-import { ChallengeType, ChallengeLevel, ChallengeLanguage } from '@amelia/shared'
+import { ChallengeType, ChallengeLevel, ChallengeLanguage } from '@amalia/shared'
 
 @Entity('challenges')
 export class Challenge {

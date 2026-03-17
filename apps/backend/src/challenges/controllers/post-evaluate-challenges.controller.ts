@@ -1,6 +1,6 @@
 import { Body, Controller, Post, UseGuards, Request } from '@nestjs/common'
 import { ChallengesService } from '../challenges.service'
-import { EvaluateChallengeRequest, EvaluationResponse } from '@amelia/shared'
+import { EvaluateChallengeRequest, EvaluationResponse } from '@amalia/shared'
 import { JwtGuard } from '../../auth/guards/jwt.guard'
 
 @Controller('challenges')

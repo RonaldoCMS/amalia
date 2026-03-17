@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm' 
-import { ChallengeType, ChallengeLevel, ChallengeLanguage } from '@amelia/shared'
+import { ChallengeType, ChallengeLevel, ChallengeLanguage } from '@amalia/shared'
 import { Challenge } from 'src/entities/challenge.entity'
 
 @Injectable()
@@ -26,6 +26,22 @@ export class ChallengeRepository {
       .andWhere('uc.id IS NULL')
       .orderBy('RANDOM()')
       .getOne()
+  }
+
+  async findMany(
+    type: ChallengeType,
+    level: ChallengeLevel,
+    language: ChallengeLanguage,
+    limit: number,
+  ): Promise<Challenge[]> {
+    return this.repository
+      .createQueryBuilder('c')
+      .where('c.type = :type', { type })
+      .andWhere('c.level = :level', { level })
+      .andWhere('c.language = :language', { language })
+      .orderBy('RANDOM()')
+      .limit(limit)
+      .getMany()
   }
 
   async save(challenge: Partial<Challenge>): Promise<Challenge> {

@@ -1,6 +1,6 @@
 'use client'
 
-import { ChallengeLevel, ChallengeType, ChallengeLanguage } from '@amelia/shared'
+import { ChallengeLevel, ChallengeType, ChallengeLanguage } from '@amalia/shared'
 
 interface ChallengeHeaderProps {
   title: string
@@ -10,16 +10,31 @@ interface ChallengeHeaderProps {
   language: ChallengeLanguage
 }
 
+const levelColors: Record<ChallengeLevel, string> = {
+  [ChallengeLevel.Beginner]: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20',
+  [ChallengeLevel.Intermediate]: 'text-amber-400 bg-amber-400/10 border-amber-400/20',
+  [ChallengeLevel.Hard]: 'text-red-400 bg-red-400/10 border-red-400/20',
+}
+
 export function ChallengeHeader({ title, description, type, level, language }: ChallengeHeaderProps) {
   return (
     <div className="mb-6">
-      <div className="flex gap-2 mb-3">
-        <span className="text-xs font-medium px-2 py-1 rounded-full bg-blue-100 text-blue-800">{language}</span>
-        <span className="text-xs font-medium px-2 py-1 rounded-full bg-amber-100 text-amber-800">{level}</span>
-        <span className="text-xs font-medium px-2 py-1 rounded-full bg-purple-100 text-purple-800">{type}</span>
+      <div className="flex flex-wrap gap-2 mb-4">
+        <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded border border-cyan-400/20 bg-cyan-400/10 text-cyan-400">
+          {language}
+        </span>
+        <span className={`text-[10px] font-mono font-medium px-2 py-0.5 rounded border ${levelColors[level]}`}>
+          {level}
+        </span>
+        <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded border border-violet-400/20 bg-violet-400/10 text-violet-400">
+          {type}
+        </span>
       </div>
-      <h1 className="text-xl font-medium text-gray-900 mb-2">{title}</h1>
-      <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
+      <h2 className="text-base font-semibold text-zinc-100 mb-2 flex items-center gap-2">
+        <span className="text-cyan-400 font-mono">{'>'}</span>
+        {title}
+      </h2>
+      <p className="text-sm text-zinc-400 leading-relaxed">{description}</p>
     </div>
   )
 }

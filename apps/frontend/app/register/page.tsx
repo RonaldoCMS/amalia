@@ -1,58 +1,90 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuthContext } from '../context/AuthContext'
 
 export default function RegisterPage() {
-  const { register, isLoading, error } = useAuthContext()
+  const { register, isLoading, error, isAuthenticated } = useAuthContext()
   const router = useRouter()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
+  useEffect(() => {
+    if (isAuthenticated) router.replace('/challenge')
+  }, [isAuthenticated, router])
+
   const handleSubmit = async () => {
-    await register({ username, password })
-    router.push('/')
+    try {
+      await register({ username, password })
+      router.push('/onboarding')
+    } catch {
+      // error displayed from context
+    }
   }
 
   return (
-    <main className="max-w-sm mx-auto px-4 py-16">
-      <h1 className="text-2xl font-medium mb-2">Crea il tuo account</h1>
-      <p className="text-sm text-gray-500 mb-8">Inizia ad allenarti con Amelia.</p>
+    <div className="min-h-screen flex items-center justify-center px-4 bg-grid relative">
+      <div className="absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-cyan-500/5 to-transparent pointer-events-none" />
 
-      <div className="flex flex-col gap-3 mb-4">
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
-          className="w-full px-4 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-blue-400"
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && handleSubmit()}
-          className="w-full px-4 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-blue-400"
-        />
+      <div className="relative z-10 w-full max-w-sm">
+        <Link href="/" className="inline-flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-300 transition-colors mb-8">
+          ← Torna alla home
+        </Link>
+
+        <div className="mb-8">
+          <span className="font-mono text-lg font-semibold tracking-tight">
+            amalia<span className="text-cyan-400">_</span>
+          </span>
+        </div>
+
+        <h1 className="text-xl font-semibold text-zinc-100 mb-1">Crea il tuo account</h1>
+        <p className="text-sm text-zinc-500 mb-8">Inizia ad allenarti con amalia.</p>
+
+        <div className="flex flex-col gap-3 mb-4">
+          <div>
+            <label className="text-xs text-zinc-500 font-medium mb-1.5 block">Username</label>
+            <input
+              type="text"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-lg bg-zinc-900 border border-zinc-800 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-cyan-500/50 transition-colors"
+              placeholder="il_tuo_username"
+            />
+          </div>
+          <div>
+            <label className="text-xs text-zinc-500 font-medium mb-1.5 block">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && username && password && handleSubmit()}
+              className="w-full px-4 py-2.5 rounded-lg bg-zinc-900 border border-zinc-800 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-cyan-500/50 transition-colors"
+              placeholder="••••••••"
+            />
+          </div>
+        </div>
+
+        {error && (
+          <p className="text-xs text-red-400 mb-4 font-mono">✗ {error}</p>
+        )}
+
+        <button
+          onClick={handleSubmit}
+          disabled={isLoading || !username || !password}
+          className="w-full py-2.5 rounded-lg bg-cyan-500 text-zinc-950 text-sm font-semibold hover:bg-cyan-400 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        >
+          {isLoading ? 'Registrazione in corso...' : 'Registrati'}
+        </button>
+
+        <p className="text-sm text-zinc-500 text-center mt-6">
+          Hai già un account?{' '}
+          <Link href="/login" className="text-cyan-400 hover:text-cyan-300 transition-colors">
+            Accedi
+          </Link>
+        </p>
       </div>
-
-      {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
-
-      <button
-        onClick={handleSubmit}
-        disabled={isLoading || !username || !password}
-        className="w-full py-3 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
-      >
-        {isLoading ? 'Registrazione in corso...' : 'Registrati'}
-      </button>
-
-      <p className="text-sm text-gray-500 text-center mt-6">
-        Hai già un account?{' '}
-        <Link href="/login" className="text-blue-600 hover:underline">Accedi</Link>
-      </p>
-    </main>
+    </div>
   )
 }

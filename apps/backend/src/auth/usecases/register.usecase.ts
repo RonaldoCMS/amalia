@@ -1,6 +1,6 @@
 import { Injectable, ConflictException } from '@nestjs/common'
 import { UserRepository } from '../../shared/repositories/pg/user.repository'
-import { RegisterRequest, AuthResponse } from '@amelia/shared'
+import { RegisterRequest, AuthResponse } from '@amalia/shared'
 import { JwtService } from '@nestjs/jwt'
 import * as bcrypt from 'bcrypt'
 

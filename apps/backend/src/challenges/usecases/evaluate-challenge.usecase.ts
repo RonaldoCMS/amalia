@@ -4,7 +4,22 @@ import { UserChallengeRepository } from '../../shared/repositories/pg/user-chall
 import {
   EvaluateChallengeRequest,
   EvaluationResponse,
-} from '@amelia/shared'
+  ChallengeType,
+  ChallengeLevel,
+} from '@amalia/shared'
+
+const BASE_POINTS: Record<ChallengeType, number> = {
+  [ChallengeType.Fill]: 5,
+  [ChallengeType.Quiz]: 3,
+  [ChallengeType.Bug]: 7,
+  [ChallengeType.Write]: 10,
+}
+
+const LEVEL_MULTIPLIER: Record<ChallengeLevel, number> = {
+  [ChallengeLevel.Beginner]: 1,
+  [ChallengeLevel.Intermediate]: 3,
+  [ChallengeLevel.Hard]: 5,
+}
 
 @Injectable()
 export class EvaluateChallengeUseCase {
@@ -19,11 +34,26 @@ export class EvaluateChallengeUseCase {
       this.buildUserPrompt(request),
     )
 
-    return this.parse(raw)
+    const parsed = this.parse(raw)
+    const score = parsed.correct
+      ? BASE_POINTS[request.type] * LEVEL_MULTIPLIER[request.level]
+      : 0
+
+    if (request.challenge.id) {
+      const uc = await this.userChallengeRepository.findByUserAndChallenge(
+        userId,
+        request.challenge.id,
+      )
+      if (uc) {
+        await this.userChallengeRepository.updateResult(uc.id, parsed.correct, score)
+      }
+    }
+
+    return { ...parsed, score }
   }
 
   private buildSystemPrompt(): string {
-    return `Sei Amelia, una maestra di programmazione.
+    return `Sei amalia, una maestra di programmazione.
 Valuti le risposte degli studenti in modo preciso e didattico.
 Rispondi SEMPRE e SOLO con JSON valido. Nessun testo extra, nessun markdown, nessun backtick.`
   }
@@ -48,7 +78,7 @@ Rispondi con questo JSON:
 }`
   }
 
-  private parse(raw: string): EvaluationResponse {
+  private parse(raw: string): { correct: boolean; feedback: string } {
     try {
       const clean = raw.replace(/```json|```/g, '').trim()
       return JSON.parse(clean)

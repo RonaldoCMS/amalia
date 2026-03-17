@@ -25,8 +25,8 @@
       "@/*": [
         "./*"
       ],
-      "@amelia/shared": [
-        "../../packages/shared/dist/index.js"
+      "@amalia/shared": [
+        "../../packages/shared"
       ]
     },
     "target": "ES2017"

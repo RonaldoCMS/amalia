@@ -15,16 +15,16 @@ export function ConfigurationSelector<T extends string>({
 }: ConfigurationSelectorProps<T>) {
   return (
     <div className="mb-6">
-      <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3">{label}</p>
+      <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3 font-mono">{label}</p>
       <div className="flex flex-wrap gap-2">
         {options.map(opt => (
           <button
             key={opt.value}
             onClick={() => onChange(opt.value)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors
+            className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all font-mono
               ${selected === opt.value
-                ? 'border-blue-400 bg-blue-50 text-blue-800'
-                : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+                ? 'border-cyan-500/50 bg-cyan-500/10 text-cyan-400'
+                : 'border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-zinc-300'
               }`}
           >
             {opt.label}

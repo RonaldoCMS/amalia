@@ -1,20 +1,11 @@
 import { useState, useCallback, useRef } from 'react'
 import { AuthService } from '../services/auth.service'
-import { LoginRequest, RegisterRequest } from '@amelia/shared'
+import { LoginRequest, RegisterRequest } from '@amalia/shared'
 
-interface UseAuthReturn {
-  isAuthenticated: boolean
-  isLoading: boolean
-  error: string | null
-  login: (request: LoginRequest) => Promise<void>
-  register: (request: RegisterRequest) => Promise<void>
-  logout: () => void
-}
-
-export function useAuth(): UseAuthReturn {
+export function useAuth() {
   const service = useRef(new AuthService())
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    typeof window !== 'undefined' && !!localStorage.getItem('token')
+  const [token, setToken] = useState<string | null>(
+    typeof window !== 'undefined' ? localStorage.getItem('token') : null
   )
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -25,9 +16,10 @@ export function useAuth(): UseAuthReturn {
     try {
       const data = await service.current.login(request)
       localStorage.setItem('token', data.accessToken)
-      setIsAuthenticated(true)
+      setToken(data.accessToken)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Errore sconosciuto')
+      throw e
     } finally {
       setIsLoading(false)
     }
@@ -39,9 +31,10 @@ export function useAuth(): UseAuthReturn {
     try {
       const data = await service.current.register(request)
       localStorage.setItem('token', data.accessToken)
-      setIsAuthenticated(true)
+      setToken(data.accessToken)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Errore sconosciuto')
+      throw e
     } finally {
       setIsLoading(false)
     }
@@ -49,8 +42,8 @@ export function useAuth(): UseAuthReturn {
 
   const logout = useCallback(() => {
     localStorage.removeItem('token')
-    setIsAuthenticated(false)
+    setToken(null)
   }, [])
 
-  return { isAuthenticated, isLoading, error, login, register, logout }
+  return { token, isLoading, error, login, register, logout }
 }

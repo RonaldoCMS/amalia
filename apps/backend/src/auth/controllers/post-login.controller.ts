@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common'
 import { AuthService } from '../auth.service'
-import { LoginRequest, AuthResponse } from '@amelia/shared'
+import { LoginRequest, AuthResponse } from '@amalia/shared'
 
 @Controller('auth')
 export class PostLoginController {

@@ -4,7 +4,8 @@ import {
   EvaluateChallengeRequest,
   ChallengeResponse,
   EvaluationResponse,
-} from '@amelia/shared'
+  UserStats,
+} from '@amalia/shared'
 
 export class ChallengeService {
   private readonly repository: ChallengeRepository
@@ -19,5 +20,9 @@ export class ChallengeService {
 
   evaluate(request: EvaluateChallengeRequest): Promise<EvaluationResponse> {
     return this.repository.evaluate(request)
+  }
+
+  getStats(): Promise<UserStats> {
+    return this.repository.getStats()
   }
 }

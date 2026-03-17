@@ -4,15 +4,18 @@ import {
   EvaluateChallengeRequest,
   ChallengeResponse,
   EvaluationResponse,
-} from '@amelia/shared'
+  UserStats,
+} from '@amalia/shared'
 import { GenerateChallengeUseCase } from './usecases/generate-challenge.usecase'
 import { EvaluateChallengeUseCase } from './usecases/evaluate-challenge.usecase'
+import { UserChallengeRepository } from '../shared/repositories/pg/user-challenge.repository'
 
 @Injectable()
 export class ChallengesService {
   constructor(
     private readonly generateChallengeUseCase: GenerateChallengeUseCase,
     private readonly evaluateChallengeUseCase: EvaluateChallengeUseCase,
+    private readonly userChallengeRepository: UserChallengeRepository,
   ) {}
 
   generate(request: GenerateChallengeRequest, userId: string): Promise<ChallengeResponse> {
@@ -21,5 +24,9 @@ export class ChallengesService {
 
   evaluate(request: EvaluateChallengeRequest, userId: string): Promise<EvaluationResponse> {
     return this.evaluateChallengeUseCase.execute(request, userId)
+  }
+
+  getStats(userId: string): Promise<UserStats> {
+    return this.userChallengeRepository.getStats(userId)
   }
 }

@@ -1,0 +1,37 @@
+import axios, { AxiosInstance } from 'axios'
+import { UserProfile, UpdatePasswordRequest, ChallengeHistoryItem } from '@amelia/shared'
+
+export class UserRepository {
+  private readonly client: AxiosInstance
+
+  constructor() {
+    this.client = axios.create({
+      baseURL: `${process.env.NEXT_PUBLIC_BACKEND_URL}/user`,
+      headers: { 'Content-Type': 'application/json' },
+    })
+
+    this.client.interceptors.request.use(config => {
+      const token = localStorage.getItem('token')
+      if (token) config.headers.Authorization = `Bearer ${token}`
+      return config
+    })
+  }
+
+  async getProfile(): Promise<UserProfile> {
+    const response = await this.client.get<UserProfile>('/me')
+    return response.data
+  }
+
+  async updatePassword(request: UpdatePasswordRequest): Promise<void> {
+    await this.client.patch('/password', request)
+  }
+
+  async deleteAccount(): Promise<void> {
+    await this.client.delete('/')
+  }
+
+  async getHistory(): Promise<ChallengeHistoryItem[]> {
+    const response = await this.client.get<ChallengeHistoryItem[]>('/history')
+    return response.data
+  }
+}

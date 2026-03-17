@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios'
-import { LoginRequest, RegisterRequest, AuthResponse } from '@amelia/shared'
+import { LoginRequest, RegisterRequest, AuthResponse } from '@amalia/shared'
 
 export class AuthRepository {
   private readonly client: AxiosInstance

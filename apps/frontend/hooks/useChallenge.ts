@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react'
-import { ChallengeResponse, EvaluationResponse, GenerateChallengeRequest, EvaluateChallengeRequest } from '@amelia/shared'
+import { ChallengeResponse, EvaluationResponse, GenerateChallengeRequest, EvaluateChallengeRequest } from '@amalia/shared'
 import { ChallengeService } from '../services/challenge.service'
 
 interface UseChallengeReturn {

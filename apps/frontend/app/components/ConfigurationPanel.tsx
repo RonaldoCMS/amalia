@@ -1,15 +1,14 @@
 'use client'
-
-import { ChallengeType, ChallengeLevel, ChallengeLanguage } from '@amelia/shared'
+import { useState } from 'react'
+import { ChallengeType, ChallengeLevel, ChallengeLanguage } from '@amalia/shared'
 import { ConfigurationSelector } from './ConfigurationSelector'
 import { useConfigurationChallenge } from '../../hooks/useConfigurationChallenge'
-import { useRouter } from 'next/navigation'
 
 const typeOptions = [
-  { label: 'Completa il codice', value: ChallengeType.Fill },
-  { label: 'Risposta multipla', value: ChallengeType.Quiz },
-  { label: 'Trova il bug', value: ChallengeType.Bug },
-  { label: 'Scrivi la funzione', value: ChallengeType.Write },
+  { label: '{ } Fill', value: ChallengeType.Fill },
+  { label: '?! Quiz', value: ChallengeType.Quiz },
+  { label: '>< Bug', value: ChallengeType.Bug },
+  { label: 'fn Write', value: ChallengeType.Write },
 ]
 
 const levelOptions = [
@@ -22,11 +21,41 @@ const languageOptions = [
   { label: 'TypeScript', value: ChallengeLanguage.TypeScript },
   { label: 'JavaScript', value: ChallengeLanguage.JavaScript },
   { label: 'Python', value: ChallengeLanguage.Python },
+  { label: 'Dart', value: ChallengeLanguage.Dart },
+  { label: 'Flutter', value: ChallengeLanguage.Flutter },
+  { label: 'Java', value: ChallengeLanguage.Java },
+  { label: 'Go', value: ChallengeLanguage.Go },
+  { label: 'Rust', value: ChallengeLanguage.Rust },
+  { label: 'C++', value: ChallengeLanguage.Cpp },
+  { label: 'C#', value: ChallengeLanguage.CSharp },
+  { label: 'PHP', value: ChallengeLanguage.PHP },
+  { label: 'Ruby', value: ChallengeLanguage.Ruby },
+  { label: 'Swift', value: ChallengeLanguage.Swift },
+  { label: 'Kotlin', value: ChallengeLanguage.Kotlin },
 ]
 
-export function ConfigurationPanel() {
+interface ConfigurationPanelProps {
+  onStart: (langOverride?: ChallengeLanguage) => void
+}
+
+export function ConfigurationPanel({ onStart }: ConfigurationPanelProps) {
   const { configuration, setType, setLevel, setLanguage } = useConfigurationChallenge()
-  const router = useRouter()
+  const [isRandomLang, setIsRandomLang] = useState(false)
+
+  const handleLangChange = (lang: ChallengeLanguage) => {
+    setIsRandomLang(false)
+    setLanguage(lang)
+  }
+
+  const handleStart = () => {
+    if (isRandomLang) {
+      const langs = Object.values(ChallengeLanguage)
+      const picked = langs[Math.floor(Math.random() * langs.length)]
+      onStart(picked)
+    } else {
+      onStart()
+    }
+  }
 
   return (
     <div>
@@ -42,17 +71,42 @@ export function ConfigurationPanel() {
         selected={configuration.level}
         onChange={setLevel}
       />
-      <ConfigurationSelector
-        label="Linguaggio"
-        options={languageOptions}
-        selected={configuration.language}
-        onChange={setLanguage}
-      />
+
+      {/* Language + Random */}
+      <div className="mb-6">
+        <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3 font-mono">Linguaggio</p>
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => setIsRandomLang(true)}
+            className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all font-mono ${
+              isRandomLang
+                ? 'border-cyan-500/50 bg-cyan-500/10 text-cyan-400'
+                : 'border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-zinc-300'
+            }`}
+          >
+            🎲 Random
+          </button>
+          {languageOptions.map(opt => (
+            <button
+              key={opt.value}
+              onClick={() => handleLangChange(opt.value)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all font-mono ${
+                !isRandomLang && configuration.language === opt.value
+                  ? 'border-cyan-500/50 bg-cyan-500/10 text-cyan-400'
+                  : 'border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-zinc-300'
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <button
-        onClick={() => router.push('/challenge')}
-        className="w-full py-3 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors mt-4"
+        onClick={handleStart}
+        className="w-full py-3 rounded-lg bg-cyan-500 text-zinc-950 text-sm font-semibold hover:bg-cyan-400 transition-colors mt-6 glow-cyan"
       >
-        Inizia con Amelia →
+        Genera sfida →
       </button>
     </div>
   )
