@@ -1,8 +1,0 @@
-[phases.install]
-cmds = ["npm install --prefix /app"]
-
-[phases.build]
-cmds = ["npm run build --workspace=apps/backend"]
-
-[start]
-cmd = "node apps/backend/dist/apps/backend/src/main.js"
