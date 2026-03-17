@@ -11,7 +11,7 @@ COPY packages/shared ./packages/shared
 RUN cd packages/shared && npx tsc
 
 COPY apps/backend ./apps/backend
-RUN cd apps/backend && npm run build
+RUN cd apps/backend && npm run build && find /app -name "main.js"
 
 EXPOSE 3000
 
