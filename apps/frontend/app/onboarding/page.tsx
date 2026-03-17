@@ -4,10 +4,7 @@ import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuthContext } from '../context/AuthContext'
 import { useOnboarding } from '../../hooks/useOnboarding'
-import {
-  DevLanguage, JobType, WorkStyle, DevGoal, Availability,
-  EXPERIENCE_LEVELS, OnboardingRequest,
-} from '@amalia/shared'
+import { DevLanguage, JobType, WorkStyle, DevGoal, Availability, EXPERIENCE_LEVELS, OnboardingRequest } from '@amalia/shared'
 
 // ── Multi-select pill ──────────────────────────────────────────────────
 function Pill({
