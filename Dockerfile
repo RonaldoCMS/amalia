@@ -15,4 +15,4 @@ RUN cd apps/backend && npm run build && ls dist/ && find /app/apps/backend/dist 
 
 EXPOSE 3000
 
-CMD ["node", "apps/backend/dist/apps/backend/src/main.js"]
+CMD ["node", "apps/backend/dist/main.js"]
