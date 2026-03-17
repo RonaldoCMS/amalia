@@ -8,10 +8,10 @@ COPY apps/backend/package*.json ./apps/backend/
 RUN npm install
 
 COPY packages/shared ./packages/shared
-RUN cd packages/shared && npx tsc
+RUN cd packages/shared && npx tsc && ls dist/
 
 COPY apps/backend ./apps/backend
-RUN cd apps/backend && npm run build && find /app -name "main.js"
+RUN cd apps/backend && npm run build && ls dist/ && find /app/apps/backend/dist -name "*.js" | head -20
 
 EXPOSE 3000
 
