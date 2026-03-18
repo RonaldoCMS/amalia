@@ -3,7 +3,9 @@
 import { Suspense } from 'react'
 import { useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useAuthContext } from '@/app/context/AuthContext'
+import { useAuthContext } from '../../../context/AuthContext'
+
+export const dynamic = 'force-dynamic'
 
 function CallbackContent() {
   const router = useRouter()
