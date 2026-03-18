@@ -68,10 +68,15 @@ function OnboardingForm() {
     if (!isAuthenticated) router.replace('/login')
   }, [isAuthenticated, router])
 
-  // Pre-fill when editing
+  // Pre-fill when editing, or skip email step if email already known
   useEffect(() => {
-    if (!isEdit || !existing) return
-    if (existing.email) setEmail(existing.email)
+    if (!existing) return
+    if (existing.email) {
+      setEmail(existing.email)
+      // Skip the email step during initial onboarding if the backend already has an email
+      if (!isEdit) setStep(s => (s === 0 ? 1 : s))
+    }
+    if (!isEdit) return
     if (existing.languages?.length) setLanguages(existing.languages)
     if (existing.yearsOfExperience) setExperience(existing.yearsOfExperience)
     if (existing.jobType) setJobType(existing.jobType)

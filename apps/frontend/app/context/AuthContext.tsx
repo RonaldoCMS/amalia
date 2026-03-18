@@ -12,6 +12,7 @@ interface AuthContextType {
   register: (request: RegisterRequest) => Promise<void>
   logout: () => void
   isAuthenticated: boolean
+  setToken: (token: string) => void
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
