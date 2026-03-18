@@ -30,4 +30,11 @@ export class User {
 
   @OneToOne(() => UserOnboarding, onboarding => onboarding.user)
   onboarding: UserOnboarding
+
+  @Column({ nullable: true, unique: true })
+  githubId: string
+
+
+  @Column({ nullable: true })
+  avatar: string
 }
