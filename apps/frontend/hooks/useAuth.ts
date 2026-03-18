@@ -4,7 +4,7 @@ import { LoginRequest, RegisterRequest } from '@amalia/shared'
 
 export function useAuth() {
   const service = useRef(new AuthService())
-  const [token, setToken] = useState<string | null>(
+  const [token, setTokenState] = useState<string | null>(
     typeof window !== 'undefined' ? localStorage.getItem('token') : null
   )
   const [isLoading, setIsLoading] = useState(false)
@@ -16,7 +16,7 @@ export function useAuth() {
     try {
       const data = await service.current.login(request)
       localStorage.setItem('token', data.accessToken)
-      setToken(data.accessToken)
+      setTokenState(data.accessToken)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Errore sconosciuto')
       throw e
@@ -31,7 +31,7 @@ export function useAuth() {
     try {
       const data = await service.current.register(request)
       localStorage.setItem('token', data.accessToken)
-      setToken(data.accessToken)
+      setTokenState(data.accessToken)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Errore sconosciuto')
       throw e
@@ -42,8 +42,22 @@ export function useAuth() {
 
   const logout = useCallback(() => {
     localStorage.removeItem('token')
-    setToken(null)
+    setTokenState(null)
   }, [])
 
-  return { token, isLoading, error, login, register, logout }
+  const setToken = useCallback((newToken: string) => {
+    localStorage.setItem('token', newToken)
+    setTokenState(newToken)
+  }, [])
+
+  return {
+    token,
+    isAuthenticated: !!token,
+    isLoading,
+    error,
+    login,
+    register,
+    logout,
+    setToken,
+  }
 }
