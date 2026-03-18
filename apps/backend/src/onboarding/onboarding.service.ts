@@ -44,8 +44,10 @@ export class OnboardingService {
   }
 
   async save(userId: string, request: OnboardingRequest): Promise<OnboardingResponse> {
-    // Persist email on the User entity
-    await this.userRepository.updateEmail(userId, request.email)
+    // Persist email on the User entity only if provided (e.g. from OAuth flows)
+    if (request.email) {
+      await this.userRepository.updateEmail(userId, request.email)
+    }
     await this.onboardingRepository.upsert(userId, request)
     return this.get(userId)
   }

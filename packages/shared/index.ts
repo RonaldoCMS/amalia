@@ -113,7 +113,7 @@ export const EXPERIENCE_LEVELS = ['0', '1-2', '3-5', '6-10', '10+'] as const
 export type ExperienceLevel = (typeof EXPERIENCE_LEVELS)[number]
 
 export interface OnboardingRequest {
-  email: string
+  email?: string
   languages: string[]
   yearsOfExperience: ExperienceLevel
   jobType: JobType
@@ -230,6 +230,7 @@ export interface UserStats {
 // Auth
 export interface RegisterRequest {
   username: string
+  email: string
   password: string
 }
 
