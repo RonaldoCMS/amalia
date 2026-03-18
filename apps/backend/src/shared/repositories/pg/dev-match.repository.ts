@@ -38,13 +38,18 @@ export class DevMatchRepository {
   async getInteractedUserIds(userId: string): Promise<string[]> {
     const matches = await this.repository
       .createQueryBuilder('m')
-      .select(['m.id', 'u1.id', 'u2.id'])
+      .select(['m.id', 'u1.id', 'u2.id', 'm.matchedAt'])
       .leftJoin('m.user1', 'u1')
       .leftJoin('m.user2', 'u2')
       .where('u1.id = :userId OR u2.id = :userId', { userId })
       .getRawMany()
 
-    return matches.map(m => (m.u1_id === userId ? m.u2_id : m.u1_id))
+    // Only exclude:
+    // - Users the current user has already liked (userId is user1)
+    // - Users already mutually matched (matchedAt set), regardless of direction
+    return matches
+      .filter(m => m.u1_id === userId || m.m_matchedAt !== null)
+      .map(m => (m.u1_id === userId ? m.u2_id : m.u1_id))
   }
 
   async createLike(fromUserId: string, toUserId: string, score: number): Promise<DevMatch> {
