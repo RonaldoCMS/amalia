@@ -1,13 +1,10 @@
 'use client'
 
-import { Suspense } from 'react'
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuthContext } from '@/app/context/AuthContext'
 
-export const dynamic = 'force-dynamic'
-
-function CallbackContent() {
+function GithubCallbackContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { setToken } = useAuthContext()
@@ -33,7 +30,7 @@ function CallbackContent() {
 export default function AuthCallbackPage() {
   return (
     <Suspense fallback={<div className="text-center py-16 text-sm text-gray-500">Caricamento...</div>}>
-      <CallbackContent />
+      <GithubCallbackContent />
     </Suspense>
   )
 }

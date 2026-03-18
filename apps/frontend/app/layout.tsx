@@ -1,6 +1,6 @@
 import "./globals.css";
 
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ChallengeConfigurationProvider } from "./context/ChallengeConfigurationContext";
 import { AuthProvider } from "./context/AuthContext";
@@ -19,7 +19,12 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "amalia — La tua maestra di codice",
   description: "Allena le tue skill con sfide di programmazione generate dall'AI.",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({
