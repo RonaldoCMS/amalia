@@ -9,15 +9,18 @@ export default function RegisterPage() {
   const { register, isLoading, error, isAuthenticated } = useAuthContext()
   const router = useRouter()
   const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
   useEffect(() => {
     if (isAuthenticated) router.replace('/challenge')
   }, [isAuthenticated, router])
 
+  const canSubmit = !!username && !!email && !!password && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+
   const handleSubmit = async () => {
     try {
-      await register({ username, password })
+      await register({ username, email, password })
       router.push('/onboarding')
     } catch {
       // error displayed from context
@@ -54,12 +57,22 @@ export default function RegisterPage() {
             />
           </div>
           <div>
+            <label className="text-xs text-zinc-500 font-medium mb-1.5 block">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-lg bg-zinc-900 border border-zinc-800 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-cyan-500/50 transition-colors"
+              placeholder="tu@esempio.com"
+            />
+          </div>
+          <div>
             <label className="text-xs text-zinc-500 font-medium mb-1.5 block">Password</label>
             <input
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && username && password && handleSubmit()}
+              onKeyDown={e => e.key === 'Enter' && canSubmit && handleSubmit()}
               className="w-full px-4 py-2.5 rounded-lg bg-zinc-900 border border-zinc-800 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-cyan-500/50 transition-colors"
               placeholder="••••••••"
             />
@@ -72,7 +85,7 @@ export default function RegisterPage() {
 
         <button
           onClick={handleSubmit}
-          disabled={isLoading || !username || !password}
+          disabled={isLoading || !canSubmit}
           className="w-full py-2.5 rounded-lg bg-cyan-500 text-zinc-950 text-sm font-semibold hover:bg-cyan-400 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
           {isLoading ? 'Registrazione in corso...' : 'Registrati'}

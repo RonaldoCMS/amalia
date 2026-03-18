@@ -42,6 +42,10 @@ export class UserRepository {
     await this.repository.delete(id)
   }
 
+  async findByEmail(email: string): Promise<User | null> {
+    return this.repository.findOne({ where: { email } })
+  }
+
   async findByGithubId(githubId: string): Promise<User | null> {
     return this.repository.findOne({ where: { githubId } })
   }

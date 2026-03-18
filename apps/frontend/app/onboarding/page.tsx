@@ -44,17 +44,16 @@ function StepIndicator({ current, total }: { current: number; total: number }) {
   )
 }
 
-const ALL_STEPS = 5
+const ALL_STEPS = 4
 
 function OnboardingForm() {
   const { isAuthenticated } = useAuthContext()
   const router = useRouter()
   const searchParams = useSearchParams()
   const isEdit = searchParams.get('edit') === 'true'
-  const { data: existing, isLoading: isLoadingExisting, save, isSaving, error } = useOnboarding()
+  const { data: existing, save, isSaving, error } = useOnboarding()
 
   const [step, setStep] = useState(0)
-  const [email, setEmail] = useState('')
   const [languages, setLanguages] = useState<string[]>([])
   const [experience, setExperience] = useState<string>('')
   const [jobType, setJobType] = useState<string>('')
@@ -68,15 +67,9 @@ function OnboardingForm() {
     if (!isAuthenticated) router.replace('/login')
   }, [isAuthenticated, router])
 
-  // Pre-fill when editing, or skip email step if email already known
+  // Pre-fill when editing
   useEffect(() => {
-    if (!existing) return
-    if (existing.email) {
-      setEmail(existing.email)
-      // Skip the email step during initial onboarding if the backend already has an email
-      if (!isEdit) setStep(s => (s === 0 ? 1 : s))
-    }
-    if (!isEdit) return
+    if (!isEdit || !existing) return
     if (existing.languages?.length) setLanguages(existing.languages)
     if (existing.yearsOfExperience) setExperience(existing.yearsOfExperience)
     if (existing.jobType) setJobType(existing.jobType)
@@ -91,17 +84,15 @@ function OnboardingForm() {
   if (!isAuthenticated) return null
 
   const canProceed = (): boolean => {
-    if (step === 0) return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-    if (step === 1) return languages.length > 0
-    if (step === 2) return !!experience && !!jobType
-    if (step === 3) return goals.length > 0
-    if (step === 4) return !!workStyle && !!availability
+    if (step === 0) return languages.length > 0
+    if (step === 1) return !!experience && !!jobType
+    if (step === 2) return goals.length > 0
+    if (step === 3) return !!workStyle && !!availability
     return true
   }
 
   const handleFinish = async () => {
     await save({
-      email,
       languages,
       yearsOfExperience: experience as OnboardingRequest['yearsOfExperience'],
       jobType: jobType as JobType,
@@ -136,25 +127,10 @@ function OnboardingForm() {
 
         <div className="border border-zinc-800 rounded-xl bg-zinc-900/40 p-6 min-h-[340px] flex flex-col">
 
-          {/* Step 0 — Email */}
+          {/* Step 0 — Languages */}
           {step === 0 && (
             <div className="flex flex-col gap-4 flex-1">
-              <p className="text-xs text-zinc-500 font-mono uppercase tracking-widest">01 / email</p>
-              <h2 className="text-base font-semibold text-zinc-100">Qual è la tua email?</h2>
-              <input
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="tu@esempio.com"
-                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-zinc-100 font-mono placeholder-zinc-700 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 transition-colors"
-              />
-            </div>
-          )}
-
-          {/* Step 1 — Languages */}
-          {step === 1 && (
-            <div className="flex flex-col gap-4 flex-1">
-              <p className="text-xs text-zinc-500 font-mono uppercase tracking-widest">02 / linguaggi</p>
+              <p className="text-xs text-zinc-500 font-mono uppercase tracking-widest">01 / linguaggi</p>
               <h2 className="text-base font-semibold text-zinc-100">Quali linguaggi conosci?</h2>
               <div className="flex flex-wrap gap-2">
                 {Object.values(DevLanguage).map(l => (
@@ -167,10 +143,10 @@ function OnboardingForm() {
             </div>
           )}
 
-          {/* Step 2 — Experience + Role */}
-          {step === 2 && (
+          {/* Step 1 — Experience + Role */}
+          {step === 1 && (
             <div className="flex flex-col gap-5 flex-1">
-              <p className="text-xs text-zinc-500 font-mono uppercase tracking-widest">03 / esperienza</p>
+              <p className="text-xs text-zinc-500 font-mono uppercase tracking-widest">02 / esperienza</p>
               <div>
                 <h2 className="text-base font-semibold text-zinc-100 mb-3">Anni di esperienza</h2>
                 <div className="flex flex-wrap gap-2">
@@ -191,10 +167,10 @@ function OnboardingForm() {
             </div>
           )}
 
-          {/* Step 3 — Goals */}
-          {step === 3 && (
+          {/* Step 2 — Goals */}
+          {step === 2 && (
             <div className="flex flex-col gap-4 flex-1">
-              <p className="text-xs text-zinc-500 font-mono uppercase tracking-widest">04 / obiettivi</p>
+              <p className="text-xs text-zinc-500 font-mono uppercase tracking-widest">03 / obiettivi</p>
               <h2 className="text-base font-semibold text-zinc-100">Cosa stai cercando?</h2>
               <div className="flex flex-wrap gap-2">
                 {Object.values(DevGoal).map(g => (
@@ -205,10 +181,10 @@ function OnboardingForm() {
             </div>
           )}
 
-          {/* Step 4 — Work style + Bio */}
-          {step === 4 && (
+          {/* Step 3 — Work style + Bio */}
+          {step === 3 && (
             <div className="flex flex-col gap-5 flex-1">
-              <p className="text-xs text-zinc-500 font-mono uppercase tracking-widest">05 / stile di lavoro</p>
+              <p className="text-xs text-zinc-500 font-mono uppercase tracking-widest">04 / stile di lavoro</p>
               <div>
                 <h2 className="text-base font-semibold text-zinc-100 mb-3">Modalità di lavoro</h2>
                 <div className="flex gap-2">

@@ -12,11 +12,18 @@ export class RegisterUseCase {
   ) {}
 
   async execute(request: RegisterRequest): Promise<AuthResponse> {
-    const existing = await this.userRepository.findByUsername(request.username)
-    if (existing) throw new ConflictException('Username già in uso')
+    const existingByUsername = await this.userRepository.findByUsername(request.username)
+    if (existingByUsername) throw new ConflictException('Username già in uso')
+
+    const existingByEmail = await this.userRepository.findByEmail(request.email)
+    if (existingByEmail) throw new ConflictException('Email già in uso')
 
     const hashed = await bcrypt.hash(request.password, 10)
-    const user = await this.userRepository.save({ username: request.username, password: hashed })
+    const user = await this.userRepository.save({
+      username: request.username,
+      email: request.email,
+      password: hashed,
+    })
 
     const accessToken = this.jwtService.sign({ sub: user.id, username: user.username })
     return { accessToken }
