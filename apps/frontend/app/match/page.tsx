@@ -8,7 +8,6 @@ import { useMatch } from '../../hooks/useMatch'
 import { MatchSuggestion, MatchItem } from '@amalia/shared'
 import { Footer } from '../components/Footer'
 import { AdBanner } from '../components/AdBanner'
-import { NotificationBell } from '../components/NotificationBell'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? ''
 
@@ -18,7 +17,7 @@ function Avatar({ url, name, px = 40 }: { url: string | null; name: string; px?:
   if (url) {
     return (
       <img
-        src={`${BACKEND_URL}${url}`}
+        src={`${url}`}
         alt={name}
         style={style}
         className="rounded-full object-cover border border-zinc-700 shrink-0"
@@ -186,23 +185,8 @@ export default function MatchPage() {
     }`
 
   return (
-    <div className="min-h-screen bg-grid relative flex flex-col">
+    <div className="min-h-screen bg-grid relative flex flex-col pb-16 sm:pb-0">
       <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-cyan-500/3 to-transparent pointer-events-none" />
-
-      <nav className="relative z-10 flex items-center justify-between max-w-4xl mx-auto w-full px-4 sm:px-6 py-4 border-b border-zinc-900">
-        <div className="flex items-center gap-3">
-          <Link href="/challenge" className="font-mono text-sm font-semibold text-zinc-100 hover:text-cyan-400 transition-colors">
-            amalia<span className="text-cyan-400">_</span>
-          </Link>
-          <span className="text-zinc-700 hidden sm:inline">/</span>
-          <span className="text-xs text-zinc-500 font-mono hidden sm:inline">dev match</span>
-        </div>
-        <div className="flex items-center gap-4 font-mono text-xs">
-          <NotificationBell />
-          <Link href="/challenge" className="text-zinc-500 hover:text-zinc-300 transition-colors">challenge</Link>
-          <Link href="/profile" className="text-zinc-500 hover:text-zinc-300 transition-colors hidden sm:inline">profile</Link>
-        </div>
-      </nav>
 
       <main className="relative z-10 max-w-2xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-8 flex-1">
         <div className="mb-6">

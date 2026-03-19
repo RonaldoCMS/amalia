@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios'
-import { UserProfile, UpdatePasswordRequest, ChallengeHistoryItem } from '@amalia/shared'
+import { UserProfile, UpdatePasswordRequest, ChallengeHistoryItem, UserSearchResult, PublicUserProfile } from '@amalia/shared'
 
 export class UserRepository {
   private readonly client: AxiosInstance
@@ -32,6 +32,16 @@ export class UserRepository {
 
   async getHistory(): Promise<ChallengeHistoryItem[]> {
     const response = await this.client.get<ChallengeHistoryItem[]>('/history')
+    return response.data
+  }
+
+  async searchUsers(query: string, limit: number = 20): Promise<UserSearchResult[]> {
+    const response = await this.client.get<UserSearchResult[]>('/search', { params: { q: query, limit } })
+    return response.data
+  }
+
+  async getPublicProfile(userId: string): Promise<PublicUserProfile> {
+    const response = await this.client.get<PublicUserProfile>(`/${userId}/profile`)
     return response.data
   }
 }

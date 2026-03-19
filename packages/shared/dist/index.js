@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DuelStatus = exports.EXPERIENCE_LEVELS = exports.Availability = exports.DevGoal = exports.WorkStyle = exports.JobType = exports.DevLanguage = exports.NotificationType = exports.ChallengeLanguage = exports.ChallengeLevel = exports.ChallengeType = void 0;
+exports.FriendshipStatus = exports.DuelStatus = exports.EXPERIENCE_LEVELS = exports.Availability = exports.DevGoal = exports.WorkStyle = exports.JobType = exports.DevLanguage = exports.NotificationType = exports.ChallengeLanguage = exports.ChallengeLevel = exports.ChallengeType = void 0;
 var ChallengeType;
 (function (ChallengeType) {
     ChallengeType["Fill"] = "fill";
@@ -37,6 +37,10 @@ var NotificationType;
     NotificationType["NewMatch"] = "new_match";
     NotificationType["NewMessage"] = "new_message";
     NotificationType["DuelChallenge"] = "duel_challenge";
+    NotificationType["FriendRequest"] = "friend_request";
+    NotificationType["FriendAccepted"] = "friend_accepted";
+    NotificationType["NewPostLike"] = "new_post_like";
+    NotificationType["NewComment"] = "new_comment";
 })(NotificationType || (exports.NotificationType = NotificationType = {}));
 // ── Onboarding ──────────────────────────────────────────────────────────
 var DevLanguage;
@@ -105,3 +109,11 @@ var DuelStatus;
     DuelStatus["Completed"] = "completed";
     DuelStatus["Cancelled"] = "cancelled";
 })(DuelStatus || (exports.DuelStatus = DuelStatus = {}));
+// ── Friendship ───────────────────────────────────────────────────────────
+var FriendshipStatus;
+(function (FriendshipStatus) {
+    FriendshipStatus["Pending"] = "pending";
+    FriendshipStatus["Accepted"] = "accepted";
+    FriendshipStatus["Rejected"] = "rejected";
+    FriendshipStatus["Blocked"] = "blocked";
+})(FriendshipStatus || (exports.FriendshipStatus = FriendshipStatus = {}));

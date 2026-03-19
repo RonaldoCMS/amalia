@@ -11,7 +11,7 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? ''
 
 function Avatar({ url, name, px = 32 }: { url: string | null; name: string; px?: number }) {
   const s = `${px}px`
-  if (url) return <img src={`${BACKEND_URL}${url}`} alt={name} style={{ width: s, height: s }} className="rounded-full object-cover border-2 border-zinc-700" />
+  if (url) return <img src={`${url}`} alt={name} style={{ width: s, height: s }} className="rounded-full object-cover border-2 border-zinc-700" />
   return (
     <div style={{ width: s, height: s }} className="rounded-full bg-zinc-800 border-2 border-zinc-700 flex items-center justify-center text-zinc-400 font-mono font-bold">
       {name[0]?.toUpperCase()}

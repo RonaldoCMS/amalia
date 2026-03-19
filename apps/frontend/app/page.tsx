@@ -17,6 +17,12 @@ export default function HomePage() {
   const { isAuthenticated } = useAuthContext()
   const router = useRouter()
 
+  // Authenticated users go straight to the feed
+  if (isAuthenticated) {
+    router.replace('/feed')
+    return null
+  }
+
   return (
     <div className="min-h-screen bg-grid relative flex flex-col">
       {/* Gradient glow */}
@@ -27,26 +33,17 @@ export default function HomePage() {
         <span className="font-mono text-sm font-semibold tracking-tight text-zinc-100">
           amalia<span className="text-cyan-400">_</span>
         </span>
-        {isAuthenticated ? (
-          <button
-            onClick={() => router.push('/challenge')}
-            className="text-sm text-cyan-400 hover:text-cyan-300 font-medium transition-colors"
+        <div className="flex gap-3">
+          <Link href="/login" className="text-sm text-zinc-400 hover:text-zinc-200 transition-colors">
+            Accedi
+          </Link>
+          <Link
+            href="/register"
+            className="text-sm px-4 py-1.5 rounded-md bg-zinc-800 text-zinc-200 hover:bg-zinc-700 transition-colors border border-zinc-700"
           >
-            Vai alle sfide →
-          </button>
-        ) : (
-          <div className="flex gap-3">
-            <Link href="/login" className="text-sm text-zinc-400 hover:text-zinc-200 transition-colors">
-              Accedi
-            </Link>
-            <Link
-              href="/register"
-              className="text-sm px-4 py-1.5 rounded-md bg-zinc-800 text-zinc-200 hover:bg-zinc-700 transition-colors border border-zinc-700"
-            >
-              Registrati
-            </Link>
-          </div>
-        )}
+            Registrati
+          </Link>
+        </div>
       </nav>
 
       {/* Hero */}

@@ -6,7 +6,6 @@ import Link from 'next/link'
 import { useAuthContext } from '../../context/AuthContext'
 import { useChat } from '../../../hooks/useChat'
 import { useProfile } from '../../../hooks/useProfile'
-import { NotificationBell } from '../../components/NotificationBell'
 import { DuelService } from '../../../services/duel.service'
 import { MatchRepository } from '../../../repositories/match.repository'
 import { ChallengeLanguage, ChatMessageItem, DuelInviteStatusResponse } from '@amalia/shared'
@@ -23,7 +22,7 @@ const EMOJIS = [
 function Avatar({ url, name, size = 32 }: { url: string | null; name: string; size?: number }) {
   const px = `${size}px`
   if (url) {
-    return <img src={`${BACKEND_URL}${url}`} alt={name} style={{ width: px, height: px }} className="rounded-full object-cover border border-zinc-700" />
+    return <img src={`${url}`} alt={name} style={{ width: px, height: px }} className="rounded-full object-cover border border-zinc-700" />
   }
   return (
     <div style={{ width: px, height: px }} className="rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-zinc-400 font-mono text-xs font-bold">
@@ -352,7 +351,7 @@ export default function ChatPage() {
   }, [router])
 
   return (
-    <div className="min-h-screen bg-grid flex flex-col relative">
+    <div className="min-h-screen bg-grid flex flex-col relative pb-16 sm:pb-0">
       <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-cyan-500/3 to-transparent pointer-events-none" />
 
       {/* Language picker modal */}
@@ -414,7 +413,6 @@ export default function ChatPage() {
               </button>
             </>
           )}
-          <NotificationBell />
         </div>
       </nav>
 
@@ -485,11 +483,11 @@ export default function ChatPage() {
                     >
                       {msg.imageUrl ? (
                         <img
-                          src={`${BACKEND_URL}${msg.imageUrl}`}
+                          src={`${msg.imageUrl}`}
                           alt="immagine"
                           className="max-w-full rounded-lg cursor-pointer"
                           style={{ maxHeight: 240 }}
-                          onClick={() => window.open(`${BACKEND_URL}${msg.imageUrl}`, '_blank')}
+                          onClick={() => window.open(`${msg.imageUrl}`, '_blank')}
                         />
                       ) : (
                         msg.content

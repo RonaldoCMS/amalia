@@ -6,6 +6,8 @@ import { UpdatePasswordUseCase } from './usecases/update-password.usecase'
 import { DeleteAccountUseCase } from './usecases/delete-account.usecase'
 import { GetHistoryUseCase } from './usecases/get-history.usecase'
 import { UpdateProfilePhotoUseCase } from './usecases/update-profile-photo.usecase'
+import { SearchUsersUseCase } from './usecases/search-users.usecase'
+import { GetPublicProfileUseCase } from './usecases/get-public-profile.usecase'
 
 @Module({
   controllers: [UserController],
@@ -16,6 +18,8 @@ import { UpdateProfilePhotoUseCase } from './usecases/update-profile-photo.useca
     DeleteAccountUseCase,
     GetHistoryUseCase,
     UpdateProfilePhotoUseCase,
+    SearchUsersUseCase,
+    GetPublicProfileUseCase,
   ],
 })
 export class UserModule {}

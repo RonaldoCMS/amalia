@@ -34,7 +34,4 @@ export class User {
   @Column({ nullable: true, unique: true })
   githubId: string
 
-
-  @Column({ nullable: true })
-  avatar: string
 }
