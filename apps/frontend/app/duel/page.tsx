@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuthContext } from '../context/AuthContext'
 import { useDuel } from '../../hooks/useDuel'
-import { NotificationBell } from '../components/NotificationBell'
 import { Footer } from '../components/Footer'
 import { ChallengeType, DuelRoundResult, DuelLanguageQueueCount } from '@amalia/shared'
 
@@ -13,7 +12,7 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? ''
 
 function Avatar({ url, name, px = 40 }: { url: string | null; name: string; px?: number }) {
   const s = `${px}px`
-  if (url) return <img src={`${BACKEND_URL}${url}`} alt={name} style={{ width: s, height: s }} className="rounded-full object-cover border-2 border-zinc-700" />
+  if (url) return <img src={`${url}`} alt={name} style={{ width: s, height: s }} className="rounded-full object-cover border-2 border-zinc-700" />
   return (
     <div style={{ width: s, height: s }} className="rounded-full bg-zinc-800 border-2 border-zinc-700 flex items-center justify-center text-zinc-400 font-mono font-bold text-lg">
       {name[0]?.toUpperCase()}
@@ -478,28 +477,8 @@ export default function DuelPage() {
   }
 
   return (
-    <div className="min-h-screen bg-grid relative flex flex-col">
+    <div className="min-h-screen bg-grid relative flex flex-col pb-16 sm:pb-0">
       <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-cyan-500/3 to-transparent pointer-events-none" />
-
-      {/* Nav */}
-      <nav className="relative z-10 flex items-center justify-between max-w-4xl mx-auto w-full px-4 sm:px-6 py-4 border-b border-zinc-900">
-        <div className="flex items-center gap-3">
-          <Link href="/challenge" className="font-mono text-sm font-semibold text-zinc-100 hover:text-cyan-400 transition-colors">
-            amalia<span className="text-cyan-400">_</span>
-          </Link>
-          <span className="text-zinc-700">/</span>
-          <span className="text-xs text-cyan-400 font-mono">sfida ⚔️</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <Link href="/challenge" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono hidden sm:inline">
-            challenge
-          </Link>
-          <Link href="/duel/leaderboard" className="text-xs text-zinc-500 hover:text-amber-400 transition-colors font-mono hidden sm:inline">
-            🏆 classifica
-          </Link>
-          <NotificationBell />
-        </div>
-      </nav>
 
       <main className="relative z-10 max-w-3xl mx-auto w-full px-4 sm:px-6 flex-1">
         {phase === 'idle' && renderIdle()}

@@ -28,7 +28,11 @@ export declare enum ChallengeLanguage {
 export declare enum NotificationType {
     NewMatch = "new_match",
     NewMessage = "new_message",
-    DuelChallenge = "duel_challenge"
+    DuelChallenge = "duel_challenge",
+    FriendRequest = "friend_request",
+    FriendAccepted = "friend_accepted",
+    NewPostLike = "new_post_like",
+    NewComment = "new_comment"
 }
 export interface NotificationItem {
     id: string;
@@ -323,4 +327,81 @@ export interface DuelLanguageQueueCount {
 }
 export interface DuelJoinQueueRequest {
     language: string;
+}
+export interface PostItem {
+    id: string;
+    authorId: string;
+    authorUsername: string;
+    authorProfilePhotoUrl: string | null;
+    content: string;
+    imageUrl: string | null;
+    likesCount: number;
+    commentsCount: number;
+    likedByMe: boolean;
+    createdAt: string;
+}
+export interface CreatePostRequest {
+    content: string;
+}
+export interface CommentItem {
+    id: string;
+    authorId: string;
+    authorUsername: string;
+    authorProfilePhotoUrl: string | null;
+    content: string;
+    createdAt: string;
+}
+export interface CreateCommentRequest {
+    content: string;
+}
+export interface FeedResponse {
+    posts: PostItem[];
+    total: number;
+    page: number;
+    limit: number;
+}
+export declare enum FriendshipStatus {
+    Pending = "pending",
+    Accepted = "accepted",
+    Rejected = "rejected",
+    Blocked = "blocked"
+}
+export interface FriendshipItem {
+    id: string;
+    status: FriendshipStatus;
+    userId: string;
+    username: string;
+    profilePhotoUrl: string | null;
+    createdAt: string;
+}
+export interface FriendshipStatusResponse {
+    status: FriendshipStatus | null;
+    friendshipId: string | null;
+    direction: 'sent' | 'received' | null;
+}
+export interface PublicUserProfile {
+    id: string;
+    username: string;
+    profilePhotoUrl: string | null;
+    bio: string | null;
+    languages: string[];
+    goals: string[];
+    jobType: string | null;
+    yearsOfExperience: string | null;
+    workStyle: string | null;
+    githubUrl: string | null;
+    challengeStats: UserStats;
+    duelStats: {
+        totalDuels: number;
+        wins: number;
+        losses: number;
+        winRate: number;
+    };
+    createdAt: string;
+}
+export interface UserSearchResult {
+    id: string;
+    username: string;
+    profilePhotoUrl: string | null;
+    bio: string | null;
 }

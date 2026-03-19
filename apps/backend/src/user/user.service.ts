@@ -4,7 +4,9 @@ import { UpdatePasswordUseCase } from './usecases/update-password.usecase'
 import { DeleteAccountUseCase } from './usecases/delete-account.usecase'
 import { GetHistoryUseCase } from './usecases/get-history.usecase'
 import { UpdateProfilePhotoUseCase } from './usecases/update-profile-photo.usecase'
-import { UserProfile, UpdatePasswordRequest, ChallengeHistoryItem } from '@amalia/shared'
+import { SearchUsersUseCase } from './usecases/search-users.usecase'
+import { GetPublicProfileUseCase } from './usecases/get-public-profile.usecase'
+import { UserProfile, UpdatePasswordRequest, ChallengeHistoryItem, UserSearchResult, PublicUserProfile } from '@amalia/shared'
 
 @Injectable()
 export class UserService {
@@ -14,6 +16,8 @@ export class UserService {
     private readonly deleteAccountUseCase: DeleteAccountUseCase,
     private readonly getHistoryUseCase: GetHistoryUseCase,
     private readonly updateProfilePhotoUseCase: UpdateProfilePhotoUseCase,
+    private readonly searchUsersUseCase: SearchUsersUseCase,
+    private readonly getPublicProfileUseCase: GetPublicProfileUseCase,
   ) {}
 
   getProfile(userId: string): Promise<UserProfile> {
@@ -34,6 +38,14 @@ export class UserService {
 
   updateProfilePhoto(userId: string, file: any): Promise<{ profilePhotoUrl: string }> {
     return this.updateProfilePhotoUseCase.execute(userId, file)
+  }
+
+  searchUsers(query: string, limit: number): Promise<UserSearchResult[]> {
+    return this.searchUsersUseCase.execute(query, limit)
+  }
+
+  getPublicProfile(userId: string): Promise<PublicUserProfile> {
+    return this.getPublicProfileUseCase.execute(userId)
   }
 }
  

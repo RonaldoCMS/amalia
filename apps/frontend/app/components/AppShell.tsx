@@ -3,6 +3,7 @@
 import { ReactNode } from 'react'
 import { useAuthContext } from '../context/AuthContext'
 import { NotificationProvider } from '../context/NotificationContext'
+import { Navbar } from './Navbar'
 import { SnackBar } from './SnackBar'
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -10,6 +11,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <NotificationProvider isAuthenticated={isAuthenticated}>
+      <Navbar />
       {children}
       <SnackBar />
     </NotificationProvider>

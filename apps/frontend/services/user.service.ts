@@ -1,5 +1,5 @@
 import { UserRepository } from '../repositories/user.repository'
-import { UserProfile, UpdatePasswordRequest, ChallengeHistoryItem } from '@amalia/shared'
+import { UserProfile, UpdatePasswordRequest, ChallengeHistoryItem, UserSearchResult, PublicUserProfile } from '@amalia/shared'
 
 export class UserService {
   private readonly repository: UserRepository
@@ -22,5 +22,13 @@ export class UserService {
 
   getHistory(): Promise<ChallengeHistoryItem[]> {
     return this.repository.getHistory()
+  }
+
+  searchUsers(query: string, limit?: number): Promise<UserSearchResult[]> {
+    return this.repository.searchUsers(query, limit)
+  }
+
+  getPublicProfile(userId: string): Promise<PublicUserProfile> {
+    return this.repository.getPublicProfile(userId)
   }
 }

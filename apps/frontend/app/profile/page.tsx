@@ -7,7 +7,6 @@ import { useAuthContext } from '../context/AuthContext'
 import { useProfile } from '../../hooks/useProfile'
 import { Footer } from '../components/Footer'
 import { AdBanner } from '../components/AdBanner'
-import { NotificationBell } from '../components/NotificationBell'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? ''
 
@@ -126,7 +125,7 @@ export default function ProfilePage() {
       const token = localStorage.getItem('token')
       const form = new FormData()
       form.append('photo', file)
-      const res = await fetch(`${BACKEND_URL}/user/photo`, {
+      const res = await fetch(`/user/photo`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: form,
@@ -144,35 +143,12 @@ export default function ProfilePage() {
   const currentPhotoUrl = photoPreview
     ? photoPreview
     : profile?.profilePhotoUrl
-      ? `${BACKEND_URL}${profile.profilePhotoUrl}`
+      ? `${profile.profilePhotoUrl}`
       : null
 
   return (
-    <div className="min-h-screen bg-grid relative flex flex-col">
+    <div className="min-h-screen bg-grid relative flex flex-col pb-16 sm:pb-0">
       <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-cyan-500/3 to-transparent pointer-events-none" />
-
-      {/* Nav */}
-      <nav className="relative z-10 flex items-center justify-between max-w-4xl mx-auto w-full px-4 sm:px-6 py-4 border-b border-zinc-900">
-        <div className="flex items-center gap-3">
-          <Link href="/challenge" className="font-mono text-sm font-semibold text-zinc-100 hover:text-cyan-400 transition-colors">
-            amalia<span className="text-cyan-400">_</span>
-          </Link>
-          <span className="text-zinc-700 hidden sm:inline">/</span>
-          <span className="text-xs text-zinc-500 font-mono hidden sm:inline">profile</span>
-        </div>
-        <div className="flex items-center gap-4 sm:gap-5 font-mono text-xs">
-          <NotificationBell />
-          <Link href="/history" className="text-zinc-500 hover:text-zinc-300 transition-colors hidden sm:inline">history</Link>
-          <Link href="/match" className="text-zinc-500 hover:text-zinc-300 transition-colors">match</Link>
-          <Link href="/challenge" className="text-zinc-500 hover:text-zinc-300 transition-colors">challenge</Link>
-          <button
-            onClick={() => { logout(); router.push('/') }}
-            className="text-zinc-500 hover:text-zinc-300 transition-colors"
-          >
-            logout
-          </button>
-        </div>
-      </nav>
 
       <main className="relative z-10 max-w-2xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-8 space-y-6 flex-1">
 
@@ -244,6 +220,16 @@ export default function ProfilePage() {
                       modifica
                     </Link>
                   </div>
+                </div>
+                <div className="h-px bg-zinc-800" />
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-zinc-600 font-mono">sessione</span>
+                  <button
+                    onClick={() => { logout(); router.push('/') }}
+                    className="text-xs font-mono text-zinc-500 hover:text-red-400 transition-colors border border-zinc-800 hover:border-red-400/30 rounded px-2.5 py-1"
+                  >
+                    logout →
+                  </button>
                 </div>
               </div>
             </div>

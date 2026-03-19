@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { useAuthContext } from '../context/AuthContext'
 import { useChallenge } from '../../hooks/useChallenge'
 import { useConfigurationChallenge } from '../../hooks/useConfigurationChallenge'
@@ -18,7 +17,6 @@ import { AnswerWrite } from './components/AnswerInput/AnswerWrite'
 import { ConfigurationPanel } from '../components/ConfigurationPanel'
 import { Footer } from '../components/Footer'
 import { AdBanner, AdInterstitial } from '../components/AdBanner'
-import { NotificationBell } from '../components/NotificationBell'
 import { ChallengeType, ChallengeLanguage } from '@amalia/shared'
 
 const AD_EVERY_N = 5
@@ -32,7 +30,6 @@ export default function ChallengePage() {
   const userService = useRef(new UserService())
   const [completedCount, setCompletedCount] = useState(0)
   const [showAdInterstitial, setShowAdInterstitial] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -93,72 +90,8 @@ export default function ChallengePage() {
   }
 
   return (
-    <div className="min-h-screen bg-grid relative flex flex-col">
+    <div className="min-h-screen bg-grid relative flex flex-col pb-16 sm:pb-0">
       <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-cyan-500/3 to-transparent pointer-events-none" />
-
-      {/* Top bar */}
-      <nav className="relative z-10 flex items-center justify-between max-w-4xl mx-auto w-full px-4 sm:px-6 py-4 border-b border-zinc-900">
-        <div className="flex items-center gap-3">
-          <span className="font-mono text-sm font-semibold text-zinc-100">
-            amalia<span className="text-cyan-400">_</span>
-          </span>
-          <span className="text-zinc-700 hidden sm:inline">/</span>
-          <span className="text-xs text-zinc-500 font-mono hidden sm:inline">challenge</span>
-        </div>
-
-        {/* Desktop nav */}
-        <div className="hidden sm:flex items-center gap-5">
-          <div className="flex items-center gap-4 font-mono text-xs">
-            <span className="flex items-center gap-1.5 text-cyan-400">
-              <span className="text-zinc-600">score</span>
-              <span className="font-bold">{stats.totalScore}</span>
-            </span>
-            <span className="flex items-center gap-1 text-emerald-400">
-              <span className="text-zinc-600">✓</span>
-              {stats.correctCount}
-            </span>
-            <span className="flex items-center gap-1 text-red-400">
-              <span className="text-zinc-600">✗</span>
-              {stats.wrongCount}
-            </span>
-          </div>
-          <NotificationBell />
-          <Link href="/duel" className="text-xs text-cyan-400 hover:text-cyan-300 transition-colors font-mono font-semibold">⚔️ sfida</Link>
-          <Link href="/history" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">history</Link>
-          <Link href="/match" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">match</Link>
-          <Link href="/profile" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">profile</Link>
-          <button
-            onClick={() => { logout(); router.push('/') }}
-            className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono"
-          >
-            logout
-          </button>
-        </div>
-
-        {/* Mobile: score + hamburger */}
-        <div className="flex sm:hidden items-center gap-3">
-          <div className="flex items-center gap-2 font-mono text-[10px]">
-            <span className="text-cyan-400 font-bold">{stats.totalScore}</span>
-            <span className="text-emerald-400">✓{stats.correctCount}</span>
-            <span className="text-red-400">✗{stats.wrongCount}</span>
-          </div>
-          <NotificationBell />
-          <button onClick={() => setMenuOpen(o => !o)} className="text-zinc-400 hover:text-zinc-200 text-lg" aria-label="Menu">☰</button>
-        </div>
-      </nav>
-
-      {/* Mobile menu */}
-      {menuOpen && (
-        <div className="sm:hidden relative z-20 border-b border-zinc-800 bg-zinc-950/95 backdrop-blur-sm">
-          <div className="flex flex-col px-4 py-3 gap-2 font-mono text-xs">
-            <Link href="/duel" onClick={() => setMenuOpen(false)} className="text-cyan-400 hover:text-cyan-300 py-1 font-semibold">⚔️ sfida</Link>
-            <Link href="/history" onClick={() => setMenuOpen(false)} className="text-zinc-400 hover:text-zinc-200 py-1">history</Link>
-            <Link href="/match" onClick={() => setMenuOpen(false)} className="text-zinc-400 hover:text-zinc-200 py-1">match</Link>
-            <Link href="/profile" onClick={() => setMenuOpen(false)} className="text-zinc-400 hover:text-zinc-200 py-1">profile</Link>
-            <button onClick={() => { logout(); router.push('/') }} className="text-left text-zinc-400 hover:text-zinc-200 py-1">logout</button>
-          </div>
-        </div>
-      )}
 
       <main className="relative z-10 max-w-4xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-8 flex-1">
         {/* Phase 1: Configuration */}
