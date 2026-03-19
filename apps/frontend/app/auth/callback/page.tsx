@@ -1,11 +1,13 @@
 import { Suspense } from 'react'
 import { CallbackContent } from './CallbackContent'
 
-export const dynamic = 'force-dynamic'
-
 export default function AuthCallbackPage() {
   return (
-    <Suspense fallback={<div className="text-center py-16 text-sm text-gray-500">Caricamento...</div>}>
+    <Suspense fallback={
+      <div className="text-center py-16 text-sm text-gray-500">
+        Caricamento...
+      </div>
+    }>
       <CallbackContent />
     </Suspense>
   )
