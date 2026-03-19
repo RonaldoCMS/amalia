@@ -405,3 +405,69 @@ export interface UserSearchResult {
     profilePhotoUrl: string | null;
     bio: string | null;
 }
+export interface CvMessage {
+    role: 'amalia' | 'user';
+    content: string;
+}
+export interface CvSkill {
+    name: string;
+    verified: boolean;
+    level: string;
+}
+export interface CvProject {
+    name: string;
+    description: string;
+    technologies: string[];
+}
+export interface CvExperience {
+    title: string;
+    company: string;
+    period: string;
+    description: string;
+}
+export interface CvData {
+    name: string;
+    title: string;
+    bio: string;
+    email: string | null;
+    githubUrl: string | null;
+    education: string | null;
+    softSkills: string[];
+    skills: CvSkill[];
+    projects: CvProject[];
+    experience: CvExperience[];
+}
+export interface CvAmaliaStats {
+    challengesCompleted: number;
+    accuracy: number;
+    totalScore: number;
+    topLanguages: string[];
+    badges: string[];
+}
+export type CvStatus = 'interviewing' | 'generating' | 'ready' | 'error';
+export interface CvSession {
+    id: string;
+    username: string;
+    status: CvStatus;
+    messages: CvMessage[];
+    cvData: CvData | null;
+    amaliaStats: CvAmaliaStats | null;
+    isPublic: boolean;
+    createdAt: string;
+}
+export interface CvSendMessageRequest {
+    content: string;
+}
+export interface CvSendMessageResponse {
+    message: CvMessage;
+    isDone: boolean;
+}
+export interface PublicCvItem {
+    id: string;
+    username: string;
+    title: string;
+    bio: string;
+    topSkills: string[];
+    amaliaStats: CvAmaliaStats;
+    createdAt: string;
+}
