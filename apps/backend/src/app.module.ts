@@ -16,6 +16,7 @@ import { Post } from './entities/post.entity';
 import { PostLike } from './entities/post-like.entity';
 import { PostComment } from './entities/post-comment.entity';
 import { Friendship } from './entities/friendship.entity';
+import { UserCv } from './entities/user-cv.entity';
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
@@ -25,7 +26,8 @@ import { ChatModule } from './chat/chat.module';
 import { NotificationModule } from './notifications/notification.module';
 import { DuelsModule } from './duels/duels.module';
 import { FeedModule } from './feed/feed.module';
-import { FriendshipModule } from './friendship/friendship.module';
+import { FriendshipModule } from './friendship/friendship.module'; 
+import { CvModule } from './cv/cv.module';
 
 @Module({
   imports: [
@@ -35,7 +37,7 @@ import { FriendshipModule } from './friendship/friendship.module';
       useFactory: (config: ConfigService) => ({
         type: 'postgres',
         url: config.get<string>('DATABASE_URL'),
-        entities: [User, Challenge, UserChallenge, UserOnboarding, DevMatch, ChatMessage, Notification, Duel, DuelRound, AppConfig, Post, PostLike, PostComment, Friendship],
+        entities: [User, Challenge, UserChallenge, UserOnboarding, DevMatch, ChatMessage, Notification, Duel, DuelRound, AppConfig, Post, PostLike, PostComment, Friendship, UserCv],
         synchronize: true,
       }),
     }),
@@ -50,6 +52,7 @@ import { FriendshipModule } from './friendship/friendship.module';
     DuelsModule,
     FeedModule,
     FriendshipModule,
+    CvModule,
   ],
 })
 export class AppModule {}

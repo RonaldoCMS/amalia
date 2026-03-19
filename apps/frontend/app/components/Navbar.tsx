@@ -121,6 +121,12 @@ export function Navbar() {
               >
                 🏆 classifica
               </Link>
+              <Link
+                href="/cv"
+                className={`transition-colors ${pathname.startsWith('/cv') ? 'text-violet-400' : 'text-zinc-500 hover:text-violet-400'}`}
+              >
+                ✨ myCV
+              </Link>
             </div>
 
             {/* Right */}
