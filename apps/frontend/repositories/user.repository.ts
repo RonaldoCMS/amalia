@@ -44,4 +44,9 @@ export class UserRepository {
     const response = await this.client.get<PublicUserProfile>(`/${userId}/profile`)
     return response.data
   }
+
+  async getPublicHistory(userId: string): Promise<ChallengeHistoryItem[]> {
+    const response = await this.client.get<ChallengeHistoryItem[]>(`/${userId}/challenge-history`)
+    return response.data
+  }
 }

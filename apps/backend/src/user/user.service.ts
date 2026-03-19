@@ -47,5 +47,9 @@ export class UserService {
   getPublicProfile(userId: string): Promise<PublicUserProfile> {
     return this.getPublicProfileUseCase.execute(userId)
   }
+
+  getPublicHistory(userId: string): Promise<ChallengeHistoryItem[]> {
+    return this.getHistoryUseCase.execute(userId)
+  }
 }
  
