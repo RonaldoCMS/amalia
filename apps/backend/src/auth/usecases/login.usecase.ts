@@ -16,7 +16,7 @@ export class LoginUseCase {
     if (!user) throw new UnauthorizedException('Credenziali non valide')
 
     const valid = await bcrypt.compare(request.password, user.password)
-    if (!valid) throw new UnauthorizedException('Credenziali non valide')
+    if (!valid) throw new UnauthorizedException('Credenziali non valide1')
 
     const accessToken = this.jwtService.sign({ sub: user.id, username: user.username })
     return { accessToken }

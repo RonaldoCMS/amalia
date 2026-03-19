@@ -49,4 +49,14 @@ export class UserRepository {
   async findByGithubId(githubId: string): Promise<User | null> {
     return this.repository.findOne({ where: { githubId } })
   }
+
+  async searchByUsername(query: string, limit: number = 20): Promise<User[]> {
+    return this.repository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.onboarding', 'onboarding')
+      .where('user.username ILIKE :query', { query: `%${query}%` })
+      .orderBy('user.username', 'ASC')
+      .limit(limit)
+      .getMany()
+  }
 }

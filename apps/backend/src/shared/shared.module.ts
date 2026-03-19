@@ -11,6 +11,10 @@ import { NotificationRepository } from './repositories/pg/notification.repositor
 import { DuelRepository } from './repositories/pg/duel.repository'
 import { DuelRoundRepository } from './repositories/pg/duel-round.repository'
 import { AppConfigRepository } from './repositories/pg/app-config.repository'
+import { PostRepository } from './repositories/pg/post.repository'
+import { PostLikeRepository } from './repositories/pg/post-like.repository'
+import { PostCommentRepository } from './repositories/pg/post-comment.repository'
+import { FriendshipRepository } from './repositories/pg/friendship.repository'
 import { User } from '../entities/user.entity'
 import { Challenge } from '../entities/challenge.entity'
 import { UserChallenge } from '../entities/user-challenge.entity'
@@ -21,10 +25,14 @@ import { Notification } from '../entities/notification.entity'
 import { Duel } from '../entities/duel.entity'
 import { DuelRound } from '../entities/duel-round.entity'
 import { AppConfig } from '../entities/app-config.entity'
+import { Post } from '../entities/post.entity'
+import { PostLike } from '../entities/post-like.entity'
+import { PostComment } from '../entities/post-comment.entity'
+import { Friendship } from '../entities/friendship.entity'
 
 @Global()
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Challenge, UserChallenge, UserOnboarding, DevMatch, ChatMessage, Notification, Duel, DuelRound, AppConfig])],
+  imports: [TypeOrmModule.forFeature([User, Challenge, UserChallenge, UserOnboarding, DevMatch, ChatMessage, Notification, Duel, DuelRound, AppConfig, Post, PostLike, PostComment, Friendship])],
   providers: [
     ClaudeRepository,
     UserRepository,
@@ -37,6 +45,10 @@ import { AppConfig } from '../entities/app-config.entity'
     DuelRepository,
     DuelRoundRepository,
     AppConfigRepository,
+    PostRepository,
+    PostLikeRepository,
+    PostCommentRepository,
+    FriendshipRepository,
   ],
   exports: [
     ClaudeRepository,
@@ -50,6 +62,10 @@ import { AppConfig } from '../entities/app-config.entity'
     DuelRepository,
     DuelRoundRepository,
     AppConfigRepository,
+    PostRepository,
+    PostLikeRepository,
+    PostCommentRepository,
+    FriendshipRepository,
   ],
 })
 export class SharedModule {}

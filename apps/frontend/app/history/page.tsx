@@ -2,14 +2,12 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { useAuthContext } from '../context/AuthContext'
 import { useHistory } from '../../hooks/useHistory'
 import { useStats } from '../../hooks/useStats'
 import { ChallengeHistoryItem, ChallengeType, ChallengeLevel, ChallengeLanguage } from '@amalia/shared'
 import { Footer } from '../components/Footer'
 import { AdBanner } from '../components/AdBanner'
-import { NotificationBell } from '../components/NotificationBell'
 
 const levelColors: Record<ChallengeLevel, string> = {
   [ChallengeLevel.Beginner]: 'text-emerald-400 border-emerald-400/30 bg-emerald-400/10',
@@ -108,30 +106,8 @@ export default function HistoryPage() {
     }`
 
   return (
-    <div className="min-h-screen bg-grid relative flex flex-col">
+    <div className="min-h-screen bg-grid relative flex flex-col pb-16 sm:pb-0">
       <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-cyan-500/3 to-transparent pointer-events-none" />
-
-      {/* Nav */}
-      <nav className="relative z-10 flex items-center justify-between max-w-4xl mx-auto w-full px-4 sm:px-6 py-4 border-b border-zinc-900">
-        <div className="flex items-center gap-3">
-          <Link href="/challenge" className="font-mono text-sm font-semibold text-zinc-100 hover:text-cyan-400 transition-colors">
-            amalia<span className="text-cyan-400">_</span>
-          </Link>
-          <span className="text-zinc-700 hidden sm:inline">/</span>
-          <span className="text-xs text-zinc-500 font-mono hidden sm:inline">history</span>
-        </div>
-        <div className="flex items-center gap-3 sm:gap-5 font-mono text-xs">
-          <span className="flex items-center gap-1.5 text-cyan-400">
-            <span className="text-zinc-600 hidden sm:inline">score</span>
-            <span className="font-bold">{stats.totalScore}</span>
-          </span>
-          <span className="text-emerald-400 hidden sm:inline">✓ {stats.correctCount}</span>
-          <span className="text-red-400 hidden sm:inline">✗ {stats.wrongCount}</span>
-          <Link href="/profile" className="text-zinc-500 hover:text-zinc-300 transition-colors hidden sm:inline">profile</Link>
-          <Link href="/challenge" className="text-zinc-500 hover:text-zinc-300 transition-colors hidden sm:inline">challenge</Link>
-          <NotificationBell />
-        </div>
-      </nav>
 
       <main className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-8 flex-1">
         <div className="mb-6">

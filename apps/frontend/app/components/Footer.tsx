@@ -21,6 +21,7 @@ export function Footer() {
           <div>
             <h4 className="text-[10px] font-mono uppercase tracking-widest text-zinc-600 mb-3">Navigazione</h4>
             <ul className="space-y-1.5">
+              <li><Link href="/feed" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">feed</Link></li>
               <li><Link href="/challenge" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">challenge</Link></li>
               <li><Link href="/match" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">dev match</Link></li>
               <li><Link href="/profile" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">profilo</Link></li>

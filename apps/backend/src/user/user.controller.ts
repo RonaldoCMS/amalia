@@ -1,5 +1,5 @@
-import { Controller, Get, Patch, Delete, Post, Body, Request, UseGuards, UseInterceptors, UploadedFile, HttpCode, HttpStatus } from '@nestjs/common'
-import { UpdatePasswordRequest, UserProfile, ChallengeHistoryItem } from '@amalia/shared'
+import { Controller, Get, Patch, Delete, Post, Body, Request, UseGuards, UseInterceptors, UploadedFile, HttpCode, HttpStatus, Query, Param } from '@nestjs/common'
+import { UpdatePasswordRequest, UserProfile, ChallengeHistoryItem, UserSearchResult, PublicUserProfile } from '@amalia/shared'
 import { JwtGuard } from 'src/auth/guards/jwt.guard'
 import { UserService } from './user.service'
 import { FileInterceptor } from '@nestjs/platform-express'
@@ -16,9 +16,23 @@ export class UserController {
     return this.userService.getProfile(req.user.id)
   }
 
+  @Get('search')
+  searchUsers(
+    @Query('q') query: string,
+    @Query('limit') limit: string = '20',
+  ): Promise<UserSearchResult[]> {
+    if (!query || query.trim().length === 0) return Promise.resolve([])
+    return this.userService.searchUsers(query.trim(), Math.min(parseInt(limit) || 20, 50))
+  }
+
   @Get('history')
   getHistory(@Request() req: { user: { id: string } }): Promise<ChallengeHistoryItem[]> {
     return this.userService.getHistory(req.user.id)
+  }
+
+  @Get(':userId/profile')
+  getPublicProfile(@Param('userId') userId: string): Promise<PublicUserProfile> {
+    return this.userService.getPublicProfile(userId)
   }
 
   @Patch('password')
