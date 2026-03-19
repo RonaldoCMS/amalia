@@ -15,6 +15,7 @@ import { PostRepository } from './repositories/pg/post.repository'
 import { PostLikeRepository } from './repositories/pg/post-like.repository'
 import { PostCommentRepository } from './repositories/pg/post-comment.repository'
 import { FriendshipRepository } from './repositories/pg/friendship.repository'
+import { CvRepository } from './repositories/pg/cv.repository'
 import { User } from '../entities/user.entity'
 import { Challenge } from '../entities/challenge.entity'
 import { UserChallenge } from '../entities/user-challenge.entity'
@@ -29,10 +30,11 @@ import { Post } from '../entities/post.entity'
 import { PostLike } from '../entities/post-like.entity'
 import { PostComment } from '../entities/post-comment.entity'
 import { Friendship } from '../entities/friendship.entity'
+import { UserCv } from '../entities/user-cv.entity'
 
 @Global()
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Challenge, UserChallenge, UserOnboarding, DevMatch, ChatMessage, Notification, Duel, DuelRound, AppConfig, Post, PostLike, PostComment, Friendship])],
+  imports: [TypeOrmModule.forFeature([User, Challenge, UserChallenge, UserOnboarding, DevMatch, ChatMessage, Notification, Duel, DuelRound, AppConfig, Post, PostLike, PostComment, Friendship, UserCv])],
   providers: [
     ClaudeRepository,
     UserRepository,
@@ -49,6 +51,7 @@ import { Friendship } from '../entities/friendship.entity'
     PostLikeRepository,
     PostCommentRepository,
     FriendshipRepository,
+    CvRepository,
   ],
   exports: [
     ClaudeRepository,
@@ -66,6 +69,7 @@ import { Friendship } from '../entities/friendship.entity'
     PostLikeRepository,
     PostCommentRepository,
     FriendshipRepository,
+    CvRepository,
   ],
 })
 export class SharedModule {}
