@@ -2,7 +2,7 @@
 
 import { PDFDownloadLink } from '@react-pdf/renderer'
 import CvDocument from './CvDocument'
-import { CvData, CvAmaliaStats } from '@amelia/shared'
+import { CvData, CvAmaliaStats } from '@amalia/shared'
 
 interface Props {
   username: string
