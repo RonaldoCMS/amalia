@@ -9,7 +9,8 @@ import { useDuel } from '../../hooks/useDuel'
 import { useLanguage } from '../../i18n/LanguageProvider'
 import { LOCALE_DATE_MAP } from '../../i18n/config'
 import { Footer } from '../components/Footer'
-import { ChallengeType, DuelRoundResult, DuelLanguageQueueCount } from '@amalia/shared'
+import { ChallengeType, DuelRoundResult, DuelLanguageQueueCount, TOPICS, ChallengeCategory } from '@amalia/shared'
+import { TopicIcon, CategoryIcon } from '../components/TopicIcons'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? ''
 
@@ -111,27 +112,19 @@ export default function DuelPage() {
 
   if (!isAuthenticated) return null
 
-  const LANGUAGES: { id: string; label: string; emoji: string }[] = [
-    { id: 'javascript', label: 'JavaScript', emoji: '🟨' },
-    { id: 'typescript', label: 'TypeScript', emoji: '🔷' },
-    { id: 'python', label: 'Python', emoji: '🐍' },
-    { id: 'java', label: 'Java', emoji: '☕' },
-    { id: 'csharp', label: 'C#', emoji: '💜' },
-    { id: 'cpp', label: 'C++', emoji: '⚙️' },
-    { id: 'go', label: 'Go', emoji: '🐹' },
-    { id: 'rust', label: 'Rust', emoji: '🦀' },
-    { id: 'kotlin', label: 'Kotlin', emoji: '🟣' },
-    { id: 'swift', label: 'Swift', emoji: '🍎' },
-    { id: 'php', label: 'PHP', emoji: '🐘' },
-    { id: 'ruby', label: 'Ruby', emoji: '💎' },
-    { id: 'dart', label: 'Dart', emoji: '🎯' },
-    { id: 'scala', label: 'Scala', emoji: '♾️' },
-  ]
+  // Get all topics for duel selection (base topics only, subtopics chosen randomly by backend)
+  const DUEL_TOPICS = TOPICS
 
-  const getCount = (lang: string) => {
-    const entry = queueCounts.find(q => q.language?.toLowerCase() === lang.toLowerCase())
+  const getCount = (topicId: string) => {
+    const entry = queueCounts.find(q => q.language?.toLowerCase() === topicId.toLowerCase())
     return entry?.count ?? 0
   }
+
+  // Group topics by category
+  const topicsByCategory = Object.values(ChallengeCategory).map(cat => ({
+    category: cat,
+    topics: DUEL_TOPICS.filter(t => t.category === cat),
+  }))
 
   // ── IDLE ───────────────────────────────────────────────────────────────
   const renderIdle = () => (
@@ -147,32 +140,47 @@ export default function DuelPage() {
         </p>
       </div>
 
-      {/* Language grid */}
-      <div>
-        <h2 className="text-xs font-mono text-zinc-500 uppercase tracking-widest mb-3">
-          {t('chooseLang')}
-        </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
-          {LANGUAGES.map(lang => {
-            const count = getCount(lang.id)
-            return (
-              <button
-                key={lang.id}
-                onClick={() => joinQueue(lang.id)}
-                disabled={!!banUntil && banUntil > new Date()}
-                className="group relative flex flex-col items-start gap-1 p-3 sm:p-4 rounded-xl border border-zinc-800 bg-zinc-900/30 hover:border-cyan-500/40 hover:bg-cyan-500/5 transition-all text-left disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-zinc-800 disabled:hover:bg-zinc-900/30"
-              >
-                <span className="text-xl sm:text-2xl">{lang.emoji}</span>
-                <span className="text-xs sm:text-sm font-mono font-medium text-zinc-200 group-hover:text-cyan-300 transition-colors">
-                  {lang.label}
-                </span>
-                <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${count > 0 ? 'text-emerald-400 bg-emerald-400/10 border border-emerald-400/20' : 'text-zinc-600 bg-zinc-800/50 border border-zinc-700/30'}`}>
-                  {count > 0 ? t('inQueue', { count }) : t('noQueue')}
-                </span>
-              </button>
-            )
-          })}
-          {/* Qualsiasi */}
+      {/* Topics by category */}
+      <div className="space-y-6">
+        {topicsByCategory.map(({ category, topics }) => (
+          <div key={category}>
+            <h2 className="flex items-center gap-2 text-xs font-mono text-zinc-500 uppercase tracking-widest mb-3">
+              <CategoryIcon category={category} size="sm" />
+              {category}
+            </h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
+              {topics.map(topic => {
+                const count = getCount(topic.id)
+                return (
+                  <button
+                    key={topic.id}
+                    onClick={() => joinQueue(topic.id)}
+                    disabled={!!banUntil && banUntil > new Date()}
+                    className="group relative flex flex-col items-start gap-1 p-3 sm:p-4 rounded-xl border border-zinc-800 bg-zinc-900/30 hover:border-cyan-500/40 hover:bg-cyan-500/5 transition-all text-left disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-zinc-800 disabled:hover:bg-zinc-900/30"
+                  >
+                    <span className="text-xl sm:text-2xl text-zinc-300 group-hover:text-cyan-400 transition-colors">
+                      <TopicIcon id={topic.id} size="lg" />
+                    </span>
+                    <span className="text-xs sm:text-sm font-mono font-medium text-zinc-200 group-hover:text-cyan-300 transition-colors">
+                      {topic.label}
+                    </span>
+                    {topic.subtopics && topic.subtopics.length > 0 && (
+                      <span className="text-[9px] font-mono text-zinc-600">
+                        +{topic.subtopics.length} subtopics
+                      </span>
+                    )}
+                    <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${count > 0 ? 'text-emerald-400 bg-emerald-400/10 border border-emerald-400/20' : 'text-zinc-600 bg-zinc-800/50 border border-zinc-700/30'}`}>
+                      {count > 0 ? t('inQueue', { count }) : t('noQueue')}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        ))}
+
+        {/* Any topic option */}
+        <div>
           <button
             onClick={() => joinQueue()}
             disabled={!!banUntil && banUntil > new Date()}
@@ -187,6 +195,7 @@ export default function DuelPage() {
             </span>
           </button>
         </div>
+        
         {error && <p className="mt-4 text-xs text-red-400 font-mono">{error}</p>}
         {banUntil && banUntil > new Date() && (
           <div className="mt-4 px-4 py-3 rounded-xl bg-red-400/5 border border-red-400/20 text-xs font-mono text-red-400 text-center">

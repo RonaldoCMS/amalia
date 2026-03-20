@@ -1,10 +1,10 @@
-# Amelia — Setup del monorepo
+# amalia — Setup del monorepo
 
 ## Cos'è un monorepo e perché lo usiamo
 
 Un **monorepo** è un singolo repository Git che contiene più progetti distinti. Nel nostro caso: il frontend (Next.js) e il backend (NestJS) vivono nella stessa cartella root, sotto `apps/`.
 
-L'alternativa sarebbe avere due repository separati — uno per il frontend, uno per il backend. Ma per un progetto come Amelia, il monorepo ha vantaggi concreti:
+L'alternativa sarebbe avere due repository separati — uno per il frontend, uno per il backend. Ma per un progetto come amalia, il monorepo ha vantaggi concreti:
 
 - **Tipi condivisi**: il tipo `Challenge` definito in `packages/shared` viene usato sia dal backend che dal frontend, senza duplicare codice o rischiare disallineamenti.
 - **Un solo clone**: chi contribuisce al progetto clona una cosa sola e ha tutto.
@@ -15,7 +15,7 @@ L'alternativa sarebbe avere due repository separati — uno per il frontend, uno
 
 ## Strumento di gestione: npm workspaces
 
-Abbiamo usato **npm workspaces**, la soluzione nativa di npm per i monorepo (disponibile da npm 7+). Non abbiamo usato Turborepo o Nx perché per ora sono strumenti over-engineered rispetto alla complessità di Amelia. Se il progetto cresce, si aggiungono dopo.
+Abbiamo usato **npm workspaces**, la soluzione nativa di npm per i monorepo (disponibile da npm 7+). Non abbiamo usato Turborepo o Nx perché per ora sono strumenti over-engineered rispetto alla complessità di amalia. Se il progetto cresce, si aggiungono dopo.
 
 La configurazione è nel `package.json` root:
 
@@ -33,7 +33,7 @@ Questo dice a npm: *"tutto ciò che sta dentro `apps/` e `packages/` è un works
 ## Struttura delle cartelle
 
 ```
-amelia/
+amalia/
 ├── apps/
 │   ├── backend/      ← NestJS (API REST)
 │   └── frontend/     ← Next.js 14 (App Router)
@@ -45,7 +45,7 @@ amelia/
 
 ### `apps/backend` — NestJS
 
-È il cuore logico di Amelia. Gestisce:
+È il cuore logico di amalia. Gestisce:
 - la generazione delle sfide (chiama Claude API)
 - la valutazione delle risposte
 - in futuro: autenticazione, salvataggio progressi, statistiche utente

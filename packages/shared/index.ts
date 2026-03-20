@@ -11,6 +11,338 @@ export enum ChallengeLevel {
   Hard = 'hard',
 }
 
+// ── Topic System ─────────────────────────────────────────────────────────
+
+export enum ChallengeCategory {
+  Programming = 'programming',
+  Database = 'database',
+  DevOps = 'devops',
+  Security = 'security',
+  Tools = 'tools',
+}
+
+export interface SubtopicDefinition {
+  id: string
+  label: string
+}
+
+export interface TopicDefinition {
+  id: string
+  label: string
+  category: ChallengeCategory
+  subtopics?: SubtopicDefinition[]
+}
+
+export const TOPICS: TopicDefinition[] = [
+  // ─── Programming ───────────────────────────────────────────────────────
+  {
+    id: 'typescript',
+    label: 'TypeScript',
+    category: ChallengeCategory.Programming,
+    subtopics: [
+      { id: 'nestjs', label: 'NestJS' },
+      { id: 'prisma', label: 'Prisma' },
+      { id: 'react', label: 'React' },
+      { id: 'nextjs', label: 'Next.js' },
+      { id: 'express', label: 'Express' },
+      { id: 'typeorm', label: 'TypeORM' },
+    ],
+  },
+  {
+    id: 'javascript',
+    label: 'JavaScript',
+    category: ChallengeCategory.Programming,
+    subtopics: [
+      { id: 'react', label: 'React' },
+      { id: 'vue', label: 'Vue' },
+      { id: 'nodejs', label: 'Node.js' },
+      { id: 'express', label: 'Express' },
+      { id: 'angular', label: 'Angular' },
+    ],
+  },
+  {
+    id: 'python',
+    label: 'Python',
+    category: ChallengeCategory.Programming,
+    subtopics: [
+      { id: 'django', label: 'Django' },
+      { id: 'fastapi', label: 'FastAPI' },
+      { id: 'flask', label: 'Flask' },
+      { id: 'pandas', label: 'Pandas' },
+      { id: 'numpy', label: 'NumPy' },
+      { id: 'pytorch', label: 'PyTorch' },
+    ],
+  },
+  {
+    id: 'java',
+    label: 'Java',
+    category: ChallengeCategory.Programming,
+    subtopics: [
+      { id: 'spring', label: 'Spring Boot' },
+      { id: 'hibernate', label: 'Hibernate' },
+      { id: 'maven', label: 'Maven' },
+    ],
+  },
+  {
+    id: 'csharp',
+    label: 'C#',
+    category: ChallengeCategory.Programming,
+    subtopics: [
+      { id: 'dotnet', label: '.NET' },
+      { id: 'aspnet', label: 'ASP.NET' },
+      { id: 'unity', label: 'Unity' },
+      { id: 'ef', label: 'Entity Framework' },
+    ],
+  },
+  {
+    id: 'go',
+    label: 'Go',
+    category: ChallengeCategory.Programming,
+    subtopics: [
+      { id: 'gin', label: 'Gin' },
+      { id: 'fiber', label: 'Fiber' },
+    ],
+  },
+  {
+    id: 'rust',
+    label: 'Rust',
+    category: ChallengeCategory.Programming,
+    subtopics: [
+      { id: 'actix', label: 'Actix' },
+      { id: 'tokio', label: 'Tokio' },
+    ],
+  },
+  {
+    id: 'cpp',
+    label: 'C++',
+    category: ChallengeCategory.Programming,
+    subtopics: [
+      { id: 'stl', label: 'STL' },
+      { id: 'qt', label: 'Qt' },
+    ],
+  },
+  {
+    id: 'c',
+    label: 'C',
+    category: ChallengeCategory.Programming,
+    subtopics: [
+      { id: 'pointers', label: 'Pointers' },
+      { id: 'memory', label: 'Memory Management' },
+    ],
+  },
+  {
+    id: 'php',
+    label: 'PHP',
+    category: ChallengeCategory.Programming,
+    subtopics: [
+      { id: 'laravel', label: 'Laravel' },
+      { id: 'symfony', label: 'Symfony' },
+    ],
+  },
+  {
+    id: 'ruby',
+    label: 'Ruby',
+    category: ChallengeCategory.Programming,
+    subtopics: [
+      { id: 'rails', label: 'Rails' },
+      { id: 'sinatra', label: 'Sinatra' },
+    ],
+  },
+  {
+    id: 'swift',
+    label: 'Swift',
+    category: ChallengeCategory.Programming,
+    subtopics: [
+      { id: 'swiftui', label: 'SwiftUI' },
+      { id: 'uikit', label: 'UIKit' },
+    ],
+  },
+  {
+    id: 'kotlin',
+    label: 'Kotlin',
+    category: ChallengeCategory.Programming,
+    subtopics: [
+      { id: 'android', label: 'Android' },
+      { id: 'ktor', label: 'Ktor' },
+      { id: 'compose', label: 'Compose' },
+    ],
+  },
+  {
+    id: 'dart',
+    label: 'Dart',
+    category: ChallengeCategory.Programming,
+    subtopics: [
+      { id: 'flutter', label: 'Flutter' },
+    ],
+  },
+
+  // ─── Database ──────────────────────────────────────────────────────────
+  {
+    id: 'sql',
+    label: 'SQL',
+    category: ChallengeCategory.Database,
+    subtopics: [
+      { id: 'joins', label: 'Joins & Relations' },
+      { id: 'subqueries', label: 'Subqueries' },
+      { id: 'optimization', label: 'Query Optimization' },
+      { id: 'indexes', label: 'Indexes' },
+    ],
+  },
+  {
+    id: 'postgresql',
+    label: 'PostgreSQL',
+    category: ChallengeCategory.Database,
+    subtopics: [
+      { id: 'jsonb', label: 'JSONB' },
+      { id: 'extensions', label: 'Extensions' },
+      { id: 'plpgsql', label: 'PL/pgSQL' },
+    ],
+  },
+  {
+    id: 'mysql',
+    label: 'MySQL',
+    category: ChallengeCategory.Database,
+  },
+  {
+    id: 'mongodb',
+    label: 'MongoDB',
+    category: ChallengeCategory.Database,
+    subtopics: [
+      { id: 'aggregation', label: 'Aggregation' },
+      { id: 'mongoose', label: 'Mongoose' },
+    ],
+  },
+  {
+    id: 'redis',
+    label: 'Redis',
+    category: ChallengeCategory.Database,
+  },
+
+  // ─── DevOps ────────────────────────────────────────────────────────────
+  {
+    id: 'docker',
+    label: 'Docker',
+    category: ChallengeCategory.DevOps,
+    subtopics: [
+      { id: 'compose', label: 'Docker Compose' },
+      { id: 'networking', label: 'Networking' },
+    ],
+  },
+  {
+    id: 'kubernetes',
+    label: 'Kubernetes',
+    category: ChallengeCategory.DevOps,
+    subtopics: [
+      { id: 'deployments', label: 'Deployments' },
+      { id: 'services', label: 'Services' },
+      { id: 'helm', label: 'Helm' },
+    ],
+  },
+  {
+    id: 'cicd',
+    label: 'CI/CD',
+    category: ChallengeCategory.DevOps,
+    subtopics: [
+      { id: 'github-actions', label: 'GitHub Actions' },
+      { id: 'gitlab-ci', label: 'GitLab CI' },
+      { id: 'jenkins', label: 'Jenkins' },
+    ],
+  },
+  {
+    id: 'terraform',
+    label: 'Terraform',
+    category: ChallengeCategory.DevOps,
+  },
+  {
+    id: 'aws',
+    label: 'AWS',
+    category: ChallengeCategory.DevOps,
+    subtopics: [
+      { id: 'ec2', label: 'EC2' },
+      { id: 's3', label: 'S3' },
+      { id: 'lambda', label: 'Lambda' },
+      { id: 'rds', label: 'RDS' },
+    ],
+  },
+
+  // ─── Security ──────────────────────────────────────────────────────────
+  {
+    id: 'web-security',
+    label: 'Web Security',
+    category: ChallengeCategory.Security,
+    subtopics: [
+      { id: 'xss', label: 'XSS' },
+      { id: 'csrf', label: 'CSRF' },
+      { id: 'sql-injection', label: 'SQL Injection' },
+      { id: 'owasp', label: 'OWASP Top 10' },
+    ],
+  },
+  {
+    id: 'cryptography',
+    label: 'Cryptography',
+    category: ChallengeCategory.Security,
+    subtopics: [
+      { id: 'hashing', label: 'Hashing' },
+      { id: 'encryption', label: 'Encryption' },
+      { id: 'jwt', label: 'JWT' },
+    ],
+  },
+  {
+    id: 'network-security',
+    label: 'Network Security',
+    category: ChallengeCategory.Security,
+  },
+
+  // ─── Tools ─────────────────────────────────────────────────────────────
+  {
+    id: 'git',
+    label: 'Git',
+    category: ChallengeCategory.Tools,
+    subtopics: [
+      { id: 'branching', label: 'Branching' },
+      { id: 'merging', label: 'Merging & Rebasing' },
+      { id: 'workflows', label: 'Workflows' },
+    ],
+  },
+  {
+    id: 'linux',
+    label: 'Linux/Shell',
+    category: ChallengeCategory.Tools,
+    subtopics: [
+      { id: 'bash', label: 'Bash' },
+      { id: 'permissions', label: 'Permissions' },
+      { id: 'networking', label: 'Networking' },
+    ],
+  },
+  {
+    id: 'regex',
+    label: 'Regex',
+    category: ChallengeCategory.Tools,
+  },
+]
+
+// Helper functions
+export function getTopicsByCategory(category: ChallengeCategory): TopicDefinition[] {
+  return TOPICS.filter(t => t.category === category)
+}
+
+export function getTopicById(id: string): TopicDefinition | undefined {
+  return TOPICS.find(t => t.id === id)
+}
+
+export function getRandomTopic(): TopicDefinition {
+  return TOPICS[Math.floor(Math.random() * TOPICS.length)]
+}
+
+export function getRandomSubtopics(topicId: string, maxCount = 2): SubtopicDefinition[] {
+  const topic = getTopicById(topicId)
+  if (!topic?.subtopics || topic.subtopics.length === 0) return []
+  const shuffled = [...topic.subtopics].sort(() => Math.random() - 0.5)
+  const count = Math.min(Math.floor(Math.random() * (maxCount + 1)), shuffled.length)
+  return shuffled.slice(0, count)
+}
+
+// Legacy enum for backward compatibility (DB migration deferred)
 export enum ChallengeLanguage {
   TypeScript = 'TypeScript',
   JavaScript = 'JavaScript',
@@ -26,6 +358,7 @@ export enum ChallengeLanguage {
   Ruby = 'Ruby',
   Swift = 'Swift',
   Kotlin = 'Kotlin',
+  C = 'C',
 }
 
 // ── Notifiche ────────────────────────────────────────────────────────────
@@ -199,15 +532,21 @@ export interface UpdateEmailRequest {
 export interface GenerateChallengeRequest {
   type: ChallengeType
   level: ChallengeLevel
-  language: ChallengeLanguage
+  topic: string           // e.g. 'typescript', 'sql', 'git'
+  subtopics?: string[]    // e.g. ['nestjs', 'prisma']
+  // Legacy field for DB compatibility
+  language?: ChallengeLanguage
 }
 
 export interface EvaluateChallengeRequest {
   challenge: ChallengeResponse
   type: ChallengeType
   level: ChallengeLevel
-  language: ChallengeLanguage
+  topic: string
+  subtopics?: string[]
   userAnswer: string
+  // Legacy
+  language?: ChallengeLanguage
 }
 
 // backend → frontend

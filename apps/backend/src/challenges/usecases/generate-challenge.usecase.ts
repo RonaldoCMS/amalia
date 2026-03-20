@@ -8,6 +8,8 @@ import {
   GenerateChallengeRequest,
   ChallengeResponse,
   ChallengeType,
+  ChallengeLanguage,
+  getTopicById,
 } from '@amalia/shared'
 
 @Injectable()
@@ -21,12 +23,22 @@ export class GenerateChallengeUseCase {
   ) {}
 
   async execute(request: GenerateChallengeRequest, userId: string, lang?: string): Promise<ChallengeResponse> {
-    const existing = await this.challengeRepository.findUnseen(
-      userId,
-      request.type,
-      request.level,
-      request.language,
-    )
+    // Derive language from topic for DB compatibility
+    const topicDef = getTopicById(request.topic)
+    const legacyLanguage = this.topicToLanguage(request.topic)
+    const isProgrammingTopic = this.isProgrammingLanguage(request.topic)
+
+    // Only look for existing challenges if it's a programming language topic
+    // Non-programming topics (docker, sql, git, etc.) should always generate new
+    let existing = null
+    if (isProgrammingTopic) {
+      existing = await this.challengeRepository.findUnseen(
+        userId,
+        request.type,
+        request.level,
+        legacyLanguage,
+      )
+    }
 
     if (!lang) {
       const user = await this.userRepository.findById(userId)
@@ -56,13 +68,41 @@ export class GenerateChallengeUseCase {
     const saved = await this.challengeRepository.save({
       type: request.type,
       level: request.level,
-      language: request.language,
+      language: legacyLanguage,
       ...parsed,
     })
 
     await this.userChallengeRepository.save(userId, saved.id)
     const response: ChallengeResponse = { id: saved.id, ...parsed }
     return this.translateChallengeUseCase.execute(saved.id, response, lang, {})
+  }
+
+  private isProgrammingLanguage(topic: string): boolean {
+    const programmingTopics = [
+      'typescript', 'javascript', 'python', 'java', 'csharp',
+      'go', 'rust', 'cpp', 'c', 'php', 'ruby', 'swift', 'kotlin', 'dart',
+    ]
+    return programmingTopics.includes(topic)
+  }
+
+  private topicToLanguage(topic: string): ChallengeLanguage {
+    const mapping: Record<string, ChallengeLanguage> = {
+      typescript: ChallengeLanguage.TypeScript,
+      javascript: ChallengeLanguage.JavaScript,
+      python: ChallengeLanguage.Python,
+      java: ChallengeLanguage.Java,
+      csharp: ChallengeLanguage.CSharp,
+      go: ChallengeLanguage.Go,
+      rust: ChallengeLanguage.Rust,
+      cpp: ChallengeLanguage.Cpp,
+      c: ChallengeLanguage.C,
+      php: ChallengeLanguage.PHP,
+      ruby: ChallengeLanguage.Ruby,
+      swift: ChallengeLanguage.Swift,
+      kotlin: ChallengeLanguage.Kotlin,
+      dart: ChallengeLanguage.Dart,
+    }
+    return mapping[topic] ?? ChallengeLanguage.TypeScript
   }
 
   private buildSystemPrompt(): string {
@@ -72,22 +112,32 @@ ALWAYS respond with valid JSON only. No extra text, no markdown, no backticks.`
   }
 
   private buildUserPrompt(request: GenerateChallengeRequest): string {
+    const topicDef = getTopicById(request.topic)
+    const topicLabel = topicDef?.label ?? request.topic
+    const subtopicsStr = request.subtopics?.length
+      ? ` focusing on: ${request.subtopics.join(', ')}`
+      : ''
+
     const typeDesc: Record<ChallengeType, string> = {
-      [ChallengeType.Fill]: 'Fill in the missing code — replace a part with ___BLANK___',
-      [ChallengeType.Quiz]: 'Multiple choice — what does this code produce or do? Give 4 options (A,B,C,D)',
+      [ChallengeType.Fill]: 'Fill in the missing code — replace exactly ONE meaningful part with ___BLANK___',
+      [ChallengeType.Quiz]: 'Multiple choice — what does this code produce or do? Give 4 options (A,B,C,D). IMPORTANT: choose a VARIED and UNEXPECTED topic every time. Rotate across themes. Never repeat the same theme twice in a row.',
       [ChallengeType.Bug]: 'Find the bug — insert ONE intentional error in the code',
-      [ChallengeType.Write]: 'Write the function — show only the signature and description',
+      [ChallengeType.Write]: 'Write the function body — show the function signature with __WRITE__ as the exact placeholder where the student must write the body',
     }
 
-    return `Generate a programming exercise in ${request.language}.
+    const writeNote = request.type === ChallengeType.Write
+      ? `\nFor Write type the "code" field MUST contain the placeholder __WRITE__ exactly once inside the function body. Example: "function sum(a, b) {\\n  __WRITE__\\n}". The student will replace __WRITE__ with their implementation.`
+      : ''
+
+    return `Generate a coding/technical exercise about ${topicLabel}${subtopicsStr}.
 Type: ${typeDesc[request.type]}
 Level: ${request.level}
-
+${writeNote}
 Respond with this JSON:
 {
   "title": "short title",
   "description": "description in English, 1-2 sentences",
-  "code": "code to display (use \\n for newline)",
+  "code": "code or content to display (use \\n for newline)",
   "options": ["A. ...", "B. ...", "C. ...", "D. ..."],
   "answer": "correct answer"
 }

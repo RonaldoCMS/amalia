@@ -71,4 +71,4 @@ export function isValidLocale(locale: string): locale is SupportedLocale {
   return (SUPPORTED_LOCALES as readonly string[]).includes(locale)
 }
 
-export const STORAGE_KEY = 'amelia-lang'
+export const STORAGE_KEY = 'amalia-lang'
