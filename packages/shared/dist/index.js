@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FriendshipStatus = exports.DuelStatus = exports.EXPERIENCE_LEVELS = exports.Availability = exports.DevGoal = exports.WorkStyle = exports.JobType = exports.DevLanguage = exports.NotificationType = exports.ChallengeLanguage = exports.ChallengeLevel = exports.ChallengeType = void 0;
+exports.JobApplicationStatus = exports.JobOfferStatus = exports.WorkMode = exports.ContractType = exports.FriendshipStatus = exports.DuelStatus = exports.EXPERIENCE_LEVELS = exports.Availability = exports.DevGoal = exports.WorkStyle = exports.JobType = exports.DevLanguage = exports.NotificationType = exports.ChallengeLanguage = exports.ChallengeLevel = exports.ChallengeType = void 0;
 var ChallengeType;
 (function (ChallengeType) {
     ChallengeType["Fill"] = "fill";
@@ -41,6 +41,7 @@ var NotificationType;
     NotificationType["FriendAccepted"] = "friend_accepted";
     NotificationType["NewPostLike"] = "new_post_like";
     NotificationType["NewComment"] = "new_comment";
+    NotificationType["JobOffer"] = "job_offer";
 })(NotificationType || (exports.NotificationType = NotificationType = {}));
 // ── Onboarding ──────────────────────────────────────────────────────────
 var DevLanguage;
@@ -117,3 +118,30 @@ var FriendshipStatus;
     FriendshipStatus["Rejected"] = "rejected";
     FriendshipStatus["Blocked"] = "blocked";
 })(FriendshipStatus || (exports.FriendshipStatus = FriendshipStatus = {}));
+// ── Job Board ────────────────────────────────────────────────────────────
+var ContractType;
+(function (ContractType) {
+    ContractType["Permanent"] = "permanent";
+    ContractType["FixedTerm"] = "fixed_term";
+    ContractType["Freelance"] = "freelance";
+    ContractType["Internship"] = "internship";
+})(ContractType || (exports.ContractType = ContractType = {}));
+var WorkMode;
+(function (WorkMode) {
+    WorkMode["Remote"] = "remote";
+    WorkMode["Hybrid"] = "hybrid";
+    WorkMode["Onsite"] = "onsite";
+})(WorkMode || (exports.WorkMode = WorkMode = {}));
+var JobOfferStatus;
+(function (JobOfferStatus) {
+    JobOfferStatus["Active"] = "active";
+    JobOfferStatus["Expired"] = "expired";
+    JobOfferStatus["Closed"] = "closed";
+})(JobOfferStatus || (exports.JobOfferStatus = JobOfferStatus = {}));
+var JobApplicationStatus;
+(function (JobApplicationStatus) {
+    JobApplicationStatus["Sent"] = "sent";
+    JobApplicationStatus["Viewed"] = "viewed";
+    JobApplicationStatus["Replied"] = "replied";
+    JobApplicationStatus["Ignored"] = "ignored";
+})(JobApplicationStatus || (exports.JobApplicationStatus = JobApplicationStatus = {}));

@@ -16,6 +16,9 @@ import { PostLikeRepository } from './repositories/pg/post-like.repository'
 import { PostCommentRepository } from './repositories/pg/post-comment.repository'
 import { FriendshipRepository } from './repositories/pg/friendship.repository'
 import { CvRepository } from './repositories/pg/cv.repository'
+import { JobOfferRepository } from './repositories/pg/job-offer.repository'
+import { JobApplicationRepository } from './repositories/pg/job-application.repository'
+import { JobMessageRepository } from './repositories/pg/job-message.repository'
 import { User } from '../entities/user.entity'
 import { Challenge } from '../entities/challenge.entity'
 import { UserChallenge } from '../entities/user-challenge.entity'
@@ -31,10 +34,13 @@ import { PostLike } from '../entities/post-like.entity'
 import { PostComment } from '../entities/post-comment.entity'
 import { Friendship } from '../entities/friendship.entity'
 import { UserCv } from '../entities/user-cv.entity'
+import { JobOffer } from '../entities/job-offer.entity'
+import { JobApplication } from '../entities/job-application.entity'
+import { JobMessage } from '../entities/job-message.entity'
 
 @Global()
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Challenge, UserChallenge, UserOnboarding, DevMatch, ChatMessage, Notification, Duel, DuelRound, AppConfig, Post, PostLike, PostComment, Friendship, UserCv])],
+  imports: [TypeOrmModule.forFeature([User, Challenge, UserChallenge, UserOnboarding, DevMatch, ChatMessage, Notification, Duel, DuelRound, AppConfig, Post, PostLike, PostComment, Friendship, UserCv, JobOffer, JobApplication, JobMessage])],
   providers: [
     ClaudeRepository,
     UserRepository,
@@ -52,6 +58,9 @@ import { UserCv } from '../entities/user-cv.entity'
     PostCommentRepository,
     FriendshipRepository,
     CvRepository,
+    JobOfferRepository,
+    JobApplicationRepository,
+    JobMessageRepository,
   ],
   exports: [
     ClaudeRepository,
@@ -70,6 +79,9 @@ import { UserCv } from '../entities/user-cv.entity'
     PostCommentRepository,
     FriendshipRepository,
     CvRepository,
+    JobOfferRepository,
+    JobApplicationRepository,
+    JobMessageRepository,
   ],
 })
 export class SharedModule {}
