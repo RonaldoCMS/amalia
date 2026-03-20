@@ -25,6 +25,7 @@ export function Footer() {
               <li><Link href="/cv" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">myCV</Link></li>
               <li><Link href="/challenge" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">challenge</Link></li>
               <li><Link href="/match" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">dev match</Link></li>
+              <li><Link href="/jobs" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">job board</Link></li>
               <li><Link href="/profile" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">profilo</Link></li>
               <li><Link href="/history" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">storico</Link></li>
             </ul>
