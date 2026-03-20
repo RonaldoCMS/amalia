@@ -7,25 +7,36 @@ export class ClaudeRepository {
   private readonly client: AxiosInstance
 
   constructor(private readonly configService: ConfigService) {
+    const apiKey = (this.configService.get<string>('ANTHROPIC_API_KEY') ?? '').trim()
+    console.log('Claude API key length:', apiKey.length, '| starts with:', apiKey.slice(0, 12))
     this.client = axios.create({
       baseURL: 'https://api.anthropic.com/v1',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': this.configService.get<string>('ANTHROPIC_API_KEY'),
+        'x-api-key': apiKey,
         'anthropic-version': '2023-06-01',
       },
     })
   }
 
-  async sendMessage(systemPrompt: string, userPrompt: string): Promise<string> {
+  async sendMessage(systemPrompt: string, userPrompt: string, maxTokens = 512): Promise<string> {
+    return this.sendConversation(systemPrompt, [{ role: 'user', content: userPrompt }], maxTokens)
+  }
+
+  async sendConversation(
+    systemPrompt: string,
+    messages: { role: 'user' | 'assistant'; content: string }[],
+    maxTokens = 512,
+  ): Promise<string> {
     const MAX_RETRIES = 3
     for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
       try {
+        console.log('[Claude] sendConversation roles:', messages.map(m => m.role))
         const response = await this.client.post('/messages', {
           model: 'claude-haiku-4-5-20251001',
-          max_tokens: 512,
+          max_tokens: maxTokens,
           system: systemPrompt,
-          messages: [{ role: 'user', content: userPrompt }],
+          messages,
         })
         return response.data.content
           .map((b: { type: string; text: string }) => b.text ?? '')

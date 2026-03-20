@@ -31,4 +31,8 @@ export class UserService {
   getPublicProfile(userId: string): Promise<PublicUserProfile> {
     return this.repository.getPublicProfile(userId)
   }
+
+  getPublicHistory(userId: string): Promise<ChallengeHistoryItem[]> {
+    return this.repository.getPublicHistory(userId)
+  }
 }

@@ -35,6 +35,11 @@ export class UserController {
     return this.userService.getPublicProfile(userId)
   }
 
+  @Get(':userId/challenge-history')
+  getPublicHistory(@Param('userId') userId: string): Promise<ChallengeHistoryItem[]> {
+    return this.userService.getHistory(userId)
+  }
+
   @Patch('password')
   @HttpCode(HttpStatus.NO_CONTENT)
   updatePassword(

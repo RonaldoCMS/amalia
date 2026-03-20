@@ -32,7 +32,8 @@ export declare enum NotificationType {
     FriendRequest = "friend_request",
     FriendAccepted = "friend_accepted",
     NewPostLike = "new_post_like",
-    NewComment = "new_comment"
+    NewComment = "new_comment",
+    JobOffer = "job_offer"
 }
 export interface NotificationItem {
     id: string;
@@ -404,4 +405,200 @@ export interface UserSearchResult {
     username: string;
     profilePhotoUrl: string | null;
     bio: string | null;
+}
+export interface CvMessage {
+    role: 'amalia' | 'user';
+    content: string;
+}
+export interface CvSkill {
+    name: string;
+    verified: boolean;
+    level: string;
+}
+export interface CvProject {
+    name: string;
+    description: string;
+    technologies: string[];
+}
+export interface CvExperience {
+    title: string;
+    company: string;
+    period: string;
+    description: string;
+}
+export interface CvData {
+    name: string;
+    title: string;
+    bio: string;
+    email: string | null;
+    githubUrl: string | null;
+    education: string | null;
+    softSkills: string[];
+    skills: CvSkill[];
+    projects: CvProject[];
+    experience: CvExperience[];
+}
+export interface CvAmaliaStats {
+    challengesCompleted: number;
+    accuracy: number;
+    totalScore: number;
+    topLanguages: string[];
+    badges: string[];
+}
+export type CvStatus = 'interviewing' | 'generating' | 'ready' | 'error';
+export interface CvSession {
+    id: string;
+    username: string;
+    status: CvStatus;
+    messages: CvMessage[];
+    cvData: CvData | null;
+    amaliaStats: CvAmaliaStats | null;
+    isPublic: boolean;
+    createdAt: string;
+}
+export interface CvSendMessageRequest {
+    content: string;
+}
+export interface CvSendMessageResponse {
+    message: CvMessage;
+    isDone: boolean;
+}
+export interface PublicCvItem {
+    id: string;
+    username: string;
+    title: string;
+    bio: string;
+    topSkills: string[];
+    amaliaStats: CvAmaliaStats;
+    createdAt: string;
+}
+export declare enum ContractType {
+    Permanent = "permanent",
+    FixedTerm = "fixed_term",
+    Freelance = "freelance",
+    Internship = "internship"
+}
+export declare enum WorkMode {
+    Remote = "remote",
+    Hybrid = "hybrid",
+    Onsite = "onsite"
+}
+export declare enum JobOfferStatus {
+    Active = "active",
+    Expired = "expired",
+    Closed = "closed"
+}
+export declare enum JobApplicationStatus {
+    Sent = "sent",
+    Viewed = "viewed",
+    Replied = "replied",
+    Ignored = "ignored"
+}
+export interface JobHardSkillReq {
+    name: string;
+    minLevel: string;
+}
+export interface CreateJobOfferRequest {
+    title: string;
+    description: string;
+    salaryMin?: number | null;
+    salaryMax?: number | null;
+    contractType: ContractType;
+    workMode: WorkMode;
+    location?: string | null;
+    yearsRequired: number;
+    sector: string;
+    hardSkills: JobHardSkillReq[];
+    softSkills: string[];
+    expiresAt: string;
+}
+export interface JobOfferItem {
+    id: string;
+    authorId: string;
+    authorUsername: string;
+    title: string;
+    description: string;
+    salaryMin: number | null;
+    salaryMax: number | null;
+    contractType: ContractType;
+    workMode: WorkMode;
+    location: string | null;
+    sector: string;
+    status: JobOfferStatus;
+    applicationsCount: number;
+    createdAt: string;
+}
+export interface JobOfferDetail {
+    id: string;
+    authorId: string;
+    authorUsername: string;
+    authorProfilePhotoUrl: string | null;
+    title: string;
+    description: string;
+    salaryMin: number | null;
+    salaryMax: number | null;
+    contractType: ContractType;
+    workMode: WorkMode;
+    location: string | null;
+    yearsRequired: number;
+    sector: string;
+    hardSkills: JobHardSkillReq[];
+    softSkills: string[];
+    status: JobOfferStatus;
+    applicationsCount: number;
+    expiresAt: string;
+    createdAt: string;
+}
+export interface JobCandidateItem {
+    developerId: string;
+    username: string;
+    profilePhotoUrl: string | null;
+    matchPercentage: number;
+    yearsOfExperience: number;
+    matchedSkills: {
+        name: string;
+        level: string;
+        verified: boolean;
+    }[];
+    missingSkills: string[];
+    verifiedSkills: string[];
+    declaredSkills: string[];
+    challengesCompleted: number;
+    accuracy: number;
+    totalScore: number;
+    cvTitle: string;
+    cvBio: string;
+}
+export interface JobApplicationItem {
+    id: string;
+    offerId: string;
+    offerTitle: string;
+    salaryMin: number | null;
+    salaryMax: number | null;
+    contractType: ContractType;
+    workMode: WorkMode;
+    location: string | null;
+    sector: string;
+    recruiterUsername: string;
+    recruiterProfilePhotoUrl: string | null;
+    matchPercentage: number;
+    status: JobApplicationStatus;
+    createdAt: string;
+}
+export interface JobMessageItem {
+    id: string;
+    applicationId: string;
+    senderId: string;
+    senderUsername: string;
+    senderPhoto: string | null;
+    content: string;
+    isOfferPreview: boolean;
+    read: boolean;
+    createdAt: string;
+}
+export interface SendJobMessageRequest {
+    content: string;
+}
+export interface SendOfferToDevsRequest {
+    developerIds: string[];
 }

@@ -73,6 +73,16 @@ const items: NavItem[] = [
       </svg>
     ),
   },
+  {
+    href: '/jobs',
+    label: 'Jobs',
+    match: p => p.startsWith('/jobs'),
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20.25 14.15v4.073a2.072 2.072 0 01-2.072 2.072H5.823a2.072 2.072 0 01-2.073-2.072V14.15M12 3.75v10.5m0-10.5l3 3m-3-3l-3 3M3.75 14.15h16.5" />
+      </svg>
+    ),
+  },
 ]
 
 // Items shown on the mobile bottom bar (max 5 for clean display)
@@ -88,7 +98,7 @@ export function Navbar() {
   const handleLogout = () => { logout(); router.push('/') }
 
   // Pages where we hide the top navbar (they have their own)
-  const hideTopBar = pathname.startsWith('/chat/')
+  const hideTopBar = pathname.startsWith('/chat/') || pathname.startsWith('/jobs/chat/')
 
   return (
     <>
@@ -120,6 +130,18 @@ export function Navbar() {
                 className={`transition-colors ${pathname === '/duel/leaderboard' ? 'text-amber-400' : 'text-zinc-500 hover:text-amber-400'}`}
               >
                 🏆 classifica
+              </Link>
+              <Link
+                href="/cv"
+                className={`transition-colors ${pathname.startsWith('/cv') ? 'text-violet-400' : 'text-zinc-500 hover:text-violet-400'}`}
+              >
+                ✨ myCV
+              </Link>
+              <Link
+                href="/jobs"
+                className={`transition-colors ${pathname.startsWith('/jobs') ? 'text-cyan-400' : 'text-zinc-500 hover:text-cyan-400'}`}
+              >
+                💼 jobs
               </Link>
             </div>
 
