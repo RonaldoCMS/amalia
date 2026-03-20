@@ -13,6 +13,7 @@ import {
   DuelStateResponse, DuelQueueResponse, DuelAnswerResponse,
   DuelPlayerInfo, DuelCurrentRound, DuelRoundResult, NotificationType,
   DuelLeaderboardEntry, DuelLanguageQueueCount, DuelInviteStatusResponse,
+  getTopicById, getRandomSubtopics, TOPICS,
 } from '@amalia/shared'
 import { Duel } from '../entities/duel.entity'
 import { DuelRound } from '../entities/duel-round.entity'
@@ -95,17 +96,52 @@ export class DuelsService implements OnModuleInit {
 
     await this.duelRepo.cancelWaiting(userId)
 
-    const preferredLang = language && Object.values(ChallengeLanguage).includes(language as ChallengeLanguage)
-      ? language as ChallengeLanguage
-      : undefined
+    // Support both legacy ChallengeLanguage enum and new topic IDs
+    let preferredLang: ChallengeLanguage | undefined
+    let preferredTopic: string | undefined
+
+    if (language) {
+      // Check if it's a legacy ChallengeLanguage
+      if (Object.values(ChallengeLanguage).includes(language as ChallengeLanguage)) {
+        preferredLang = language as ChallengeLanguage
+        preferredTopic = language.toLowerCase()
+      } else {
+        // It's a topic ID
+        const topic = getTopicById(language)
+        if (topic) {
+          preferredTopic = language
+          // Map to ChallengeLanguage for DB storage if it's a programming language
+          const langMap: Record<string, ChallengeLanguage> = {
+            typescript: ChallengeLanguage.TypeScript,
+            javascript: ChallengeLanguage.JavaScript,
+            python: ChallengeLanguage.Python,
+            java: ChallengeLanguage.Java,
+            csharp: ChallengeLanguage.CSharp,
+            cpp: ChallengeLanguage.Cpp,
+            go: ChallengeLanguage.Go,
+            rust: ChallengeLanguage.Rust,
+            kotlin: ChallengeLanguage.Kotlin,
+            swift: ChallengeLanguage.Swift,
+            php: ChallengeLanguage.PHP,
+            ruby: ChallengeLanguage.Ruby,
+            dart: ChallengeLanguage.Dart,
+            c: ChallengeLanguage.C,
+          }
+          preferredLang = langMap[language] ?? ChallengeLanguage.TypeScript
+        }
+      }
+    }
 
     const waiting = await this.duelRepo.findWaiting(userId, preferredLang)
     if (waiting) {
       // Use preferred language if explicitly requested, else pick common
       const matchLang = preferredLang ?? (waiting.language as ChallengeLanguage | undefined)
         ?? await this.pickCommonLanguage(waiting.user1Id, userId)
+      
+      // Determine topic ID for challenge generation
+      const matchTopic = preferredTopic ?? this.languageToTopicId(matchLang)
 
-      const challenges = await this.prepareChallenges(matchLang)
+      const challenges = await this.prepareChallenges(matchLang, matchTopic)
 
       waiting.user2Id = userId
       waiting.status = 'active'
@@ -218,7 +254,8 @@ export class DuelsService implements OnModuleInit {
     // Prepare challenges
     const matchLang = (duel.language as ChallengeLanguage | null)
       ?? await this.pickCommonLanguage(duel.user1Id, acceptingUserId)
-    const challenges = await this.prepareChallenges(matchLang)
+    const matchTopic = this.languageToTopicId(matchLang)
+    const challenges = await this.prepareChallenges(matchLang, matchTopic)
 
     duel.user2Id = acceptingUserId
     duel.status = 'active'
@@ -666,6 +703,27 @@ export class DuelsService implements OnModuleInit {
 
   // ── Language ───────────────────────────────────────────────────────────
 
+  private languageToTopicId(lang: ChallengeLanguage): string {
+    const map: Record<ChallengeLanguage, string> = {
+      [ChallengeLanguage.TypeScript]: 'typescript',
+      [ChallengeLanguage.JavaScript]: 'javascript',
+      [ChallengeLanguage.Python]: 'python',
+      [ChallengeLanguage.Java]: 'java',
+      [ChallengeLanguage.CSharp]: 'csharp',
+      [ChallengeLanguage.Cpp]: 'cpp',
+      [ChallengeLanguage.Go]: 'go',
+      [ChallengeLanguage.Rust]: 'rust',
+      [ChallengeLanguage.Kotlin]: 'kotlin',
+      [ChallengeLanguage.Swift]: 'swift',
+      [ChallengeLanguage.PHP]: 'php',
+      [ChallengeLanguage.Ruby]: 'ruby',
+      [ChallengeLanguage.Dart]: 'dart',
+      [ChallengeLanguage.Flutter]: 'dart',
+      [ChallengeLanguage.C]: 'c',
+    }
+    return map[lang] ?? 'typescript'
+  }
+
   private async pickCommonLanguage(user1Id: string, user2Id: string): Promise<ChallengeLanguage> {
     const u1 = await this.userRepo.findById(user1Id)
     const u2 = await this.userRepo.findById(user2Id)
@@ -684,7 +742,7 @@ export class DuelsService implements OnModuleInit {
 
   // ── Challenge Preparation ──────────────────────────────────────────────
 
-  private async prepareChallenges(language: ChallengeLanguage): Promise<Challenge[]> {
+  private async prepareChallenges(language: ChallengeLanguage, topicId?: string): Promise<Challenge[]> {
     const types = Object.values(ChallengeType)
     const levels = Object.values(ChallengeLevel)
     const all: Challenge[] = []
@@ -692,7 +750,7 @@ export class DuelsService implements OnModuleInit {
     // Sequential to avoid rate limits — 1 challenge per type+level combo = 12 total
     for (const type of types) {
       for (const level of levels) {
-        const batch = await this.getOrGenerateChallenges(type, level, language, 1)
+        const batch = await this.getOrGenerateChallenges(type, level, language, 1, topicId)
         all.push(...batch)
       }
     }
@@ -705,23 +763,37 @@ export class DuelsService implements OnModuleInit {
     level: ChallengeLevel,
     language: ChallengeLanguage,
     count: number,
+    topicId?: string,
   ): Promise<Challenge[]> {
-    const existing = await this.challengeRepo.findMany(type, level, language, count)
-    if (existing.length >= count) return existing.slice(0, count)
-
-    const missing = count - existing.length
+    // For duels, always generate fresh challenges with random subtopics
+    // This ensures variety and includes framework-specific questions
     const generated: Challenge[] = []
-    for (let i = 0; i < missing; i++) {
-      generated.push(await this.generateSingleChallenge(type, level, language))
+    for (let i = 0; i < count; i++) {
+      generated.push(await this.generateSingleChallenge(type, level, language, topicId))
     }
-    return [...existing, ...generated]
+    return generated
   }
 
   private async generateSingleChallenge(
     type: ChallengeType,
     level: ChallengeLevel,
     language: ChallengeLanguage,
+    topicId?: string,
   ): Promise<Challenge> {
+    // Get topic info and randomly select subtopics
+    const topic = topicId ? getTopicById(topicId) : null
+    const randomSubs = topicId ? getRandomSubtopics(topicId, 2) : []
+    
+    // Build topic string for prompt
+    let topicLabel = language
+    if (topic) {
+      topicLabel = topic.label
+      if (randomSubs.length > 0) {
+        const subLabels = randomSubs.map(s => s.label).join(', ')
+        topicLabel += ` (focus on: ${subLabels})`
+      }
+    }
+
     const typeDesc: Record<string, string> = {
       [ChallengeType.Fill]: 'Fill in the missing code — replace a part with ___BLANK___',
       [ChallengeType.Quiz]: 'Multiple choice — what does this code produce or do? Give 4 options (A,B,C,D)',
@@ -739,7 +811,7 @@ export class DuelsService implements OnModuleInit {
 You generate real, educational coding exercises.
 ALWAYS respond with valid JSON only. No extra text, no markdown, no backticks.`
 
-    const user = `Generate a programming exercise in ${language}.
+    const user = `Generate a programming exercise about ${topicLabel}.
 Type: ${typeDesc[type]}
 Level: ${level}
 ${sizeHint[level] ?? ''}
