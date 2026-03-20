@@ -391,7 +391,7 @@ export default function ChatPage() {
       {/* Nav */}
       <nav className="relative z-10 flex items-center justify-between max-w-4xl w-full mx-auto px-4 sm:px-6 py-4 border-b border-zinc-900 shrink-0">
         <div className="flex items-center gap-3">
-          <Link href="/match" className="text-zinc-500 hover:text-zinc-300 transition-colors font-mono text-xs">
+          <Link href="/chat" className="text-zinc-500 hover:text-zinc-300 transition-colors font-mono text-xs">
             {t('backToMatch')}
           </Link>
           <span className="text-zinc-700 hidden sm:inline">/</span>
