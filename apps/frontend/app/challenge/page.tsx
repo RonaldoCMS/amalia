@@ -11,6 +11,7 @@ import { useLanguage } from '../../i18n/LanguageProvider'
 import { UserService } from '../../services/user.service'
 import { ChallengeHeader } from './components/ChallengeHeader'
 import { CodeDisplay } from './components/CodeDisplay'
+import type { WriteProps } from './components/CodeDisplay'
 import { EvaluationFeedback } from './components/EvaluationFeedback'
 import { AnswerFill } from './components/AnswerInput/AnswerFill'
 import { AnswerQuiz } from './components/AnswerInput/AnswerQuiz'
@@ -34,6 +35,8 @@ export default function ChallengePage() {
   const userService = useRef(new UserService())
   const [completedCount, setCompletedCount] = useState(0)
   const [showAdInterstitial, setShowAdInterstitial] = useState(false)
+  const [fillAnswer, setFillAnswer] = useState('')
+  const [writeAnswer, setWriteAnswer] = useState('')
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -50,6 +53,9 @@ export default function ChallengePage() {
 
   const handleGenerate = (langOverride?: ChallengeLanguage) =>
     generate({ ...configuration, language: langOverride ?? configuration.language }, locale)
+
+  // Reset fill/write answer each time a new challenge arrives
+  useEffect(() => { setFillAnswer(''); setWriteAnswer('') }, [challenge])
 
   const handleAnswer = (userAnswer: string) => {
     if (!challenge) return
@@ -86,10 +92,10 @@ export default function ChallengePage() {
   const renderAnswerInput = () => {
     if (!challenge || evaluation) return null
     switch (configuration.type) {
-      case ChallengeType.Fill: return <AnswerFill onSubmit={handleAnswer} disabled={isEvaluating} />
+      case ChallengeType.Fill: return null // handled inline inside CodeDisplay
+      case ChallengeType.Bug: return null  // handled inline inside CodeDisplay
       case ChallengeType.Quiz: return <AnswerQuiz options={challenge.options} onSubmit={handleAnswer} disabled={isEvaluating} />
-      case ChallengeType.Bug: return <AnswerBug onSubmit={handleAnswer} disabled={isEvaluating} />
-      case ChallengeType.Write: return <AnswerWrite onSubmit={handleAnswer} disabled={isEvaluating} />
+      case ChallengeType.Write: return null // handled inline inside CodeDisplay
     }
   }
 
@@ -166,7 +172,28 @@ export default function ChallengePage() {
                   level={configuration.level}
                   language={configuration.language}
                 />
-                <CodeDisplay code={challenge.code} />
+                <CodeDisplay
+                  code={challenge.code}
+                  fill={configuration.type === ChallengeType.Fill && !evaluation ? {
+                    value: fillAnswer,
+                    onChange: setFillAnswer,
+                    onSubmit: () => { if (fillAnswer.trim()) handleAnswer(fillAnswer.trim()) },
+                    disabled: isEvaluating,
+                  } : undefined}
+                  bug={configuration.type === ChallengeType.Bug && !evaluation ? {
+                    onSubmit: (lineNumber, reason) => {
+                      if (lineNumber === null) handleAnswer('Nessun bug nel codice')
+                      else handleAnswer(`Riga ${lineNumber}: ${reason}`)
+                    },
+                    disabled: isEvaluating,
+                  } : undefined}
+                  write={configuration.type === ChallengeType.Write && !evaluation ? {
+                    value: writeAnswer,
+                    onChange: setWriteAnswer,
+                    onSubmit: () => { if (writeAnswer.trim()) handleAnswer(writeAnswer.trim()) },
+                    disabled: isEvaluating,
+                  } : undefined}
+                />
                 {renderAnswerInput()}
                 {isEvaluating && (
                   <div className="font-mono text-xs text-zinc-500 py-4">

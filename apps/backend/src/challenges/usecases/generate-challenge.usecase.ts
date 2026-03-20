@@ -73,16 +73,20 @@ ALWAYS respond with valid JSON only. No extra text, no markdown, no backticks.`
 
   private buildUserPrompt(request: GenerateChallengeRequest): string {
     const typeDesc: Record<ChallengeType, string> = {
-      [ChallengeType.Fill]: 'Fill in the missing code — replace a part with ___BLANK___',
-      [ChallengeType.Quiz]: 'Multiple choice — what does this code produce or do? Give 4 options (A,B,C,D)',
+      [ChallengeType.Fill]: 'Fill in the missing code — replace exactly ONE meaningful part with ___BLANK___',
+      [ChallengeType.Quiz]: 'Multiple choice — what does this code produce or do? Give 4 options (A,B,C,D). IMPORTANT: choose a VARIED and UNEXPECTED topic every time. Rotate across themes such as: closures, type coercion, recursion, bitwise ops, string/array methods, prototype chain, async/promises, destructuring, generators, error handling, sorting, data structures, regex, memory/reference semantics, scope rules. Never repeat the same theme twice in a row.',
       [ChallengeType.Bug]: 'Find the bug — insert ONE intentional error in the code',
-      [ChallengeType.Write]: 'Write the function — show only the signature and description',
+      [ChallengeType.Write]: 'Write the function body — show the function signature with __WRITE__ as the exact placeholder where the student must write the body',
     }
+
+    const writeNote = request.type === ChallengeType.Write
+      ? `\nFor Write type the "code" field MUST contain the placeholder __WRITE__ exactly once inside the function body. Example: "function sum(a, b) {\\n  __WRITE__\\n}". The student will replace __WRITE__ with their implementation.`
+      : ''
 
     return `Generate a programming exercise in ${request.language}.
 Type: ${typeDesc[request.type]}
 Level: ${request.level}
-
+${writeNote}
 Respond with this JSON:
 {
   "title": "short title",
