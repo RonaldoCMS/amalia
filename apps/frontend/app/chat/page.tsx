@@ -8,7 +8,7 @@ import { useAuthContext } from '../context/AuthContext'
 import { useMatch } from '../../hooks/useMatch'
 import { useLanguage } from '../../i18n/LanguageProvider'
 import { LOCALE_DATE_MAP } from '../../i18n/config'
-import { MatchItem } from '@amelia/shared'
+import { MatchItem } from '@amalia/shared'
 
 function Avatar({ url, name, px = 44 }: { url: string | null; name: string; px?: number }) {
   if (url) {

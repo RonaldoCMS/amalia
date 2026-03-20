@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { useAuthContext } from '../context/AuthContext'
 import { useMatch } from '../../hooks/useMatch'
-import { MatchSuggestion } from '@amelia/shared'
+import { MatchSuggestion } from '@amalia/shared'
 import { Footer } from '../components/Footer'
 
 const SWIPE_THRESHOLD = 80
