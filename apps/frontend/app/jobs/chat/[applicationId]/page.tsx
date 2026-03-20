@@ -2,7 +2,10 @@
 
 import { use, useRef, useEffect, useState, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { useAuthContext } from '../../../context/AuthContext'
+import { useLanguage } from '../../../../i18n/LanguageProvider'
+import { LOCALE_DATE_MAP } from '../../../../i18n/config'
 import { useProfile } from '../../../../hooks/useProfile'
 import { useJobChat } from '../../../../hooks/useJobs'
 import { JobMessageItem } from '@amalia/shared'
@@ -21,7 +24,7 @@ function Avatar({ url, name, size = 32 }: { url: string | null; name: string; si
   )
 }
 
-function Bubble({ msg, isMe }: { msg: JobMessageItem; isMe: boolean }) {
+function Bubble({ msg, isMe, locale }: { msg: JobMessageItem; isMe: boolean; locale: string }) {
   if (msg.isOfferPreview) {
     return (
       <div className="flex justify-center my-2">
@@ -46,7 +49,7 @@ function Bubble({ msg, isMe }: { msg: JobMessageItem; isMe: boolean }) {
       }`}>
         <p className="whitespace-pre-wrap break-words">{msg.content}</p>
         <p className={`text-[9px] mt-1 ${isMe ? 'text-cyan-400/40' : 'text-zinc-600'}`}>
-          {new Date(msg.createdAt).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
+          {new Date(msg.createdAt).toLocaleTimeString(LOCALE_DATE_MAP[locale as keyof typeof LOCALE_DATE_MAP] || 'it-IT', { hour: '2-digit', minute: '2-digit' })}
         </p>
       </div>
     </div>
@@ -59,6 +62,8 @@ export default function JobChatPage({ params }: { params: Promise<{ applicationI
   const { profile } = useProfile()
   const { messages, isLoading, send } = useJobChat(applicationId)
   const router = useRouter()
+  const t = useTranslations('Jobs')
+  const { locale } = useLanguage()
 
   const [text, setText] = useState('')
   const [sending, setSending] = useState(false)
@@ -89,10 +94,10 @@ export default function JobChatPage({ params }: { params: Promise<{ applicationI
       <div className="relative z-20 border-b border-zinc-800 bg-zinc-950/90 backdrop-blur">
         <div className="max-w-2xl mx-auto px-4 h-14 flex items-center gap-3">
           <button onClick={() => router.push('/jobs')} className="text-xs font-mono text-zinc-500 hover:text-zinc-300 transition-colors">
-            ← indietro
+            {t('chatBack')}
           </button>
           <div className="flex-1 text-center">
-            <span className="text-xs font-mono text-zinc-300">💼 job chat</span>
+            <span className="text-xs font-mono text-zinc-300">{t('chatTitle')}</span>
           </div>
           <div className="w-16" /> {/* spacer */}
         </div>
@@ -106,11 +111,11 @@ export default function JobChatPage({ params }: { params: Promise<{ applicationI
           </div>
         ) : messages.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-zinc-600 font-mono text-sm">nessun messaggio ancora</p>
+            <p className="text-zinc-600 font-mono text-sm">{t('chatEmpty')}</p>
           </div>
         ) : (
           messages.map(m => (
-            <Bubble key={m.id} msg={m} isMe={m.senderId === profile.id} />
+            <Bubble key={m.id} msg={m} isMe={m.senderId === profile.id} locale={locale} />
           ))
         )}
         <div ref={bottomRef} />
@@ -122,7 +127,7 @@ export default function JobChatPage({ params }: { params: Promise<{ applicationI
           <input
             value={text}
             onChange={e => setText(e.target.value)}
-            placeholder="scrivi un messaggio..."
+            placeholder={t('chatPlaceholder')}
             className="flex-1 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-zinc-100 font-mono placeholder-zinc-700 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20"
           />
           <button
@@ -130,7 +135,7 @@ export default function JobChatPage({ params }: { params: Promise<{ applicationI
             disabled={!text.trim() || sending}
             className="px-4 py-2.5 rounded-xl text-sm font-mono bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
-            invia
+            {t('chatSend')}
           </button>
         </form>
       </div>

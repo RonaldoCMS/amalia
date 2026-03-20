@@ -2,8 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { DuelLeaderboardEntry } from '@amalia/shared'
 import { DuelService } from '../../../services/duel.service'
+import { useLanguage } from '../../../i18n/LanguageProvider'
+import { LOCALE_DATE_MAP } from '../../../i18n/config'
 import { NotificationBell } from '../../components/NotificationBell'
 import { Footer } from '../../components/Footer'
 
@@ -22,6 +25,8 @@ function Avatar({ url, name, px = 32 }: { url: string | null; name: string; px?:
 export default function LeaderboardPage() {
   const [entries, setEntries] = useState<DuelLeaderboardEntry[]>([])
   const [loading, setLoading] = useState(true)
+  const t = useTranslations('Leaderboard')
+  const { locale } = useLanguage()
 
   useEffect(() => {
     const svc = new DuelService()
@@ -42,13 +47,13 @@ export default function LeaderboardPage() {
             amalia<span className="text-cyan-400">_</span>
           </Link>
           <span className="text-zinc-700">/</span>
-          <Link href="/duel" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">sfida ⚔️</Link>
+          <Link href="/duel" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">{t('tabDuel')}</Link>
           <span className="text-zinc-700">/</span>
-          <span className="text-xs text-amber-400 font-mono">classifica 🏆</span>
+          <span className="text-xs text-amber-400 font-mono">{t('tabLeaderboard')}</span>
         </div>
         <div className="flex items-center gap-4">
           <Link href="/duel" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono hidden sm:inline">
-            ← sfida
+            {t('backToDuel')}
           </Link>
           <NotificationBell />
         </div>
@@ -58,32 +63,32 @@ export default function LeaderboardPage() {
         <div className="text-center mb-8">
           <div className="text-5xl mb-4">🏆</div>
           <h1 className="text-2xl sm:text-3xl font-bold text-zinc-100 font-mono mb-2">
-            Classifica <span className="text-amber-400">Sfide</span>
+            {t.rich('title', { span: (chunks) => <span className="text-amber-400">{chunks}</span> })}
           </h1>
-          <p className="text-sm text-zinc-500">I migliori developer in modalità 1v1</p>
+          <p className="text-sm text-zinc-500">{t('subtitle')}</p>
         </div>
 
         {loading ? (
           <div className="text-center py-16">
-            <p className="text-sm text-zinc-500 font-mono animate-pulse">Caricamento<span className="animate-blink">_</span></p>
+            <p className="text-sm text-zinc-500 font-mono animate-pulse">{t('loading')}<span className="animate-blink">_</span></p>
           </div>
         ) : entries.length === 0 ? (
           <div className="rounded-xl border border-zinc-800 bg-zinc-900/20 px-4 py-16 text-center">
-            <p className="text-sm text-zinc-600 font-mono">Nessuna sfida completata ancora.</p>
+            <p className="text-sm text-zinc-600 font-mono">{t('empty')}</p>
             <Link href="/duel" className="mt-4 inline-block text-xs text-cyan-400 font-mono hover:text-cyan-300 transition-colors">
-              Sii il primo → sfida qualcuno
+              {t('emptyAction')}
             </Link>
           </div>
         ) : (
           <div className="rounded-xl border border-zinc-800 bg-zinc-900/20 overflow-hidden">
             {/* Header */}
             <div className="grid grid-cols-[2.5rem_1fr_4.5rem_4.5rem_4.5rem_5rem] gap-2 px-4 py-3 border-b border-zinc-800 text-[10px] font-mono text-zinc-600 uppercase tracking-wider bg-zinc-900/60">
-              <span>#</span>
-              <span>Giocatore</span>
-              <span className="text-center">Vittorie</span>
-              <span className="text-center">Sconfitte</span>
-              <span className="text-center">Win%</span>
-              <span className="text-center">Punti tot.</span>
+              <span>{t('colRank')}</span>
+              <span>{t('colPlayer')}</span>
+              <span className="text-center">{t('colWins')}</span>
+              <span className="text-center">{t('colLosses')}</span>
+              <span className="text-center">{t('colWinRate')}</span>
+              <span className="text-center">{t('colTotalScore')}</span>
             </div>
 
             {entries.map(entry => (
@@ -106,7 +111,7 @@ export default function LeaderboardPage() {
                   <Avatar url={entry.profilePhotoUrl} name={entry.username} px={28} />
                   <div className="min-w-0">
                     <p className="text-sm font-mono text-zinc-200 truncate">{entry.username}</p>
-                    <p className="text-[10px] text-zinc-600 font-mono">{entry.totalDuels} sfide</p>
+                    <p className="text-[10px] text-zinc-600 font-mono">{t('duelsCount', { count: entry.totalDuels })}</p>
                   </div>
                 </div>
 
@@ -115,7 +120,7 @@ export default function LeaderboardPage() {
                 <span className={`text-sm font-mono font-bold text-center ${entry.winRate >= 60 ? 'text-cyan-400' : entry.winRate >= 40 ? 'text-zinc-300' : 'text-zinc-500'}`}>
                   {entry.winRate}%
                 </span>
-                <span className="text-sm font-mono text-zinc-300 text-center">{entry.totalScore.toLocaleString('it-IT')}</span>
+                <span className="text-sm font-mono text-zinc-300 text-center">{entry.totalScore.toLocaleString(LOCALE_DATE_MAP[locale] || 'it-IT')}</span>
               </div>
             ))}
           </div>

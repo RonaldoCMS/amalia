@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import { useTranslations } from 'next-intl'
 import { PostItem } from '@amalia/shared'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? ''
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export function PostComposer({ profilePhotoUrl, username, onSubmit }: Props) {
+  const t = useTranslations('Feed')
   const [content, setContent] = useState('')
   const [image, setImage] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
@@ -64,7 +66,7 @@ export function PostComposer({ profilePhotoUrl, username, onSubmit }: Props) {
           <textarea
             value={content}
             onChange={e => setContent(e.target.value)}
-            placeholder="Cosa stai pensando?"
+            placeholder={t('composerPlaceholder')}
             className="w-full bg-transparent text-zinc-200 placeholder-zinc-600 resize-none outline-none text-[15px] min-h-[60px]"
             rows={3}
           />
@@ -95,7 +97,7 @@ export function PostComposer({ profilePhotoUrl, username, onSubmit }: Props) {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" />
               </svg>
-              Foto
+              {t('photo')}
             </button>
             <input
               ref={fileRef}
@@ -109,7 +111,7 @@ export function PostComposer({ profilePhotoUrl, username, onSubmit }: Props) {
               disabled={isSubmitting || (!content.trim() && !image)}
               className="px-4 py-1.5 bg-cyan-500 hover:bg-cyan-400 disabled:opacity-40 disabled:cursor-not-allowed text-black font-semibold text-sm rounded-full transition"
             >
-              {isSubmitting ? 'Pubblicando...' : 'Pubblica'}
+              {isSubmitting ? t('publishing') : t('publish')}
             </button>
           </div>
         </div>

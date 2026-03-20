@@ -6,6 +6,7 @@ import { SendMessageUseCase } from './usecases/send-message.usecase'
 import { GenerateCvUseCase } from './usecases/generate-cv.usecase'
 import { GetMyCvUseCase } from './usecases/get-my-cv.usecase'
 import { GetPublicCvsUseCase } from './usecases/get-public-cvs.usecase'
+import { TranslateCvUseCase } from './usecases/translate-cv.usecase'
 
 @Module({
   controllers: [CvController],
@@ -16,6 +17,7 @@ import { GetPublicCvsUseCase } from './usecases/get-public-cvs.usecase'
     GenerateCvUseCase,
     GetMyCvUseCase,
     GetPublicCvsUseCase,
+    TranslateCvUseCase,
   ],
 })
 export class CvModule {}

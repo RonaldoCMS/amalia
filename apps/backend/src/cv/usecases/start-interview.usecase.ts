@@ -3,6 +3,7 @@ import { CvRepository } from '../../shared/repositories/pg/cv.repository';
 import { UserRepository } from '../../shared/repositories/pg/user.repository';
 import { UserChallengeRepository } from '../../shared/repositories/pg/user-challenge.repository';
 import { ClaudeRepository } from '../../shared/repositories/claude.repository';
+import { getLanguageInstruction } from '../../shared/utils/prompt-language';
 import { CvAmaliaStats, CvMessage, CvSession } from '@amalia/shared';
 import { computeBadges } from '../cv.badges';
 
@@ -68,6 +69,7 @@ export class StartInterviewUseCase {
           jobType,
           yearsOfExp,
           githubUrl,
+          user.preferredLanguage,
         ),
         'START',
       );
@@ -92,25 +94,26 @@ export class StartInterviewUseCase {
     jobType: string,
     exp: string,
     githubUrl: string | null,
+    lang?: string | null,
   ): string {
-    const langList = stats.topLanguages.join(', ') || 'non registrati';
-    return `Sei Amalia, l'AI assistente della piattaforma di sfide di programmazione Amalia.
-Stai per avviare una breve intervista a ${username} per creare il suo CV professionale.
+    const langList = stats.topLanguages.join(', ') || 'none recorded';
+    return `You are Amalia, the AI assistant of the Amalia programming challenge platform.
+You are about to start a short interview with ${username} to create their professional CV.
 
-DATI DELL'UTENTE (dalla piattaforma Amalia):
-- Ruolo: ${jobType}
-- Anni di esperienza: ${exp}
-- Sfide completate: ${stats.challengesCompleted} (accuratezza ${stats.accuracy}%)
-- Punteggio totale: ${stats.totalScore} punti
-- Linguaggi principali: ${langList}${githubUrl ? `\n- GitHub: ${githubUrl}` : ''}
+USER DATA (from the Amalia platform):
+- Role: ${jobType}
+- Years of experience: ${exp}
+- Challenges completed: ${stats.challengesCompleted} (accuracy ${stats.accuracy}%)
+- Total score: ${stats.totalScore} points
+- Main languages: ${langList}${githubUrl ? `\n- GitHub: ${githubUrl}` : ''}
 
-COMPITO: Avvia l'intervista.
-1. Saluta ${username} per nome con calore
-2. Menziona 1-2 dati dalla piattaforma per personalizzare (es. sfide, linguaggi, ruolo)
-3. Spiega in UNA frase che condurrai 7 brevi domande per costruire il suo CV professionale
-4. Poni subito la PRIMA domanda: come si presenterebbe a un recruiter in 2-3 frasi?
+TASK: Start the interview.
+1. Greet ${username} by name warmly
+2. Mention 1-2 platform data points to personalize (e.g. challenges, languages, role)
+3. Explain in ONE sentence that you will ask 7 short questions to build their professional CV
+4. Ask the FIRST question right away: how would they introduce themselves to a recruiter in 2-3 sentences?
 
-Formato: testo semplice, massimo 5 righe, italiano, tono professionale ma amichevole.`;
+Format: plain text, max 5 lines, professional but friendly tone.${getLanguageInstruction(lang)}`;
   }
 }
 

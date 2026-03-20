@@ -35,4 +35,8 @@ export class UserService {
   getPublicHistory(userId: string): Promise<ChallengeHistoryItem[]> {
     return this.repository.getPublicHistory(userId)
   }
+
+  updateLanguage(language: string): Promise<void> {
+    return this.repository.updateLanguage(language)
+  }
 }

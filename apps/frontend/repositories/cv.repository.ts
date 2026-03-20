@@ -24,8 +24,8 @@ export class CvRepository {
     this.publicClient = axios.create({ baseURL: base, headers: { 'Content-Type': 'application/json' } })
   }
 
-  async getMyCv(): Promise<CvSession | null> {
-    const res = await this.client.get<CvSession | null>('/me')
+  async getMyCv(lang?: string): Promise<CvSession | null> {
+    const res = await this.client.get<CvSession | null>('/me', { params: lang ? { lang } : undefined })
     return res.data
   }
 
@@ -48,13 +48,13 @@ export class CvRepository {
     await this.client.delete('/me')
   }
 
-  async getGallery(): Promise<PublicCvItem[]> {
-    const res = await this.publicClient.get<PublicCvItem[]>('/gallery')
+  async getGallery(lang?: string): Promise<PublicCvItem[]> {
+    const res = await this.publicClient.get<PublicCvItem[]>('/gallery', { params: lang ? { lang } : undefined })
     return res.data
   }
 
-  async getPublicByUsername(username: string): Promise<CvSession> {
-    const res = await this.publicClient.get<CvSession>(`/public/${username}`)
+  async getPublicByUsername(username: string, lang?: string): Promise<CvSession> {
+    const res = await this.publicClient.get<CvSession>(`/public/${username}`, { params: lang ? { lang } : undefined })
     return res.data
   }
 }

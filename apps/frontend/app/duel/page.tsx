@@ -3,8 +3,11 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { useAuthContext } from '../context/AuthContext'
 import { useDuel } from '../../hooks/useDuel'
+import { useLanguage } from '../../i18n/LanguageProvider'
+import { LOCALE_DATE_MAP } from '../../i18n/config'
 import { Footer } from '../components/Footer'
 import { ChallengeType, DuelRoundResult, DuelLanguageQueueCount } from '@amalia/shared'
 
@@ -62,6 +65,8 @@ export default function DuelPage() {
   const { isAuthenticated } = useAuthContext()
   const router = useRouter()
   const { phase, duel, lastAnswer, error, banUntil, queueCounts, joinQueue, leaveQueue, submitAnswer, forfeit, reset } = useDuel()
+  const t = useTranslations('Duel')
+  const { locale } = useLanguage()
   const [localTimer, setLocalTimer] = useState(30)
   const [userInput, setUserInput] = useState('')
   const [submitted, setSubmitted] = useState(false)
@@ -135,18 +140,17 @@ export default function DuelPage() {
       <div className="text-center">
         <div className="text-5xl sm:text-6xl mb-4">⚔️</div>
         <h1 className="text-2xl sm:text-3xl font-bold text-zinc-100 font-mono mb-2">
-          Modalità <span className="text-cyan-400">Sfida</span>
+          {t.rich('title', { span: (chunks) => <span className="text-cyan-400">{chunks}</span> })}
         </h1>
         <p className="text-sm text-zinc-500 max-w-md mx-auto">
-          Scegli un linguaggio e affronta un avversario in tempo reale.
-          24 round, 30 secondi ciascuno.
+          {t('subtitle')}
         </p>
       </div>
 
       {/* Language grid */}
       <div>
         <h2 className="text-xs font-mono text-zinc-500 uppercase tracking-widest mb-3">
-          Scegli il linguaggio — clicca per cercare un avversario
+          {t('chooseLang')}
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
           {LANGUAGES.map(lang => {
@@ -163,7 +167,7 @@ export default function DuelPage() {
                   {lang.label}
                 </span>
                 <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${count > 0 ? 'text-emerald-400 bg-emerald-400/10 border border-emerald-400/20' : 'text-zinc-600 bg-zinc-800/50 border border-zinc-700/30'}`}>
-                  {count > 0 ? `${count} in coda` : 'nessuno'}
+                  {count > 0 ? t('inQueue', { count }) : t('noQueue')}
                 </span>
               </button>
             )
@@ -176,19 +180,17 @@ export default function DuelPage() {
           >
             <span className="text-xl sm:text-2xl">🎲</span>
             <span className="text-xs sm:text-sm font-mono font-medium text-zinc-400 group-hover:text-zinc-200 transition-colors">
-              Qualsiasi
+              {t('any')}
             </span>
             <span className="text-[10px] font-mono px-1.5 py-0.5 rounded text-zinc-600 bg-zinc-800/50 border border-zinc-700/30">
-              sceglieremo noi
+              {t('anyDesc')}
             </span>
           </button>
         </div>
         {error && <p className="mt-4 text-xs text-red-400 font-mono">{error}</p>}
         {banUntil && banUntil > new Date() && (
           <div className="mt-4 px-4 py-3 rounded-xl bg-red-400/5 border border-red-400/20 text-xs font-mono text-red-400 text-center">
-            🚫 Ban attivo fino alle {banUntil.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
-            <br />
-            <span className="text-zinc-500 mt-1 block">Hai abbandonato 3 sfide oggi. Riprova più tardi.</span>
+            {t('banActive', { time: banUntil.toLocaleTimeString(LOCALE_DATE_MAP[locale] || 'it-IT', { hour: '2-digit', minute: '2-digit' }) })}
           </div>
         )}
       </div>
@@ -196,7 +198,7 @@ export default function DuelPage() {
       {/* Leaderboard link */}
       <div className="text-center pt-2 pb-4">
         <Link href="/duel/leaderboard" className="inline-flex items-center gap-2 text-xs font-mono text-zinc-500 hover:text-amber-400 transition-colors border border-zinc-800 hover:border-amber-400/30 rounded-lg px-4 py-2">
-          🏆 Classifica Sfide
+          {t('leaderboardTitle')}
         </Link>
       </div>
     </div>
@@ -207,9 +209,9 @@ export default function DuelPage() {
     <div className="flex flex-col items-center justify-center py-16 sm:py-24 text-center px-4">
       <div className="text-4xl mb-6 animate-pulse">🔍</div>
       <h2 className="text-lg font-semibold text-zinc-100 font-mono mb-2">
-        Cerco un avversario<span className="animate-blink">_</span>
+        {t('searching')}<span className="animate-blink">_</span>
       </h2>
-      <p className="text-sm text-zinc-500 mb-8">In attesa che un altro player si unisca...</p>
+      <p className="text-sm text-zinc-500 mb-8">{t('waitingOpponent')}</p>
       <div className="flex gap-8 mb-8">
         {[0, 1, 2].map(i => (
           <div key={i} className="w-3 h-3 rounded-full bg-cyan-400 animate-bounce" style={{ animationDelay: `${i * 200}ms` }} />
@@ -219,7 +221,7 @@ export default function DuelPage() {
         onClick={leaveQueue}
         className="text-xs text-zinc-500 hover:text-zinc-300 font-mono transition-colors"
       >
-        ← Annulla ricerca
+        {t('cancelSearch')}
       </button>
     </div>
   )
@@ -243,7 +245,7 @@ export default function DuelPage() {
 
           <div className="text-center shrink-0">
             <div className="text-[10px] text-zinc-600 font-mono">
-              {duel.isSuddenDeath ? '⚡ SUDDEN DEATH' : `Round ${duel.currentRoundNumber}/${duel.totalRounds}`}
+              {duel.isSuddenDeath ? t('suddenDeath') : t('round', { current: duel.currentRoundNumber, total: duel.totalRounds })}
             </div>
             <div className="text-xs text-zinc-500 font-mono">{duel.language}</div>
             {/* Forfeit button */}
@@ -345,9 +347,9 @@ export default function DuelPage() {
                         onChange={e => setUserInput(e.target.value)}
                         onKeyDown={e => e.key === 'Enter' && handleSubmit()}
                         placeholder={
-                          round.type === ChallengeType.Fill ? 'Inserisci il codice mancante...'
-                            : round.type === ChallengeType.Bug ? 'Scrivi il codice corretto...'
-                            : 'Scrivi la tua risposta...'
+                          round.type === ChallengeType.Fill ? t('placeholderFill')
+                            : round.type === ChallengeType.Bug ? t('placeholderBug')
+                            : t('placeholderWrite')
                         }
                         disabled={localTimer <= 0}
                         className="flex-1 bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-100 font-mono placeholder-zinc-700 focus:outline-none focus:border-cyan-500/50 transition-colors"
@@ -357,12 +359,12 @@ export default function DuelPage() {
                         disabled={!userInput.trim() || localTimer <= 0}
                         className="px-4 py-2.5 rounded-lg text-sm font-mono bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 transition-all disabled:opacity-40 shrink-0"
                       >
-                        Invia
+                        {t('submit')}
                       </button>
                     </div>
                   )}
                   {localTimer <= 0 && (
-                    <p className="text-xs text-red-400 font-mono mt-2">⏰ Tempo scaduto!</p>
+                    <p className="text-xs text-red-400 font-mono mt-2">{t('timeUp')}</p>
                   )}
                 </div>
               ) : (
@@ -373,11 +375,11 @@ export default function DuelPage() {
                         {lastAnswer.correct ? '✓' : '✗'}
                       </div>
                       <p className={`text-sm font-mono font-bold ${lastAnswer.correct ? 'text-emerald-400' : 'text-red-400'}`}>
-                        {lastAnswer.correct ? `Corretto! +${lastAnswer.score}` : 'Sbagliato!'}
+                        {lastAnswer.correct ? t('correct', { score: lastAnswer.score }) : t('wrong')}
                       </p>
                       {!round.opponentAnswered && (
                         <p className="text-xs text-zinc-500 font-mono mt-3 animate-pulse">
-                          In attesa dell&apos;avversario...
+                          {t('waitingOpponentAnswer')}
                         </p>
                       )}
                     </div>
@@ -393,7 +395,7 @@ export default function DuelPage() {
         {/* No current round but active = waiting for results */}
         {!round && duel.status === 'active' && (
           <div className="text-center py-8">
-            <p className="text-sm text-zinc-500 font-mono animate-pulse">Elaborazione risultati<span className="animate-blink">_</span></p>
+            <p className="text-sm text-zinc-500 font-mono animate-pulse">{t('processingResults')}<span className="animate-blink">_</span></p>
           </div>
         )}
       </div>
@@ -410,14 +412,14 @@ export default function DuelPage() {
       <div className="flex flex-col items-center py-8 sm:py-12 px-4">
         <div className="text-5xl mb-4">{isWinner ? '🏆' : isTie ? '🤝' : '😤'}</div>
         <h2 className="text-xl sm:text-2xl font-bold font-mono text-zinc-100 mb-1">
-          {isWinner ? 'Hai vinto!' : isTie ? 'Pareggio!' : 'Hai perso!'}
+          {isWinner ? t('win') : isTie ? t('draw') : t('lose')}
         </h2>
         <p className="text-sm text-zinc-500 mb-6">
           {isWinner
-            ? 'Complimenti, ottimo lavoro!'
+            ? t('winMessage')
             : isTie
-            ? 'Sfida equilibrata!'
-            : 'La prossima volta andrà meglio!'}
+            ? t('drawMessage')
+            : t('loseMessage')}
         </p>
 
         {/* Score comparison */}
@@ -436,12 +438,12 @@ export default function DuelPage() {
         </div>
 
         {duel.isSuddenDeath && (
-          <p className="text-xs text-amber-400 font-mono mb-4">⚡ Deciso al sudden death!</p>
+          <p className="text-xs text-amber-400 font-mono mb-4">{t('decidedSuddenDeath')}</p>
         )}
 
         {/* Round history */}
         <div className="w-full max-w-lg mb-8">
-          <h3 className="text-xs text-zinc-600 font-mono mb-3 uppercase tracking-wider">Dettaglio round</h3>
+          <h3 className="text-xs text-zinc-600 font-mono mb-3 uppercase tracking-wider">{t('roundDetail')}</h3>
           <div className="flex flex-col gap-1">
             {duel.history.map((r: DuelRoundResult) => (
               <div key={r.roundNumber} className="flex items-center justify-between px-3 py-1.5 rounded bg-zinc-900/40 border border-zinc-800/50">
@@ -466,10 +468,10 @@ export default function DuelPage() {
             onClick={reset}
             className="px-6 py-2.5 rounded-xl text-sm font-mono bg-cyan-500/15 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/25 transition-all"
           >
-            Nuova sfida
+            {t('newDuel')}
           </button>
           <Link href="/challenge" className="px-6 py-2.5 rounded-xl text-sm font-mono border border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:border-zinc-700 transition-all">
-            Torna alle challenge
+            {t('backToChallenge')}
           </Link>
         </div>
       </div>

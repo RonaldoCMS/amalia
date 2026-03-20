@@ -23,13 +23,13 @@ export class ChallengeRepository {
     })
   }
 
-  async generate(request: GenerateChallengeRequest): Promise<ChallengeResponse> {
-    const response = await this.client.post<ChallengeResponse>('/generate', request)
+  async generate(request: GenerateChallengeRequest, lang?: string): Promise<ChallengeResponse> {
+    const response = await this.client.post<ChallengeResponse>('/generate', request, { params: { lang } })
     return response.data
   }
 
-  async evaluate(request: EvaluateChallengeRequest): Promise<EvaluationResponse> {
-    const response = await this.client.post<EvaluationResponse>('/evaluate', request)
+  async evaluate(request: EvaluateChallengeRequest, lang?: string): Promise<EvaluationResponse> {
+    const response = await this.client.post<EvaluationResponse>('/evaluate', request, { params: { lang } })
     return response.data
   }
 

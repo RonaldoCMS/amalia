@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { useComments } from '../../../hooks/useComments'
 import { CommentItemView } from './CommentItem'
 
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export function CommentSection({ postId, currentUserId, onCommentCountChange }: Props) {
+  const t = useTranslations('Feed')
   const { comments, isLoading, load, addComment, deleteComment } = useComments(postId)
   const [text, setText] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -39,10 +41,10 @@ export function CommentSection({ postId, currentUserId, onCommentCountChange }: 
       {/* Comments list */}
       <div className="max-h-80 overflow-y-auto">
         {isLoading && comments.length === 0 && (
-          <p className="text-zinc-600 text-sm p-4">Caricamento...</p>
+          <p className="text-zinc-600 text-sm p-4">{t('loadingComments')}</p>
         )}
         {!isLoading && comments.length === 0 && (
-          <p className="text-zinc-600 text-sm p-4">Nessun commento ancora</p>
+          <p className="text-zinc-600 text-sm p-4">{t('noComments')}</p>
         )}
         {comments.map(c => (
           <CommentItemView
@@ -61,7 +63,7 @@ export function CommentSection({ postId, currentUserId, onCommentCountChange }: 
           value={text}
           onChange={e => setText(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && !e.shiftKey && handleSubmit()}
-          placeholder="Scrivi un commento..."
+          placeholder={t('commentPlaceholder')}
           className="flex-1 bg-transparent text-zinc-300 placeholder-zinc-600 outline-none text-sm"
         />
         <button
@@ -69,7 +71,7 @@ export function CommentSection({ postId, currentUserId, onCommentCountChange }: 
           disabled={isSubmitting || !text.trim()}
           className="text-cyan-400 hover:text-cyan-300 disabled:opacity-40 text-sm font-semibold transition"
         >
-          Invia
+          {t('sendComment')}
         </button>
       </div>
     </div>

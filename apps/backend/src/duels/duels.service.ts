@@ -7,6 +7,7 @@ import { ClaudeRepository } from '../shared/repositories/claude.repository'
 import { NotificationService } from '../notifications/notification.service'
 import { ChatMessageRepository } from '../shared/repositories/pg/chat-message.repository'
 import { AppConfigRepository } from '../shared/repositories/pg/app-config.repository'
+import { TranslateChallengeUseCase } from '../challenges/usecases/translate-challenge.usecase'
 import {
   ChallengeType, ChallengeLevel, ChallengeLanguage,
   DuelStateResponse, DuelQueueResponse, DuelAnswerResponse,
@@ -48,6 +49,7 @@ export class DuelsService implements OnModuleInit {
     private readonly notificationService: NotificationService,
     private readonly chatMsgRepo: ChatMessageRepository,
     private readonly appConfig: AppConfigRepository,
+    private readonly translateChallengeUseCase: TranslateChallengeUseCase,
   ) {}
 
   async onModuleInit() {
@@ -394,15 +396,28 @@ export class DuelsService implements OnModuleInit {
           ? round.user2Answer !== null
           : round.user1Answer !== null
 
+        const userLang = (isUser1 ? duel.user1 : duel.user2!)?.preferredLanguage ?? 'en'
+        const challengeResponse = {
+          id: round.challenge.id,
+          title: round.challenge.title,
+          description: round.challenge.description,
+          code: round.challenge.code,
+          options: round.challenge.options,
+          answer: round.challenge.answer,
+        }
+        const translated = await this.translateChallengeUseCase.execute(
+          round.challenge.id, challengeResponse, userLang, round.challenge.translations ?? {},
+        )
+
         currentRound = {
           roundNumber: round.roundNumber,
           type: round.challenge.type,
           level: round.challenge.level,
           challenge: {
-            title: round.challenge.title,
-            description: round.challenge.description,
+            title: translated.title,
+            description: translated.description,
             code: round.challenge.code,
-            options: round.challenge.options,
+            options: translated.options,
           },
           myAnswer,
           opponentAnswered,
@@ -708,29 +723,29 @@ export class DuelsService implements OnModuleInit {
     language: ChallengeLanguage,
   ): Promise<Challenge> {
     const typeDesc: Record<string, string> = {
-      [ChallengeType.Fill]: 'Completa il codice mancante — sostituisci una parte con ___BLANK___',
-      [ChallengeType.Quiz]: 'Risposta multipla — cosa produce o cosa fa questo codice? Dai 4 opzioni (A,B,C,D)',
-      [ChallengeType.Bug]: 'Trova il bug — inserisci UN solo errore intenzionale nel codice',
-      [ChallengeType.Write]: 'Scrivi la funzione — mostra solo la firma e la descrizione',
+      [ChallengeType.Fill]: 'Fill in the missing code — replace a part with ___BLANK___',
+      [ChallengeType.Quiz]: 'Multiple choice — what does this code produce or do? Give 4 options (A,B,C,D)',
+      [ChallengeType.Bug]: 'Find the bug — insert ONE intentional error in the code',
+      [ChallengeType.Write]: 'Write the function — show only the signature and description',
     }
 
     const sizeHint: Record<string, string> = {
-      [ChallengeLevel.Beginner]: 'Lo snippet di codice deve essere MOLTO corto: massimo 4-6 righe.',
-      [ChallengeLevel.Intermediate]: 'Lo snippet di codice deve essere breve: massimo 8-12 righe.',
-      [ChallengeLevel.Hard]: 'Lo snippet di codice deve essere contenuto: massimo 15-20 righe.',
+      [ChallengeLevel.Beginner]: 'The code snippet must be VERY short: maximum 4-6 lines.',
+      [ChallengeLevel.Intermediate]: 'The code snippet must be short: maximum 8-12 lines.',
+      [ChallengeLevel.Hard]: 'The code snippet must be concise: maximum 15-20 lines.',
     }
 
-    const system = `Sei amalia, una maestra di programmazione.
-Generi esercizi di codice reali e didattici.
-Rispondi SEMPRE e SOLO con JSON valido. Nessun testo extra, nessun markdown, nessun backtick.`
+    const system = `You are Amalia, a programming teacher.
+You generate real, educational coding exercises.
+ALWAYS respond with valid JSON only. No extra text, no markdown, no backticks.`
 
-    const user = `Genera un esercizio di programmazione in ${language}.
-Tipo: ${typeDesc[type]}
-Livello: ${level}
+    const user = `Generate a programming exercise in ${language}.
+Type: ${typeDesc[type]}
+Level: ${level}
 ${sizeHint[level] ?? ''}
-Rispondi con questo JSON:
+Respond with this JSON:
 { "title": "...", "description": "...", "code": "...", "options": [...], "answer": "..." }
-IMPORTANTE: ogni opzione DEVE essere una singola stringa nell'array. Sii conciso.`
+IMPORTANT: each option MUST be a single string in the array. Be concise.`
 
     const raw = await this.claudeRepo.sendMessage(system, user)
     const clean = raw.replace(/```json|```/g, '').trim()

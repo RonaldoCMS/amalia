@@ -18,12 +18,12 @@ export class ChallengesService {
     private readonly userChallengeRepository: UserChallengeRepository,
   ) {}
 
-  generate(request: GenerateChallengeRequest, userId: string): Promise<ChallengeResponse> {
-    return this.generateChallengeUseCase.execute(request, userId)
+  generate(request: GenerateChallengeRequest, userId: string, lang?: string): Promise<ChallengeResponse> {
+    return this.generateChallengeUseCase.execute(request, userId, lang)
   }
 
-  evaluate(request: EvaluateChallengeRequest, userId: string): Promise<EvaluationResponse> {
-    return this.evaluateChallengeUseCase.execute(request, userId)
+  evaluate(request: EvaluateChallengeRequest, userId: string, lang?: string): Promise<EvaluationResponse> {
+    return this.evaluateChallengeUseCase.execute(request, userId, lang)
   }
 
   getStats(userId: string): Promise<UserStats> {

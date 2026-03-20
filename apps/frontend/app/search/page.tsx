@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { useAuthContext } from '../context/AuthContext'
 import { useUserSearch } from '../../hooks/useUserSearch'
 
@@ -13,6 +14,7 @@ export default function SearchPage() {
   const { isAuthenticated } = useAuthContext()
   const { results, isSearching, search, clear } = useUserSearch()
   const [query, setQuery] = useState('')
+  const t = useTranslations('Search')
 
   if (!isAuthenticated) {
     router.replace('/login')
@@ -40,7 +42,7 @@ export default function SearchPage() {
             type="text"
             value={query}
             onChange={e => handleChange(e.target.value)}
-            placeholder="Cerca per username..."
+            placeholder={t('placeholder')}
             autoFocus
             className="w-full bg-zinc-900/60 border border-zinc-800 rounded-xl pl-10 pr-4 py-3 text-sm text-zinc-200 placeholder-zinc-600 outline-none focus:border-cyan-400/50 transition"
           />
@@ -98,16 +100,16 @@ export default function SearchPage() {
         {/* Empty state */}
         {!isSearching && query.length > 0 && results.length === 0 && (
           <div className="text-center py-16">
-            <p className="text-zinc-600 text-sm">Nessun utente trovato</p>
-            <p className="text-zinc-700 text-xs mt-1">Prova con un altro username</p>
+            <p className="text-zinc-600 text-sm">{t('noResults')}</p>
+            <p className="text-zinc-700 text-xs mt-1">{t('noResultsHint')}</p>
           </div>
         )}
 
         {/* Initial state */}
         {!query && (
           <div className="text-center py-16">
-            <p className="text-zinc-600 text-sm">Cerca utenti per username</p>
-            <p className="text-zinc-700 text-xs mt-1">Trova altri developer e connettiti</p>
+            <p className="text-zinc-600 text-sm">{t('defaultTitle')}</p>
+            <p className="text-zinc-700 text-xs mt-1">{t('defaultSubtitle')}</p>
           </div>
         )}
       </main>

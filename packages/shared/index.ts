@@ -260,6 +260,7 @@ export interface UserProfile {
   profilePhotoUrl: string | null
   createdAt: string
   onboardingCompleted: boolean
+  preferredLanguage: string | null
 }
 
 export interface ChallengeHistoryItem {

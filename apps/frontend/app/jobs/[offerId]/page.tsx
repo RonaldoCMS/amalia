@@ -2,17 +2,22 @@
 
 import { use } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { useOfferDetail } from '../../../hooks/useJobs'
 import { useAuthContext } from '../../context/AuthContext'
 import { Footer } from '../../components/Footer'
 import { JobService } from '../../../services/job.service'
 import { JobHardSkillReq } from '@amalia/shared'
+import { useLanguage } from '../../../i18n/LanguageProvider'
+import { LOCALE_DATE_MAP } from '../../../i18n/config'
 
 export default function OfferDetailPage({ params }: { params: Promise<{ offerId: string }> }) {
   const { offerId } = use(params)
   const { isAuthenticated } = useAuthContext()
   const { offer, isLoading } = useOfferDetail(offerId)
   const router = useRouter()
+  const t = useTranslations('Jobs')
+  const { locale } = useLanguage()
 
   if (!isAuthenticated) return null
 
@@ -27,7 +32,7 @@ export default function OfferDetailPage({ params }: { params: Promise<{ offerId:
   if (!offer) {
     return (
       <div className="min-h-screen bg-grid flex items-center justify-center">
-        <p className="text-zinc-600 font-mono text-sm">offerta non trovata</p>
+        <p className="text-zinc-600 font-mono text-sm">{t('offerNotFound')}</p>
       </div>
     )
   }
@@ -39,7 +44,7 @@ export default function OfferDetailPage({ params }: { params: Promise<{ offerId:
   }
 
   const handleClose = async () => {
-    if (!confirm('Vuoi chiudere questa offerta?')) return
+    if (!confirm(t('closeOfferConfirm'))) return
     try {
       const svc = new JobService()
       await svc.closeOffer(offerId)
@@ -54,7 +59,7 @@ export default function OfferDetailPage({ params }: { params: Promise<{ offerId:
 
       <main className="relative z-10 flex-1 max-w-2xl w-full mx-auto px-4 py-8 pb-24 sm:pb-8">
         <button onClick={() => router.push('/jobs')} className="text-xs font-mono text-zinc-500 hover:text-zinc-300 mb-4 inline-block transition-colors">
-          ← torna alla job board
+          {t('backToJobs')}
         </button>
 
         {/* Title + Status */}
@@ -72,8 +77,8 @@ export default function OfferDetailPage({ params }: { params: Promise<{ offerId:
           {offer.workMode && <span>🏠 {offer.workMode}</span>}
           {offer.location && <span>📍 {offer.location}</span>}
           {(offer.salaryMin || offer.salaryMax) && <span>💰 {offer.salaryMin ?? '?'}–{offer.salaryMax ?? '?'}k</span>}
-          <span>📅 {offer.yearsRequired} anni exp</span>
-          <span>👥 {offer.applicationsCount} invii</span>
+          <span>📅 {offer.yearsRequired} {t('yearsExp')}</span>
+          <span>👥 {offer.applicationsCount} {t('submissions')}</span>
         </div>
 
         {/* Description */}
@@ -84,7 +89,7 @@ export default function OfferDetailPage({ params }: { params: Promise<{ offerId:
         {/* Skills */}
         {offer.hardSkills.length > 0 && (
           <div className="border border-zinc-800 rounded-xl p-5 bg-zinc-900/30 mb-5">
-            <h3 className="text-[10px] font-mono uppercase tracking-widest text-zinc-600 mb-3">hard skills</h3>
+            <h3 className="text-[10px] font-mono uppercase tracking-widest text-zinc-600 mb-3">{t('hardSkills')}</h3>
             <div className="flex flex-wrap gap-2">
               {offer.hardSkills.map((s: JobHardSkillReq) => (
                 <span key={s.name} className="text-[11px] font-mono px-2.5 py-1 rounded-lg border border-cyan-400/20 bg-cyan-400/10 text-cyan-400">
@@ -97,7 +102,7 @@ export default function OfferDetailPage({ params }: { params: Promise<{ offerId:
 
         {offer.softSkills && offer.softSkills.length > 0 && (
           <div className="border border-zinc-800 rounded-xl p-5 bg-zinc-900/30 mb-5">
-            <h3 className="text-[10px] font-mono uppercase tracking-widest text-zinc-600 mb-3">soft skills</h3>
+            <h3 className="text-[10px] font-mono uppercase tracking-widest text-zinc-600 mb-3">{t('softSkills')}</h3>
             <div className="flex flex-wrap gap-2">
               {offer.softSkills.map((s: string) => (
                 <span key={s} className="text-[11px] font-mono px-2.5 py-1 rounded-lg border border-violet-400/20 bg-violet-400/10 text-violet-400">{s}</span>
@@ -108,7 +113,7 @@ export default function OfferDetailPage({ params }: { params: Promise<{ offerId:
 
         {/* Expiry */}
         <div className="text-[10px] font-mono text-zinc-600 mb-6">
-          scadenza: {new Date(offer.expiresAt).toLocaleDateString('it-IT')}
+          {t('expiresAt')} {new Date(offer.expiresAt).toLocaleDateString(LOCALE_DATE_MAP[locale] || 'it-IT')}
         </div>
 
         {/* Actions */}
@@ -119,13 +124,13 @@ export default function OfferDetailPage({ params }: { params: Promise<{ offerId:
                 onClick={() => router.push(`/jobs/${offerId}/candidates`)}
                 className="flex-1 py-2.5 rounded-lg text-sm font-mono font-medium bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 hover:border-cyan-500/50 transition-colors"
               >
-                🔍 trova candidati
+                {t('findCandidates')}
               </button>
               <button
                 onClick={handleClose}
                 className="px-4 py-2.5 rounded-lg text-sm font-mono border border-red-400/30 text-red-400 bg-red-400/5 hover:bg-red-400/10 transition-colors"
               >
-                chiudi offerta
+                {t('closeOffer')}
               </button>
             </>
           )}

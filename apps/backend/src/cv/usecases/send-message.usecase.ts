@@ -1,6 +1,8 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import { CvRepository } from '../../shared/repositories/pg/cv.repository'
 import { ClaudeRepository } from '../../shared/repositories/claude.repository'
+import { UserRepository } from '../../shared/repositories/pg/user.repository'
+import { getLanguageInstruction } from '../../shared/utils/prompt-language'
 import { CvMessage, CvSendMessageResponse } from '@amalia/shared'
 import { toSession } from './start-interview.usecase'
 
@@ -11,6 +13,7 @@ export class SendMessageUseCase {
   constructor(
     private readonly cvRepository: CvRepository,
     private readonly claudeRepository: ClaudeRepository,
+    private readonly userRepository: UserRepository,
   ) {}
 
   async execute(cvId: string, userId: string, content: string): Promise<CvSendMessageResponse> {
@@ -30,8 +33,11 @@ export class SendMessageUseCase {
       content: m.content,
     }))
 
+    const user = await this.userRepository.findById(userId)
+    const lang = user?.preferredLanguage ?? 'it'
+
     const amaliaContent = await this.claudeRepository.sendConversation(
-      this.buildSystemPrompt(cv.username, cv.amaliaStats, isDone),
+      this.buildSystemPrompt(cv.username, cv.amaliaStats, isDone, lang),
       conversation,
       350,
     )
@@ -47,37 +53,37 @@ export class SendMessageUseCase {
     return { message: amaliaMessage, isDone }
   }
 
-  private buildSystemPrompt(username: string, stats: any, isDone: boolean): string {
+  private buildSystemPrompt(username: string, stats: any, isDone: boolean, lang: string): string {
+    const langInstr = getLanguageInstruction(lang)
     if (isDone) {
-      return `Sei Amalia, AI assistente della piattaforma Amalia.
-Hai appena ricevuto l'ultima risposta di ${username} nella sua intervista per il CV.
-Concludi l'intervista: ringraziali calorosamente in 1-2 frasi, poi scrivi esattamente questa frase finale:
-"Perfetto! Ho tutto quello che mi serve. Sto generando il tuo CV professionale... 🚀"
-NON aggiungere nulla dopo quella frase.`
+      return `You are Amalia, AI assistant of the Amalia platform.
+You have just received the last answer from ${username} in their CV interview.
+Conclude the interview: thank them warmly in 1-2 sentences, then write a final sentence saying you have everything you need and are generating their professional CV, followed by 🚀.
+Do NOT add anything after that sentence.${langInstr}`
     }
 
-    const langList = stats?.topLanguages?.join(', ') || 'non specificati'
+    const langList = stats?.topLanguages?.join(', ') || 'not specified'
 
-    return `Sei Amalia, AI assistente della piattaforma Amalia (sfide di programmazione).
-Stai conducendo un'intervista a ${username} per creare il suo CV professionale.
+    return `You are Amalia, AI assistant of the Amalia platform (programming challenges).
+You are conducting an interview with ${username} to create their professional CV.
 
-DATI PIATTAFORMA: ${stats?.challengesCompleted ?? 0} sfide completate, ${stats?.accuracy ?? 0}% accuratezza, ${stats?.totalScore ?? 0} punti, linguaggi principali: ${langList}
+PLATFORM DATA: ${stats?.challengesCompleted ?? 0} challenges completed, ${stats?.accuracy ?? 0}% accuracy, ${stats?.totalScore ?? 0} points, main languages: ${langList}
 
-SEQUENZA DOMANDE (ESATTAMENTE in questo ordine, UNA alla volta):
-1. Come ti presenteresti a un recruiter in 2-3 frasi? (elevator pitch professionale)
-2. Che esperienze lavorative hai avuto? (ruoli, aziende, durata — anche stage/freelance)
-3. Hai un titolo di studio o certificazioni rilevanti?
-4. Descrivi 1-2 progetti di cui sei fiero: cosa hai fatto, con quali tecnologie, che impatto ha avuto?
-5. Quali sono i tuoi punti di forza tecnici principali? Quali stack o strumenti usi meglio?
-6. Come ti descriveresti come collega? Dimmi 3 soft skill che ti rappresentano davvero (es. problem solving, comunicazione, leadership, creatività...).
-7. Cosa stai cercando professionalmente adesso? (lavoro full-time, freelance, crescita, cambio settore...)
+QUESTION SEQUENCE (EXACTLY in this order, ONE at a time):
+1. How would you introduce yourself to a recruiter in 2-3 sentences? (professional elevator pitch)
+2. What work experiences have you had? (roles, companies, duration — including internships/freelance)
+3. Do you have any relevant degrees or certifications?
+4. Describe 1-2 projects you're proud of: what you did, with which technologies, what impact it had?
+5. What are your main technical strengths? Which stacks or tools do you use best?
+6. How would you describe yourself as a colleague? Tell me 3 soft skills that truly represent you (e.g. problem solving, communication, leadership, creativity...).
+7. What are you looking for professionally right now? (full-time job, freelance, growth, career change...)
 
-REGOLE FERREE:
-- Guarda la conversazione: conta le risposte dell'utente e poni la PROSSIMA domanda non ancora fatta
-- Prima di ogni risposta: commenta brevemente ciò che l'utente ha detto (massimo 1 riga, varia il commento)
-- MAI porre due domande insieme
-- Massimo 4 righe totali per risposta
-- Italiano, tono professionale ma caldo e umano
-- Se una risposta è molto breve o generica, chiedi gentilmente un esempio concreto prima di andare avanti`
+STRICT RULES:
+- Look at the conversation: count the user's answers and ask the NEXT question not yet asked
+- Before each answer: briefly comment on what the user said (max 1 line, vary the comment)
+- NEVER ask two questions at once
+- Max 4 lines total per response
+- Professional but warm and human tone
+- If an answer is very short or generic, gently ask for a concrete example before moving on${langInstr}`
   }
 }

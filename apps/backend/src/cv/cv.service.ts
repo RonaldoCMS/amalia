@@ -4,6 +4,7 @@ import { SendMessageUseCase } from './usecases/send-message.usecase'
 import { GenerateCvUseCase } from './usecases/generate-cv.usecase'
 import { GetMyCvUseCase } from './usecases/get-my-cv.usecase'
 import { GetPublicCvsUseCase } from './usecases/get-public-cvs.usecase'
+import { TranslateCvUseCase } from './usecases/translate-cv.usecase'
 import { CvRepository } from '../shared/repositories/pg/cv.repository'
 import { CvSession, CvSendMessageResponse, PublicCvItem } from '@amalia/shared'
 
@@ -15,6 +16,7 @@ export class CvService {
     private readonly generateCvUseCase: GenerateCvUseCase,
     private readonly getMyCvUseCase: GetMyCvUseCase,
     private readonly getPublicCvsUseCase: GetPublicCvsUseCase,
+    private readonly translateCvUseCase: TranslateCvUseCase,
     private readonly cvRepository: CvRepository,
   ) {}
 
@@ -30,16 +32,16 @@ export class CvService {
     return this.generateCvUseCase.execute(cvId, userId)
   }
 
-  getMyCv(userId: string): Promise<CvSession | null> {
-    return this.getMyCvUseCase.execute(userId)
+  getMyCv(userId: string, lang?: string): Promise<CvSession | null> {
+    return this.getMyCvUseCase.execute(userId, lang)
   }
 
-  getAllPublic(): Promise<PublicCvItem[]> {
-    return this.getPublicCvsUseCase.getAll()
+  getAllPublic(lang?: string): Promise<PublicCvItem[]> {
+    return this.getPublicCvsUseCase.getAll(lang)
   }
 
-  getPublicByUsername(username: string): Promise<CvSession> {
-    return this.getPublicCvsUseCase.getByUsername(username)
+  getPublicByUsername(username: string, lang?: string): Promise<CvSession> {
+    return this.getPublicCvsUseCase.getByUsername(username, lang)
   }
 
   deleteMyCV(userId: string): Promise<void> {
