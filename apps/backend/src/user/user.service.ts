@@ -6,6 +6,7 @@ import { GetHistoryUseCase } from './usecases/get-history.usecase'
 import { UpdateProfilePhotoUseCase } from './usecases/update-profile-photo.usecase'
 import { SearchUsersUseCase } from './usecases/search-users.usecase'
 import { GetPublicProfileUseCase } from './usecases/get-public-profile.usecase'
+import { UpdateLanguageUseCase } from './usecases/update-language.usecase'
 import { UserProfile, UpdatePasswordRequest, ChallengeHistoryItem, UserSearchResult, PublicUserProfile } from '@amalia/shared'
 
 @Injectable()
@@ -18,6 +19,7 @@ export class UserService {
     private readonly updateProfilePhotoUseCase: UpdateProfilePhotoUseCase,
     private readonly searchUsersUseCase: SearchUsersUseCase,
     private readonly getPublicProfileUseCase: GetPublicProfileUseCase,
+    private readonly updateLanguageUseCase: UpdateLanguageUseCase,
   ) {}
 
   getProfile(userId: string): Promise<UserProfile> {
@@ -46,6 +48,10 @@ export class UserService {
 
   getPublicProfile(userId: string): Promise<PublicUserProfile> {
     return this.getPublicProfileUseCase.execute(userId)
+  }
+
+  updateLanguage(userId: string, language: string): Promise<void> {
+    return this.updateLanguageUseCase.execute(userId, language)
   }
 
   getPublicHistory(userId: string): Promise<ChallengeHistoryItem[]> {

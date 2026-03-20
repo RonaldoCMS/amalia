@@ -34,4 +34,7 @@ export class User {
   @Column({ nullable: true, unique: true })
   githubId: string
 
+  @Column({ nullable: true, default: null })
+  preferredLanguage: string | null
+
 }

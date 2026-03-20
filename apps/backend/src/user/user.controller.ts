@@ -49,6 +49,15 @@ export class UserController {
     return this.userService.updatePassword(req.user.id, body)
   }
 
+  @Patch('language')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  updateLanguage(
+    @Body() body: { language: string },
+    @Request() req: { user: { id: string } },
+  ): Promise<void> {
+    return this.userService.updateLanguage(req.user.id, body.language)
+  }
+
   @Post('photo')
   @UseInterceptors(FileInterceptor('photo', {
     storage: diskStorage({

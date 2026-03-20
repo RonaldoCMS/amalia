@@ -1,8 +1,10 @@
 'use client'
 
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 
 export function Footer() {
+  const t = useTranslations('Footer')
   return (
     <footer className="relative z-10 border-t border-zinc-900 bg-zinc-950/50 mt-auto">
       <div className="max-w-5xl mx-auto px-6 py-10">
@@ -13,29 +15,29 @@ export function Footer() {
               amalia<span className="text-cyan-400">_</span>
             </span>
             <p className="text-xs text-zinc-500 mt-2 leading-relaxed max-w-xs">
-              Piattaforma di sfide di programmazione generate dall&apos;AI. Allena le tue skill, connettiti con altri developer.
+              {t('description')}
             </p>
           </div>
 
           {/* Links */}
           <div>
-            <h4 className="text-[10px] font-mono uppercase tracking-widest text-zinc-600 mb-3">Navigazione</h4>
+            <h4 className="text-[10px] font-mono uppercase tracking-widest text-zinc-600 mb-3">{t('navigation')}</h4>
             <ul className="space-y-1.5">
-              <li><Link href="/feed" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">feed</Link></li>
-              <li><Link href="/cv" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">myCV</Link></li>
-              <li><Link href="/challenge" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">challenge</Link></li>
-              <li><Link href="/match" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">dev match</Link></li>
-              <li><Link href="/jobs" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">job board</Link></li>
-              <li><Link href="/profile" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">profilo</Link></li>
-              <li><Link href="/history" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">storico</Link></li>
+              <li><Link href="/feed" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">{t('feed')}</Link></li>
+              <li><Link href="/cv" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">{t('myCV')}</Link></li>
+              <li><Link href="/challenge" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">{t('challenge')}</Link></li>
+              <li><Link href="/match" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">{t('devMatch')}</Link></li>
+              <li><Link href="/jobs" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">{t('jobBoard')}</Link></li>
+              <li><Link href="/profile" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">{t('profile')}</Link></li>
+              <li><Link href="/history" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono">{t('history')}</Link></li>
             </ul>
           </div>
 
           {/* Credits */}
           <div>
-            <h4 className="text-[10px] font-mono uppercase tracking-widest text-zinc-600 mb-3">Creato da</h4>
+            <h4 className="text-[10px] font-mono uppercase tracking-widest text-zinc-600 mb-3">{t('createdBy')}</h4>
             <p className="text-xs text-zinc-400 font-mono">Fabio Danubbio</p>
-            <p className="text-xs text-zinc-600 mt-1">Full Stack Developer — Nola, Napoli</p>
+            <p className="text-xs text-zinc-600 mt-1">{t('creatorRole')}</p>
             <a
               href="https://www.danubbio.it"
               target="_blank"
@@ -50,7 +52,7 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="mt-8 pt-6 border-t border-zinc-900 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-[10px] text-zinc-700 font-mono">
-            © {new Date().getFullYear()} amalia — built for developers · powered by ai
+            {t('copyright', { year: new Date().getFullYear() })}
           </p>
           <div className="flex items-center gap-4">
             <a

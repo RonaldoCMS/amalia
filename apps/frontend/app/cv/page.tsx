@@ -2,20 +2,24 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
+import { useLanguage } from '../../i18n/LanguageProvider'
 import { CvService } from '../../services/cv.service'
 import { PublicCvItem } from '@amalia/shared'
 import { Footer } from '../components/Footer'
 
 export default function CvGalleryPage() {
+  const t = useTranslations('CV')
+  const { locale } = useLanguage()
   const [cvs, setCvs] = useState<PublicCvItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    new CvService().getGallery()
+    new CvService().getGallery(locale)
       .then(setCvs)
       .catch(() => setCvs([]))
       .finally(() => setIsLoading(false))
-  }, [])
+  }, [locale])
 
   return (
     <div className="min-h-screen bg-grid relative flex flex-col pb-16 sm:pb-0">
@@ -30,14 +34,14 @@ export default function CvGalleryPage() {
                 myCV<span className="text-violet-400">_</span>
               </h1>
               <p className="text-sm text-zinc-500 mt-1">
-                CV professionali verificati da Amalia
+                {t('galleryTitle')}
               </p>
             </div>
             <Link
               href="/cv/create"
               className="px-4 py-2 text-sm font-mono font-semibold rounded-xl border border-violet-400/30 bg-violet-400/10 text-violet-400 hover:bg-violet-400/20 transition"
             >
-              + Crea il tuo CV
+              {t('createCV')}
             </Link>
           </div>
 
@@ -45,9 +49,8 @@ export default function CvGalleryPage() {
           <div className="mt-4 p-3 rounded-xl border border-violet-400/20 bg-violet-400/5 flex items-start gap-3">
             <span className="text-lg">✨</span>
             <p className="text-xs font-mono text-zinc-400 leading-relaxed">
-              I CV qui presenti sono stati generati da Amalia attraverso un'intervista + i dati reali della piattaforma (sfide, linguaggi, punti). Le skill con{' '}
-              <span className="text-violet-400">✓ Verified</span>{' '}
-              sono certificate da sfide di programmazione reali.
+              {t('galleryDescription')}{' '}
+              <span className="text-violet-400">✓ Verified</span>
             </p>
           </div>
         </div>
@@ -62,9 +65,9 @@ export default function CvGalleryPage() {
         {/* Empty */}
         {!isLoading && cvs.length === 0 && (
           <div className="text-center py-16">
-            <p className="text-zinc-600 font-mono text-sm">Nessun CV ancora generato.</p>
+            <p className="text-zinc-600 font-mono text-sm">{t('galleryEmpty')}</p>
             <Link href="/cv/create" className="inline-block mt-4 text-sm font-mono text-violet-400 hover:underline">
-              Sii il primo →
+              {t('galleryEmptyAction')}
             </Link>
           </div>
         )}
@@ -111,18 +114,18 @@ export default function CvGalleryPage() {
               <div className="flex items-center gap-3 pt-3 border-t border-zinc-800/60">
                 <div className="text-center">
                   <p className="text-xs font-bold font-mono text-cyan-400">{cv.amaliaStats.challengesCompleted}</p>
-                  <p className="text-[9px] font-mono text-zinc-600">sfide</p>
+                  <p className="text-[9px] font-mono text-zinc-600">{t('challenges')}</p>
                 </div>
                 <div className="text-center">
                   <p className="text-xs font-bold font-mono text-emerald-400">{cv.amaliaStats.accuracy}%</p>
-                  <p className="text-[9px] font-mono text-zinc-600">acc.</p>
+                  <p className="text-[9px] font-mono text-zinc-600">{t('accuracy')}</p>
                 </div>
                 <div className="text-center">
                   <p className="text-xs font-bold font-mono text-amber-400">{cv.amaliaStats.totalScore}</p>
-                  <p className="text-[9px] font-mono text-zinc-600">punti</p>
+                  <p className="text-[9px] font-mono text-zinc-600">{t('points')}</p>
                 </div>
                 <div className="ml-auto">
-                  <span className="text-[10px] font-mono text-violet-400 group-hover:underline">Vedi CV →</span>
+                  <span className="text-[10px] font-mono text-violet-400 group-hover:underline">{t('viewCV')}</span>
                 </div>
               </div>
             </Link>

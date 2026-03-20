@@ -14,12 +14,12 @@ export class ChallengeService {
     this.repository = new ChallengeRepository()
   }
 
-  generate(request: GenerateChallengeRequest): Promise<ChallengeResponse> {
-    return this.repository.generate(request)
+  generate(request: GenerateChallengeRequest, lang?: string): Promise<ChallengeResponse> {
+    return this.repository.generate(request, lang)
   }
 
-  evaluate(request: EvaluateChallengeRequest): Promise<EvaluationResponse> {
-    return this.repository.evaluate(request)
+  evaluate(request: EvaluateChallengeRequest, lang?: string): Promise<EvaluationResponse> {
+    return this.repository.evaluate(request, lang)
   }
 
   getStats(): Promise<UserStats> {

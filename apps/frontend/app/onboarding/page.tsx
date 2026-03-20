@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { useAuthContext } from '../context/AuthContext'
 import { useOnboarding } from '../../hooks/useOnboarding'
 import { DevLanguage, JobType, WorkStyle, DevGoal, Availability, EXPERIENCE_LEVELS, OnboardingRequest } from '@amalia/shared'
@@ -52,6 +53,7 @@ function OnboardingForm() {
   const searchParams = useSearchParams()
   const isEdit = searchParams.get('edit') === 'true'
   const { data: existing, save, isSaving, error } = useOnboarding()
+  const t = useTranslations('Onboarding')
 
   const [step, setStep] = useState(0)
   const [languages, setLanguages] = useState<string[]>([])
@@ -117,10 +119,10 @@ function OnboardingForm() {
         </div>
 
         <h1 className="text-xl font-semibold text-zinc-100 mb-1">
-          {isEdit ? 'Modifica il tuo profilo' : 'Completa il tuo profilo'}
+          {isEdit ? t('editTitle') : t('createTitle')}
         </h1>
         <p className="text-sm text-zinc-500 mb-6">
-          {isEdit ? 'Aggiorna le tue informazioni tecniche.' : 'Ci aiuta a trovare developer compatibili con te.'}
+          {isEdit ? t('editSubtitle') : t('createSubtitle')}
         </p>
 
         <StepIndicator current={step} total={ALL_STEPS} />
@@ -130,8 +132,8 @@ function OnboardingForm() {
           {/* Step 0 — Languages */}
           {step === 0 && (
             <div className="flex flex-col gap-4 flex-1">
-              <p className="text-xs text-zinc-500 font-mono uppercase tracking-widest">01 / linguaggi</p>
-              <h2 className="text-base font-semibold text-zinc-100">Quali linguaggi conosci?</h2>
+              <p className="text-xs text-zinc-500 font-mono uppercase tracking-widest">{t('sectionLanguages')}</p>
+              <h2 className="text-base font-semibold text-zinc-100">{t('languagesQuestion')}</h2>
               <div className="flex flex-wrap gap-2">
                 {Object.values(DevLanguage).map(l => (
                   <Pill
@@ -146,18 +148,18 @@ function OnboardingForm() {
           {/* Step 1 — Experience + Role */}
           {step === 1 && (
             <div className="flex flex-col gap-5 flex-1">
-              <p className="text-xs text-zinc-500 font-mono uppercase tracking-widest">02 / esperienza</p>
+              <p className="text-xs text-zinc-500 font-mono uppercase tracking-widest">{t('sectionExperience')}</p>
               <div>
-                <h2 className="text-base font-semibold text-zinc-100 mb-3">Anni di esperienza</h2>
+                <h2 className="text-base font-semibold text-zinc-100 mb-3">{t('yearsLabel')}</h2>
                 <div className="flex flex-wrap gap-2">
                   {EXPERIENCE_LEVELS.map(l => (
-                    <Pill key={l} label={l === '0' ? '0 anni' : `${l} anni`} selected={experience === l}
+                    <Pill key={l} label={l === '0' ? t('years_zero') : t('years_other', { value: l })} selected={experience === l}
                       onClick={() => setExperience(l)} />
                   ))}
                 </div>
               </div>
               <div>
-                <h2 className="text-base font-semibold text-zinc-100 mb-3">Ruolo professionale</h2>
+                <h2 className="text-base font-semibold text-zinc-100 mb-3">{t('roleLabel')}</h2>
                 <div className="flex flex-wrap gap-2">
                   {Object.values(JobType).map(j => (
                     <Pill key={j} label={j} selected={jobType === j} onClick={() => setJobType(j)} />
@@ -170,11 +172,11 @@ function OnboardingForm() {
           {/* Step 2 — Goals */}
           {step === 2 && (
             <div className="flex flex-col gap-4 flex-1">
-              <p className="text-xs text-zinc-500 font-mono uppercase tracking-widest">03 / obiettivi</p>
-              <h2 className="text-base font-semibold text-zinc-100">Cosa stai cercando?</h2>
+              <p className="text-xs text-zinc-500 font-mono uppercase tracking-widest">{t('sectionGoals')}</p>
+              <h2 className="text-base font-semibold text-zinc-100">{t('goalsQuestion')}</h2>
               <div className="flex flex-wrap gap-2">
                 {Object.values(DevGoal).map(g => (
-                  <Pill key={g} label={goalLabel[g] ?? g} selected={goals.includes(g)}
+                  <Pill key={g} label={t(`goal${g}`)} selected={goals.includes(g)}
                     onClick={() => setGoals(toggle(goals, g))} />
                 ))}
               </div>
@@ -184,9 +186,9 @@ function OnboardingForm() {
           {/* Step 3 — Work style + Bio */}
           {step === 3 && (
             <div className="flex flex-col gap-5 flex-1">
-              <p className="text-xs text-zinc-500 font-mono uppercase tracking-widest">04 / stile di lavoro</p>
+              <p className="text-xs text-zinc-500 font-mono uppercase tracking-widest">{t('sectionWorkStyle')}</p>
               <div>
-                <h2 className="text-base font-semibold text-zinc-100 mb-3">Modalità di lavoro</h2>
+                <h2 className="text-base font-semibold text-zinc-100 mb-3">{t('workStyleLabel')}</h2>
                 <div className="flex gap-2">
                   {Object.values(WorkStyle).map(w => (
                     <Pill key={w} label={w} selected={workStyle === w} onClick={() => setWorkStyle(w)} />
@@ -194,26 +196,26 @@ function OnboardingForm() {
                 </div>
               </div>
               <div>
-                <h2 className="text-base font-semibold text-zinc-100 mb-3">Disponibilità</h2>
+                <h2 className="text-base font-semibold text-zinc-100 mb-3">{t('availabilityLabel')}</h2>
                 <div className="flex flex-wrap gap-2">
                   {Object.values(Availability).map(a => (
-                    <Pill key={a} label={availLabel[a] ?? a} selected={availability === a}
+                    <Pill key={a} label={t(`avail${a}`)} selected={availability === a}
                       onClick={() => setAvailability(a)} />
                   ))}
                 </div>
               </div>
               <div>
-                <label className="text-xs text-zinc-500 font-mono mb-1.5 block">Bio (opzionale)</label>
+                <label className="text-xs text-zinc-500 font-mono mb-1.5 block">{t('bioLabel')}</label>
                 <textarea
                   value={bio}
                   onChange={e => setBio(e.target.value)}
                   rows={2}
-                  placeholder="Breve descrizione di te..."
+                  placeholder={t('bioPlaceholder')}
                   className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-zinc-100 font-mono placeholder-zinc-700 focus:outline-none focus:border-cyan-500/50 resize-none transition-colors"
                 />
               </div>
               <div>
-                <label className="text-xs text-zinc-500 font-mono mb-1.5 block">GitHub URL (opzionale)</label>
+                <label className="text-xs text-zinc-500 font-mono mb-1.5 block">{t('githubLabel')}</label>
                 <input
                   type="url"
                   value={githubUrl}
@@ -236,7 +238,7 @@ function OnboardingForm() {
                 onClick={() => setStep(s => s - 1)}
                 className="px-4 py-2 rounded-lg text-sm font-mono border border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:border-zinc-700 transition-colors"
               >
-                ← indietro
+                {t('back')}
               </button>
             )}
             <button
@@ -244,7 +246,7 @@ function OnboardingForm() {
               disabled={!canProceed() || isSaving}
               className="flex-1 py-2 rounded-lg text-sm font-mono font-medium bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 hover:border-cyan-500/50 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              {isSaving ? 'Salvataggio...' : step < ALL_STEPS - 1 ? 'Continua →' : '🚀 Inizia'}
+              {isSaving ? t('saving') : step < ALL_STEPS - 1 ? t('continue') : t('start')}
             </button>
           </div>
         </div>

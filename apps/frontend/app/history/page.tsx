@@ -2,12 +2,15 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { useAuthContext } from '../context/AuthContext'
 import { useHistory } from '../../hooks/useHistory'
 import { useStats } from '../../hooks/useStats'
 import { ChallengeHistoryItem, ChallengeType, ChallengeLevel, ChallengeLanguage } from '@amalia/shared'
 import { Footer } from '../components/Footer'
 import { AdBanner } from '../components/AdBanner'
+import { useLanguage } from '../../i18n/LanguageProvider'
+import { LOCALE_DATE_MAP } from '../../i18n/config'
 
 const levelColors: Record<ChallengeLevel, string> = {
   [ChallengeLevel.Beginner]: 'text-emerald-400 border-emerald-400/30 bg-emerald-400/10',
@@ -34,8 +37,8 @@ function Badge({ label, className }: { label: string; className: string }) {
   )
 }
 
-function HistoryRow({ item }: { item: ChallengeHistoryItem }) {
-  const date = new Date(item.createdAt).toLocaleDateString('it-IT', {
+function HistoryRow({ item, locale }: { item: ChallengeHistoryItem; locale: string }) {
+  const date = new Date(item.createdAt).toLocaleDateString(LOCALE_DATE_MAP[locale as keyof typeof LOCALE_DATE_MAP] || 'it-IT', {
     day: '2-digit', month: 'short', year: 'numeric',
   })
 
@@ -78,6 +81,8 @@ export default function HistoryPage() {
   const router = useRouter()
   const { history, isLoading } = useHistory()
   const { stats } = useStats()
+  const t = useTranslations('History')
+  const { locale } = useLanguage()
 
   const [typeFilter, setTypeFilter] = useState<FilterType>('all')
   const [levelFilter, setLevelFilter] = useState<FilterLevel>('all')
@@ -114,25 +119,25 @@ export default function HistoryPage() {
           <h1 className="text-lg font-semibold text-zinc-100 font-mono">
             <span className="text-cyan-400">{'>'}</span> challenge history
           </h1>
-          <p className="text-sm text-zinc-500 mt-1">{history.length} challenge completate</p>
+          <p className="text-sm text-zinc-500 mt-1">{t('count', { count: history.length })}</p>
         </div>
 
         {/* Filters */}
         <div className="flex flex-wrap gap-4 mb-6">
           <div className="flex flex-wrap gap-1.5">
-            <button className={filterBtn(typeFilter === 'all')} onClick={() => setTypeFilter('all')}>all types</button>
+            <button className={filterBtn(typeFilter === 'all')} onClick={() => setTypeFilter('all')}>{t('filterAllTypes')}</button>
             {Object.values(ChallengeType).map(t => (
               <button key={t} className={filterBtn(typeFilter === t)} onClick={() => setTypeFilter(t)}>{t}</button>
             ))}
           </div>
           <div className="flex flex-wrap gap-1.5">
-            <button className={filterBtn(levelFilter === 'all')} onClick={() => setLevelFilter('all')}>all levels</button>
+            <button className={filterBtn(levelFilter === 'all')} onClick={() => setLevelFilter('all')}>{t('filterAllLevels')}</button>
             {Object.values(ChallengeLevel).map(l => (
               <button key={l} className={filterBtn(levelFilter === l)} onClick={() => setLevelFilter(l)}>{l}</button>
             ))}
           </div>
           <div className="flex flex-wrap gap-1.5">
-            <button className={filterBtn(langFilter === 'all')} onClick={() => setLangFilter('all')}>all langs</button>
+            <button className={filterBtn(langFilter === 'all')} onClick={() => setLangFilter('all')}>{t('filterAllLangs')}</button>
             {Object.values(ChallengeLanguage).map(l => (
               <button key={l} className={filterBtn(langFilter === l)} onClick={() => setLangFilter(l)}>{l}</button>
             ))}
@@ -146,12 +151,12 @@ export default function HistoryPage() {
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-sm text-zinc-600 font-mono py-12 text-center border border-dashed border-zinc-800 rounded-lg">
-            {history.length === 0 ? 'Nessuna challenge completata ancora.' : 'Nessuna challenge trovata con i filtri selezionati.'}
+            {history.length === 0 ? t('emptyDefault') : t('emptyFiltered')}
           </div>
         ) : (
           <div className="flex flex-col gap-2">
             {filtered.map(item => (
-              <HistoryRow key={item.id} item={item} />
+              <HistoryRow key={item.id} item={item} locale={locale} />
             ))}
           </div>
         )}

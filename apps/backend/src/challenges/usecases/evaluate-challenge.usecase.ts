@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { ClaudeRepository } from '../../shared/repositories/claude.repository'
 import { UserChallengeRepository } from '../../shared/repositories/pg/user-challenge.repository'
+import { UserRepository } from '../../shared/repositories/pg/user.repository'
+import { getLanguageInstruction } from '../../shared/utils/prompt-language'
 import {
   EvaluateChallengeRequest,
   EvaluationResponse,
@@ -26,12 +28,18 @@ export class EvaluateChallengeUseCase {
   constructor(
     private readonly claudeRepository: ClaudeRepository,
     private readonly userChallengeRepository: UserChallengeRepository,
+    private readonly userRepository: UserRepository,
   ) {}
 
-  async execute(request: EvaluateChallengeRequest, userId: string): Promise<EvaluationResponse> {
+  async execute(request: EvaluateChallengeRequest, userId: string, lang?: string): Promise<EvaluationResponse> {
+    if (!lang) {
+      const user = await this.userRepository.findById(userId)
+      lang = user?.preferredLanguage ?? 'it'
+    }
+
     const raw = await this.claudeRepository.sendMessage(
-      this.buildSystemPrompt(),
-      this.buildUserPrompt(request),
+      this.buildSystemPrompt(lang),
+      this.buildUserPrompt(request, lang),
     )
 
     const parsed = this.parse(raw)
@@ -52,29 +60,29 @@ export class EvaluateChallengeUseCase {
     return { ...parsed, score }
   }
 
-  private buildSystemPrompt(): string {
-    return `Sei amalia, una maestra di programmazione.
-Valuti le risposte degli studenti in modo preciso e didattico.
-Rispondi SEMPRE e SOLO con JSON valido. Nessun testo extra, nessun markdown, nessun backtick.`
+  private buildSystemPrompt(lang: string): string {
+    return `You are Amalia, a programming teacher.
+You evaluate student answers precisely and educationally.
+ALWAYS respond with valid JSON only. No extra text, no markdown, no backticks.${getLanguageInstruction(lang)}`
   }
 
-  private buildUserPrompt(request: EvaluateChallengeRequest): string {
-    return `Valuta questa risposta a un esercizio di programmazione.
+  private buildUserPrompt(request: EvaluateChallengeRequest, lang: string): string {
+    return `Evaluate this answer to a programming exercise.
 
-Linguaggio: ${request.language}
-Livello: ${request.level}
-Tipo: ${request.type}
-Titolo: ${request.challenge.title}
-Codice mostrato: ${request.challenge.code}
-Risposta attesa: ${request.challenge.answer}
-Risposta studente: ${request.userAnswer}
+Language: ${request.language}
+Level: ${request.level}
+Type: ${request.type}
+Title: ${request.challenge.title}
+Code shown: ${request.challenge.code}
+Expected answer: ${request.challenge.answer}
+Student answer: ${request.userAnswer}
 
-Considera corretta anche una risposta sostanzialmente equivalente a quella attesa.
+Also consider a substantially equivalent answer as correct.
 
-Rispondi con questo JSON:
+Respond with this JSON:
 {
-  "correct": true oppure false,
-  "feedback": "spiegazione in italiano, 2-3 frasi"
+  "correct": true or false,
+  "feedback": "explanation in 2-3 sentences"
 }`
   }
 
@@ -83,7 +91,7 @@ Rispondi con questo JSON:
       const clean = raw.replace(/```json|```/g, '').trim()
       return JSON.parse(clean)
     } catch {
-      throw new Error(`Risposta Claude non parsabile: ${raw}`)
+      throw new Error(`Unparseable Claude response: ${raw}`)
     }
   }
 }

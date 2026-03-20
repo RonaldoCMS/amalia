@@ -3,10 +3,13 @@
 import { useEffect, useState, FormEvent, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { useAuthContext } from '../context/AuthContext'
 import { useProfile } from '../../hooks/useProfile'
 import { Footer } from '../components/Footer'
 import { AdBanner } from '../components/AdBanner'
+import { useLanguage } from '../../i18n/LanguageProvider'
+import { LOCALE_DATE_MAP } from '../../i18n/config'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? ''
 
@@ -51,6 +54,8 @@ export default function ProfilePage() {
   const { isAuthenticated, logout } = useAuthContext()
   const router = useRouter()
   const { profile, isLoading, updatePassword, deleteAccount, reload } = useProfile()
+  const t = useTranslations('Profile')
+  const { locale } = useLanguage()
 
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
   const [photoUploading, setPhotoUploading] = useState(false)
@@ -76,23 +81,23 @@ export default function ProfilePage() {
   const handleUpdatePassword = async (e: FormEvent) => {
     e.preventDefault()
     if (newPassword !== confirmPassword) {
-      setPwStatus({ type: 'error', msg: 'Le password non coincidono.' })
+      setPwStatus({ type: 'error', msg: t('passwordMismatch') })
       return
     }
     if (newPassword.length < 6) {
-      setPwStatus({ type: 'error', msg: 'La nuova password deve essere di almeno 6 caratteri.' })
+      setPwStatus({ type: 'error', msg: t('passwordTooShort') })
       return
     }
     setPwLoading(true)
     setPwStatus(null)
     try {
       await updatePassword({ currentPassword, newPassword })
-      setPwStatus({ type: 'success', msg: 'Password aggiornata correttamente.' })
+      setPwStatus({ type: 'success', msg: t('passwordSuccess') })
       setCurrentPassword('')
       setNewPassword('')
       setConfirmPassword('')
     } catch {
-      setPwStatus({ type: 'error', msg: 'Password attuale errata o errore del server.' })
+      setPwStatus({ type: 'error', msg: t('passwordError') })
     } finally {
       setPwLoading(false)
     }
@@ -106,13 +111,13 @@ export default function ProfilePage() {
       logout()
       router.replace('/')
     } catch {
-      setDeleteError('Errore durante l\'eliminazione dell\'account.')
+      setDeleteError(t('deleteError'))
       setDeleteLoading(false)
     }
   }
 
   const joinDate = profile?.createdAt
-    ? new Date(profile.createdAt).toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' })
+    ? new Date(profile.createdAt).toLocaleDateString(LOCALE_DATE_MAP[locale] || 'it-IT', { day: '2-digit', month: 'long', year: 'numeric' })
     : null
 
   const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -130,10 +135,10 @@ export default function ProfilePage() {
         headers: { Authorization: `Bearer ${token}` },
         body: form,
       })
-      if (!res.ok) throw new Error('Upload fallito')
-      setPhotoStatus({ type: 'success', msg: 'Foto aggiornata.' })
+      if (!res.ok) throw new Error('Upload failed')
+      setPhotoStatus({ type: 'success', msg: t('photoUpdated') })
     } catch {
-      setPhotoStatus({ type: 'error', msg: 'Errore durante il caricamento.' })
+      setPhotoStatus({ type: 'error', msg: t('photoError') })
       setPhotoPreview(null)
     } finally {
       setPhotoUploading(false)
@@ -154,7 +159,7 @@ export default function ProfilePage() {
 
         {/* Profile info + photo */}
         <section className="border border-zinc-800 rounded-xl p-6 bg-zinc-900/30">
-          <h2 className="text-xs font-mono text-zinc-500 uppercase tracking-widest mb-4">Account</h2>
+          <h2 className="text-xs font-mono text-zinc-500 uppercase tracking-widest mb-4">{t('accountTitle')}</h2>
           {isLoading ? (
             <p className="text-xs text-zinc-600 font-mono">loading<span className="animate-blink">_</span></p>
           ) : (
@@ -164,7 +169,7 @@ export default function ProfilePage() {
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   className="relative group"
-                  title="Cambia foto"
+                  title={t('changePhoto')}
                 >
                   {currentPhotoUrl ? (
                     <img
@@ -203,7 +208,7 @@ export default function ProfilePage() {
                 </div>
                 <div className="h-px bg-zinc-800" />
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-zinc-600 font-mono">membro dal</span>
+                  <span className="text-xs text-zinc-600 font-mono">{t('memberSince')}</span>
                   <span className="text-sm text-zinc-400 font-mono">{joinDate}</span>
                 </div>
                 <div className="h-px bg-zinc-800" />
@@ -211,24 +216,24 @@ export default function ProfilePage() {
                   <span className="text-xs text-zinc-600 font-mono">onboarding</span>
                   <div className="flex items-center gap-3">
                     <span className={`text-xs font-mono ${profile?.onboardingCompleted ? 'text-emerald-400' : 'text-amber-400'}`}>
-                      {profile?.onboardingCompleted ? '✓ completato' : '⚠ incompleto'}
+                      {profile?.onboardingCompleted ? t('onboardingComplete') : t('onboardingIncomplete')}
                     </span>
                     <Link
                       href="/onboarding?edit=true"
                       className="text-xs font-mono text-zinc-600 hover:text-cyan-400 transition-colors underline underline-offset-2"
                     >
-                      modifica
+                      {t('editOnboarding')}
                     </Link>
                   </div>
                 </div>
                 <div className="h-px bg-zinc-800" />
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-zinc-600 font-mono">sessione</span>
+                  <span className="text-xs text-zinc-600 font-mono">{t('session')}</span>
                   <button
                     onClick={() => { logout(); router.push('/') }}
                     className="text-xs font-mono text-zinc-500 hover:text-red-400 transition-colors border border-zinc-800 hover:border-red-400/30 rounded px-2.5 py-1"
                   >
-                    logout →
+                    {t('logoutButton')}
                   </button>
                 </div>
               </div>
@@ -238,24 +243,24 @@ export default function ProfilePage() {
 
         {/* Change password */}
         <section className="border border-zinc-800 rounded-xl p-6 bg-zinc-900/30">
-          <h2 className="text-xs font-mono text-zinc-500 uppercase tracking-widest mb-4">Cambia Password</h2>
+          <h2 className="text-xs font-mono text-zinc-500 uppercase tracking-widest mb-4">{t('changePasswordTitle')}</h2>
           <form onSubmit={handleUpdatePassword} className="space-y-4">
             <InputField
-              label="password attuale"
+              label={t('currentPassword')}
               type="password"
               value={currentPassword}
               onChange={setCurrentPassword}
               autoComplete="current-password"
             />
             <InputField
-              label="nuova password"
+              label={t('newPassword')}
               type="password"
               value={newPassword}
               onChange={setNewPassword}
               autoComplete="new-password"
             />
             <InputField
-              label="conferma nuova password"
+              label={t('confirmPassword')}
               type="password"
               value={confirmPassword}
               onChange={setConfirmPassword}
@@ -267,22 +272,22 @@ export default function ProfilePage() {
               disabled={pwLoading || !currentPassword || !newPassword || !confirmPassword}
               className="w-full py-2.5 rounded-lg text-sm font-mono font-medium bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 hover:border-cyan-500/50 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              {pwLoading ? 'aggiornamento...' : 'aggiorna password'}
+              {pwLoading ? t('updatingPassword') : t('updatePassword')}
             </button>
           </form>
         </section>
 
         {/* Danger zone */}
         <section className="border border-red-400/20 rounded-xl p-6 bg-red-400/5">
-          <h2 className="text-xs font-mono text-red-400/80 uppercase tracking-widest mb-1">Danger Zone</h2>
+          <h2 className="text-xs font-mono text-red-400/80 uppercase tracking-widest mb-1">{t('dangerZone')}</h2>
           <p className="text-xs text-zinc-500 font-mono mb-4">
-            L'eliminazione dell'account è irreversibile. Tutti i tuoi dati verranno cancellati.
+            {t('dangerDescription')}
           </p>
           <button
             onClick={() => setShowDeleteModal(true)}
             className="px-4 py-2 rounded-lg text-xs font-mono font-medium border border-red-400/30 text-red-400 bg-red-400/5 hover:bg-red-400/15 hover:border-red-400/50 transition-all"
           >
-            elimina account
+            {t('deleteAccount')}
           </button>
         </section>
       </main>
@@ -298,11 +303,11 @@ export default function ProfilePage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
           <div className="w-full max-w-sm border border-zinc-800 rounded-xl bg-zinc-950 p-6 shadow-2xl">
             <h3 className="text-base font-semibold text-zinc-100 font-mono mb-2">
-              <span className="text-red-400">!</span> Conferma eliminazione
+              <span className="text-red-400">!</span> {t('deleteConfirmTitle')}
             </h3>
             <p className="text-sm text-zinc-400 mb-6">
-              Sei sicuro di voler eliminare il tuo account? Questa azione è{' '}
-              <span className="text-red-400 font-semibold">irreversibile</span>.
+              {t('deleteConfirmText')}{' '}
+              <span className="text-red-400 font-semibold">{t('deleteConfirmBold')}</span>.
             </p>
             {deleteError && <Alert message={deleteError} type="error" />}
             <div className="flex gap-3 mt-4">
@@ -311,14 +316,14 @@ export default function ProfilePage() {
                 disabled={deleteLoading}
                 className="flex-1 py-2 rounded-lg text-sm font-mono border border-zinc-700 text-zinc-400 hover:text-zinc-200 hover:border-zinc-600 transition-colors disabled:opacity-40"
               >
-                annulla
+                {t('deleteCancel')}
               </button>
               <button
                 onClick={handleDeleteAccount}
                 disabled={deleteLoading}
                 className="flex-1 py-2 rounded-lg text-sm font-mono font-medium border border-red-400/40 text-red-400 bg-red-400/10 hover:bg-red-400/20 transition-colors disabled:opacity-40"
               >
-                {deleteLoading ? 'eliminazione...' : 'elimina'}
+                {deleteLoading ? t('deleting') : t('deleteButton')}
               </button>
             </div>
           </div>

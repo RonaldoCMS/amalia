@@ -47,4 +47,8 @@ export class ChallengeRepository {
   async save(challenge: Partial<Challenge>): Promise<Challenge> {
     return this.repository.save(challenge)
   }
+
+  async updateTranslations(id: string, translations: Record<string, { title: string; description: string; options: string[] }>): Promise<void> {
+    await this.repository.update(id, { translations })
+  }
 }

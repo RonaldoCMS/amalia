@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { ChallengeType, ChallengeLevel, ChallengeLanguage } from '@amalia/shared'
 import { ConfigurationSelector } from './ConfigurationSelector'
 import { useConfigurationChallenge } from '../../hooks/useConfigurationChallenge'
@@ -41,6 +42,7 @@ interface ConfigurationPanelProps {
 export function ConfigurationPanel({ onStart }: ConfigurationPanelProps) {
   const { configuration, setType, setLevel, setLanguage } = useConfigurationChallenge()
   const [isRandomLang, setIsRandomLang] = useState(false)
+  const t = useTranslations('Challenge')
 
   const handleLangChange = (lang: ChallengeLanguage) => {
     setIsRandomLang(false)
@@ -60,13 +62,13 @@ export function ConfigurationPanel({ onStart }: ConfigurationPanelProps) {
   return (
     <div>
       <ConfigurationSelector
-        label="Tipo di esercizio"
+        label={t('exerciseType')}
         options={typeOptions}
         selected={configuration.type}
         onChange={setType}
       />
       <ConfigurationSelector
-        label="Livello"
+        label={t('level')}
         options={levelOptions}
         selected={configuration.level}
         onChange={setLevel}
@@ -74,7 +76,7 @@ export function ConfigurationPanel({ onStart }: ConfigurationPanelProps) {
 
       {/* Language + Random */}
       <div className="mb-6">
-        <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3 font-mono">Linguaggio</p>
+        <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3 font-mono">{t('language')}</p>
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setIsRandomLang(true)}
@@ -84,7 +86,7 @@ export function ConfigurationPanel({ onStart }: ConfigurationPanelProps) {
                 : 'border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-zinc-300'
             }`}
           >
-            🎲 Random
+            {t('random')}
           </button>
           {languageOptions.map(opt => (
             <button
@@ -106,7 +108,7 @@ export function ConfigurationPanel({ onStart }: ConfigurationPanelProps) {
         onClick={handleStart}
         className="w-full py-3 rounded-lg bg-cyan-500 text-zinc-950 text-sm font-semibold hover:bg-cyan-400 transition-colors mt-6 glow-cyan"
       >
-        Genera sfida →
+        {t('generate')}
       </button>
     </div>
   )

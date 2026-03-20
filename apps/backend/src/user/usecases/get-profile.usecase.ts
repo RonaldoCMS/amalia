@@ -16,6 +16,7 @@ export class GetProfileUseCase {
       profilePhotoUrl: user.profilePhotoUrl,
       createdAt: user.createdAt.toISOString(),
       onboardingCompleted: user.onboarding?.completed ?? false,
+      preferredLanguage: user.preferredLanguage ?? null,
     }
   }
 }

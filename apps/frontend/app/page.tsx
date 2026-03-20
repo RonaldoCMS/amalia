@@ -3,19 +3,21 @@
 import Link from 'next/link'
 import { useAuthContext } from './context/AuthContext'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Footer } from './components/Footer'
 import { AdBanner } from './components/AdBanner'
 
-const features = [
-  { icon: '{ }', title: 'Fill the blank', desc: 'Completa il codice mancante nel punto giusto.', colorClass: 'text-cyan-400' },
-  { icon: '?!', title: 'Quiz', desc: 'Scegli la risposta corretta tra le opzioni.', colorClass: 'text-violet-400' },
-  { icon: '><', title: 'Find the bug', desc: "Trova e correggi l'errore nel codice.", colorClass: 'text-amber-400' },
-  { icon: 'fn', title: 'Write code', desc: 'Scrivi la soluzione da zero.', colorClass: 'text-emerald-400' },
+const featureData = [
+  { icon: '{ }', title: 'Fill the blank', descKey: 'featureDesc_fill', colorClass: 'text-cyan-400' },
+  { icon: '?!', title: 'Quiz', descKey: 'featureDesc_quiz', colorClass: 'text-violet-400' },
+  { icon: '><', title: 'Find the bug', descKey: 'featureDesc_bug', colorClass: 'text-amber-400' },
+  { icon: 'fn', title: 'Write code', descKey: 'featureDesc_write', colorClass: 'text-emerald-400' },
 ]
 
 export default function HomePage() {
   const { isAuthenticated } = useAuthContext()
   const router = useRouter()
+  const t = useTranslations('Home')
 
   // Authenticated users go straight to the feed
   if (isAuthenticated) {
@@ -35,13 +37,13 @@ export default function HomePage() {
         </span>
         <div className="flex gap-3">
           <Link href="/login" className="text-sm text-zinc-400 hover:text-zinc-200 transition-colors">
-            Accedi
+            {t('login')}
           </Link>
           <Link
             href="/register"
             className="text-sm px-4 py-1.5 rounded-md bg-zinc-800 text-zinc-200 hover:bg-zinc-700 transition-colors border border-zinc-700"
           >
-            Registrati
+            {t('register')}
           </Link>
         </div>
       </nav>
@@ -59,11 +61,10 @@ export default function HomePage() {
         </h1>
 
         <p className="text-lg sm:text-xl text-zinc-400 max-w-xl mx-auto mb-4 leading-relaxed">
-          La tua maestra di codice.
+          {t('tagline')}
         </p>
         <p className="text-sm text-zinc-500 max-w-lg mx-auto mb-10">
-          Sfide di programmazione generate dall&apos;AI per allenare le tue skill.
-          Scegli il linguaggio, il livello e il tipo di sfida.
+          {t('subtitle')}
         </p>
 
         {isAuthenticated ? (
@@ -71,7 +72,7 @@ export default function HomePage() {
             onClick={() => router.push('/challenge')}
             className="inline-flex items-center gap-2 px-8 py-3 rounded-lg bg-cyan-500 text-zinc-950 font-semibold text-sm hover:bg-cyan-400 transition-colors glow-cyan"
           >
-            Inizia una sfida
+            {t('startChallenge')}
             <span className="text-base">→</span>
           </button>
         ) : (
@@ -80,13 +81,13 @@ export default function HomePage() {
               href="/register"
               className="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-lg bg-cyan-500 text-zinc-950 font-semibold text-sm hover:bg-cyan-400 transition-colors glow-cyan"
             >
-              Crea un account
+              {t('createAccount')}
             </Link>
             <Link
               href="/login"
               className="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-lg bg-zinc-900 text-zinc-300 font-medium text-sm hover:bg-zinc-800 transition-colors border border-zinc-800"
             >
-              Accedi
+              {t('login')}
             </Link>
           </div>
         )}
@@ -95,7 +96,7 @@ export default function HomePage() {
       {/* Features */}
       <section className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pb-16 sm:pb-24">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {features.map((feat) => (
+          {featureData.map((feat) => (
             <div
               key={feat.title}
               className="group p-5 rounded-xl bg-zinc-900/50 border border-zinc-800/50 hover:border-zinc-700 transition-all"
@@ -104,7 +105,7 @@ export default function HomePage() {
                 {feat.icon}
               </span>
               <h3 className="text-sm font-semibold text-zinc-200 mb-1">{feat.title}</h3>
-              <p className="text-xs text-zinc-500 leading-relaxed">{feat.desc}</p>
+              <p className="text-xs text-zinc-500 leading-relaxed">{t(feat.descKey)}</p>
             </div>
           ))}
         </div>

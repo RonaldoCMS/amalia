@@ -49,4 +49,8 @@ export class UserRepository {
     const response = await this.client.get<ChallengeHistoryItem[]>(`/${userId}/challenge-history`)
     return response.data
   }
+
+  async updateLanguage(language: string): Promise<void> {
+    await this.client.patch('/language', { language })
+  }
 }
