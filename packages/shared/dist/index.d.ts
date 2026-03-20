@@ -9,6 +9,28 @@ export declare enum ChallengeLevel {
     Intermediate = "intermediate",
     Hard = "hard"
 }
+export declare enum ChallengeCategory {
+    Programming = "programming",
+    Database = "database",
+    DevOps = "devops",
+    Security = "security",
+    Tools = "tools"
+}
+export interface SubtopicDefinition {
+    id: string;
+    label: string;
+}
+export interface TopicDefinition {
+    id: string;
+    label: string;
+    category: ChallengeCategory;
+    subtopics?: SubtopicDefinition[];
+}
+export declare const TOPICS: TopicDefinition[];
+export declare function getTopicsByCategory(category: ChallengeCategory): TopicDefinition[];
+export declare function getTopicById(id: string): TopicDefinition | undefined;
+export declare function getRandomTopic(): TopicDefinition;
+export declare function getRandomSubtopics(topicId: string, maxCount?: number): SubtopicDefinition[];
 export declare enum ChallengeLanguage {
     TypeScript = "TypeScript",
     JavaScript = "JavaScript",
@@ -23,7 +45,8 @@ export declare enum ChallengeLanguage {
     PHP = "PHP",
     Ruby = "Ruby",
     Swift = "Swift",
-    Kotlin = "Kotlin"
+    Kotlin = "Kotlin",
+    C = "C"
 }
 export declare enum NotificationType {
     NewMatch = "new_match",
@@ -170,14 +193,18 @@ export interface UpdateEmailRequest {
 export interface GenerateChallengeRequest {
     type: ChallengeType;
     level: ChallengeLevel;
-    language: ChallengeLanguage;
+    topic: string;
+    subtopics?: string[];
+    language?: ChallengeLanguage;
 }
 export interface EvaluateChallengeRequest {
     challenge: ChallengeResponse;
     type: ChallengeType;
     level: ChallengeLevel;
-    language: ChallengeLanguage;
+    topic: string;
+    subtopics?: string[];
     userAnswer: string;
+    language?: ChallengeLanguage;
 }
 export interface ChallengeResponse {
     id?: string;
@@ -220,6 +247,7 @@ export interface UserProfile {
     profilePhotoUrl: string | null;
     createdAt: string;
     onboardingCompleted: boolean;
+    preferredLanguage: string | null;
 }
 export interface ChallengeHistoryItem {
     id: string;

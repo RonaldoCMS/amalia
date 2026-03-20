@@ -20,7 +20,7 @@ import { AnswerWrite } from './components/AnswerInput/AnswerWrite'
 import { ConfigurationPanel } from '../components/ConfigurationPanel'
 import { Footer } from '../components/Footer'
 import { AdBanner, AdInterstitial } from '../components/AdBanner'
-import { ChallengeType, ChallengeLanguage } from '@amalia/shared'
+import { ChallengeType } from '@amalia/shared'
 
 const AD_EVERY_N = 5
 
@@ -51,8 +51,13 @@ export default function ChallengePage() {
 
   if (!isAuthenticated) return null
 
-  const handleGenerate = (langOverride?: ChallengeLanguage) =>
-    generate({ ...configuration, language: langOverride ?? configuration.language }, locale)
+  const handleGenerate = () =>
+    generate({
+      type: configuration.type,
+      level: configuration.level,
+      topic: configuration.topic,
+      subtopics: configuration.subtopics.length > 0 ? configuration.subtopics : undefined,
+    }, locale)
 
   // Reset fill/write answer each time a new challenge arrives
   useEffect(() => { setFillAnswer(''); setWriteAnswer('') }, [challenge])
@@ -63,7 +68,8 @@ export default function ChallengePage() {
       challenge,
       type: configuration.type,
       level: configuration.level,
-      language: configuration.language,
+      topic: configuration.topic,
+      subtopics: configuration.subtopics.length > 0 ? configuration.subtopics : undefined,
       userAnswer,
     }, locale).then(() => refreshStats())
   }
@@ -75,14 +81,14 @@ export default function ChallengePage() {
       setShowAdInterstitial(true)
     } else {
       reset()
-      generate(configuration, locale)
+      handleGenerate()
     }
   }
 
   const handleAdClose = () => {
     setShowAdInterstitial(false)
     reset()
-    generate(configuration, locale)
+    handleGenerate()
   }
 
   const handleNewConfig = () => {

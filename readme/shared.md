@@ -1,6 +1,6 @@
 # packages/shared
 
-Il package `@amelia/shared` contiene i tipi TypeScript condivisi tra frontend e backend.
+Il package `@amalia/shared` contiene i tipi TypeScript condivisi tra frontend e backend.
 
 ## Il problema che risolve
 
@@ -23,7 +23,7 @@ TypeScript non può avvertirti perché i due tipi vivono in posti diversi e non 
 Con shared:
 
 ```
-@amelia/shared
+@amalia/shared
 --------------
 GenerateChallengeRequest   ← definito una volta sola
 
@@ -31,7 +31,7 @@ frontend                   backend
 --------                   -------
 import { GenerateChallenge import { GenerateChallengeR
 Request } from              equest } from
-'@amelia/shared'            '@amelia/shared'
+'@amalia/shared'            '@amalia/shared'
 ```
 
 Se cambi un campo nello shared, TypeScript ti segnala immediatamente tutti i posti rotti — sia nel frontend che nel backend.
@@ -67,17 +67,17 @@ I `Dto` non vivono nello shared perché sono un dettaglio implementativo del bac
 
 ## Come funziona nel monorepo
 
-`@amelia/shared` è un npm workspace. npm lo collega automaticamente agli altri package del monorepo senza bisogno di pubblicarlo su npm registry.
+`@amalia/shared` è un npm workspace. npm lo collega automaticamente agli altri package del monorepo senza bisogno di pubblicarlo su npm registry.
 
 Nel `package.json` del backend:
 
 ```json
 "dependencies": {
-  "@amelia/shared": "*"
+  "@amalia/shared": "*"
 }
 ```
 
-Il `*` significa: usa la versione locale. Quando fai `npm install` dalla root, npm crea un symlink da `node_modules/@amelia/shared` alla cartella `packages/shared`.
+Il `*` significa: usa la versione locale. Quando fai `npm install` dalla root, npm crea un symlink da `node_modules/@amalia/shared` alla cartella `packages/shared`.
 
 ## Cosa NON mettere qui
 
