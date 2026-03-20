@@ -9,7 +9,7 @@ import { CvSession, CvData, CvAmaliaStats } from '@amalia/shared'
 import { Footer } from '../../components/Footer'
 
 // Dynamic import: @react-pdf/renderer only works client-side (wrap both in one component)
-const PdfDownloadButton = dynamic(() => import('./PdfDownloadButton'), { ssr: false })
+// const PdfDownloadButton = dynamic(() => import('./PdfDownloadButton'), { ssr: false })
 
 export default function PublicCvPage() {
   const { username } = useParams<{ username: string }>()
@@ -60,7 +60,7 @@ export default function PublicCvPage() {
             <span className="text-violet-400 font-mono text-xs">@{session.username}</span>
           </div>
           {/* PDF Download button — rendered only on client */}
-          {amaliaStats && (
+          {/* {amaliaStats && (
             <Suspense fallback={
               <span className="text-xs font-mono text-zinc-600 px-4 py-2">Caricamento PDF...</span>
             }>
@@ -70,7 +70,7 @@ export default function PublicCvPage() {
                 amaliaStats={amaliaStats}
               />
             </Suspense>
-          )}
+          )} */}
         </div>
 
         {/* CV Content */}
