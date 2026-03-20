@@ -38,6 +38,10 @@ export class UserRepository {
     await this.repository.update(id, { profilePhotoUrl })
   }
 
+  async updateLanguage(id: string, preferredLanguage: string | null): Promise<void> {
+    await this.repository.update(id, { preferredLanguage })
+  }
+
   async deleteById(id: string): Promise<void> {
     await this.repository.delete(id)
   }

@@ -5,6 +5,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { ChallengeConfigurationProvider } from "./context/ChallengeConfigurationContext";
 import { AuthProvider } from "./context/AuthContext";
 import { AppShell } from "./components/AppShell";
+import { LanguageProvider } from "../i18n/LanguageProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,14 +29,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="it">
+    <html lang="it" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-          <ChallengeConfigurationProvider>
-            <AppShell>{children}</AppShell>
-          </ChallengeConfigurationProvider>
+          <LanguageProvider>
+            <ChallengeConfigurationProvider>
+              <AppShell>{children}</AppShell>
+            </ChallengeConfigurationProvider>
+          </LanguageProvider>
         </AuthProvider>
       </body>
     </html>

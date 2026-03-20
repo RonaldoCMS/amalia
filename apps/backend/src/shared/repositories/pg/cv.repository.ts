@@ -49,7 +49,11 @@ export class CvRepository {
   }
 
   async updateCvData(id: string, cvData: CvData, amaliaStats: CvAmaliaStats): Promise<void> {
-    await this.repository.update(id, { cvData, amaliaStats, status: 'ready' })
+    await this.repository.update(id, { cvData, amaliaStats, status: 'ready', translations: {} })
+  }
+
+  async updateTranslations(id: string, translations: Record<string, CvData>): Promise<void> {
+    await this.repository.update(id, { translations })
   }
 
   async deleteByUserId(userId: string): Promise<void> {

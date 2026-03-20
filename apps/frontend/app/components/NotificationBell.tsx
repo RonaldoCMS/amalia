@@ -2,10 +2,15 @@
 
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { useNotifications } from '../context/NotificationContext'
+import { useLanguage } from '../../i18n/LanguageProvider'
+import { LOCALE_DATE_MAP } from '../../i18n/config'
 import { NotificationType } from '@amalia/shared'
 export function NotificationBell() {
   const { notifications, unreadCount, markAllRead } = useNotifications()
+  const t = useTranslations('Notifications')
+  const { locale } = useLanguage()
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -41,20 +46,20 @@ export function NotificationBell() {
       {open && (
         <div className="absolute right-0 top-8 w-72 sm:w-80 max-h-80 overflow-y-auto bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl z-50">
           <div className="px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
-            <span className="text-xs font-mono font-semibold text-zinc-300">Notifiche</span>
+            <span className="text-xs font-mono font-semibold text-zinc-300">{t('title')}</span>
             {notifications.length > 0 && (
               <button
                 onClick={markAllRead}
                 className="text-[10px] font-mono text-cyan-400/70 hover:text-cyan-400 transition-colors"
               >
-                segna tutte lette
+                {t('markAllRead')}
               </button>
             )}
           </div>
 
           {notifications.length === 0 ? (
             <div className="px-4 py-8 text-center text-xs text-zinc-600 font-mono">
-              Nessuna notifica
+              {t('empty')}
             </div>
           ) : (
             <ul>
@@ -67,7 +72,7 @@ export function NotificationBell() {
                   ? '/duel'
                   : '#'
 
-                const time = new Date(n.createdAt).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })
+                const time = new Date(n.createdAt).toLocaleTimeString(LOCALE_DATE_MAP[locale] || 'it-IT', { hour: '2-digit', minute: '2-digit' })
 
                 return (
                   <li key={n.id}>

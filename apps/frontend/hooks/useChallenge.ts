@@ -8,8 +8,8 @@ interface UseChallengeReturn {
   isGenerating: boolean
   isEvaluating: boolean
   error: string | null
-  generate: (config: GenerateChallengeRequest) => Promise<void>
-  evaluate: (request: EvaluateChallengeRequest) => Promise<void>
+  generate: (config: GenerateChallengeRequest, lang?: string) => Promise<void>
+  evaluate: (request: EvaluateChallengeRequest, lang?: string) => Promise<void>
   reset: () => void
 }
 
@@ -22,12 +22,12 @@ export function useChallenge(): UseChallengeReturn {
   const [isEvaluating, setIsEvaluating] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const generate = useCallback(async (config: GenerateChallengeRequest) => {
+  const generate = useCallback(async (config: GenerateChallengeRequest, lang?: string) => {
     setIsGenerating(true)
     setError(null)
     setEvaluation(null)
     try {
-      const data = await service.current.generate(config)
+      const data = await service.current.generate(config, lang)
       setChallenge(data)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Errore sconosciuto')
@@ -36,11 +36,11 @@ export function useChallenge(): UseChallengeReturn {
     }
   }, [])
 
-  const evaluate = useCallback(async (request: EvaluateChallengeRequest) => {
+  const evaluate = useCallback(async (request: EvaluateChallengeRequest, lang?: string) => {
     setIsEvaluating(true)
     setError(null)
     try {
-      const data = await service.current.evaluate(request)
+      const data = await service.current.evaluate(request, lang)
       setEvaluation(data)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Errore sconosciuto')

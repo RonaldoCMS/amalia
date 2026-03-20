@@ -3,8 +3,11 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { useAuthContext } from '../context/AuthContext'
 import { useMatch } from '../../hooks/useMatch'
+import { useLanguage } from '../../i18n/LanguageProvider'
+import { LOCALE_DATE_MAP } from '../../i18n/config'
 import { MatchSuggestion, MatchItem } from '@amalia/shared'
 import { Footer } from '../components/Footer'
 import { AdBanner } from '../components/AdBanner'
@@ -130,12 +133,14 @@ function SuggestionCard({ s, onLike }: { s: MatchSuggestion; onLike: () => void 
 
 function MatchCard({ m, onRemove }: { m: MatchItem; onRemove: () => void }) {
   const [removing, setRemoving] = useState(false)
-  const date = new Date(m.matchedAt).toLocaleDateString('it-IT', { day: '2-digit', month: 'short' })
+  const { locale } = useLanguage()
+  const t = useTranslations('Match')
+  const date = new Date(m.matchedAt).toLocaleDateString(LOCALE_DATE_MAP[locale] || 'it-IT', { day: '2-digit', month: 'short' })
 
   const handleRemove = async (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    if (!confirm(`Rimuovere il match con ${m.username}?`)) return
+    if (!confirm(t('confirmRemove', { username: m.username }))) return
     setRemoving(true)
     try { await onRemove() } finally { setRemoving(false) }
   }
@@ -169,6 +174,7 @@ export default function MatchPage() {
   const { isAuthenticated } = useAuthContext()
   const router = useRouter()
   const { suggestions, matches, isLoading, like, archiveMatch } = useMatch()
+  const t = useTranslations('Match')
   const [tab, setTab] = useState<'discover' | 'matches'>('discover')
 
   useEffect(() => {
@@ -193,7 +199,7 @@ export default function MatchPage() {
           <h1 className="text-lg font-semibold text-zinc-100 font-mono">
             <span className="text-cyan-400">{'>'}</span> dev match
           </h1>
-          <p className="text-sm text-zinc-500 mt-1">Trova developer con i tuoi stessi obiettivi.</p>
+          <p className="text-sm text-zinc-500 mt-1">{t('subtitle')}</p>
         </div>
 
         <div className="flex gap-2 mb-6">
@@ -212,7 +218,7 @@ export default function MatchPage() {
         ) : tab === 'discover' ? (
           suggestions.length === 0 ? (
             <div className="py-16 text-center border border-dashed border-zinc-800 rounded-xl font-mono text-sm text-zinc-600">
-              Nessun developer disponibile al momento. Torna più tardi!
+              {t('emptyDiscover')}
             </div>
           ) : (
             <div className="flex flex-col gap-4">
@@ -224,7 +230,7 @@ export default function MatchPage() {
         ) : (
           matches.length === 0 ? (
             <div className="py-16 text-center border border-dashed border-zinc-800 rounded-xl font-mono text-sm text-zinc-600">
-              Nessun match ancora. Esplora i developer e connettiti!
+              {t('emptyMatches')}
             </div>
           ) : (
             <div className="flex flex-col gap-3">

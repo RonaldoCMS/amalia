@@ -3,12 +3,15 @@
 import { useEffect, useRef, useState, FormEvent, useCallback } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { useAuthContext } from '../../context/AuthContext'
 import { useChat } from '../../../hooks/useChat'
 import { useProfile } from '../../../hooks/useProfile'
 import { DuelService } from '../../../services/duel.service'
 import { MatchRepository } from '../../../repositories/match.repository'
 import { ChallengeLanguage, ChatMessageItem, DuelInviteStatusResponse } from '@amalia/shared'
+import { useLanguage } from '../../../i18n/LanguageProvider'
+import { LOCALE_DATE_MAP } from '../../../i18n/config'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? ''
 
@@ -38,6 +41,7 @@ function SystemMessage({ content, duelInviteId, isSender, myId, onAccept }: {
   myId?: string
   onAccept?: (duelId: string) => void
 }) {
+  const t = useTranslations('Chat')
   const router = useRouter()
   const [status, setStatus] = useState<DuelInviteStatusResponse | null>(null)
   const [accepting, setAccepting] = useState(false)
@@ -81,7 +85,7 @@ function SystemMessage({ content, duelInviteId, isSender, myId, onAccept }: {
     try {
       await onAccept(duelInviteId)
     } catch (e: any) {
-      setAcceptErr(e?.response?.data?.message ?? e?.message ?? 'Errore. Riprova.')
+      setAcceptErr(e?.response?.data?.message ?? e?.message ?? t('errorRetry'))
     } finally {
       setAccepting(false)
     }
@@ -110,7 +114,7 @@ function SystemMessage({ content, duelInviteId, isSender, myId, onAccept }: {
       <div className="flex justify-center my-2">
         <div className="px-4 py-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-xs font-mono text-center max-w-sm">
           {content}
-          <div className="mt-1 text-zinc-500 text-[10px]">Caricamento...</div>
+          <div className="mt-1 text-zinc-500 text-[10px]">{t('loadingMsg')}</div>
         </div>
       </div>
     )
@@ -124,7 +128,7 @@ function SystemMessage({ content, duelInviteId, isSender, myId, onAccept }: {
     return (
       <div className="flex justify-center my-2">
         <div className="px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-mono text-center max-w-sm">
-          ⏰ Invito scaduto — la sfida non è stata accettata in tempo.
+          {t('inviteExpired')}
         </div>
       </div>
     )
@@ -143,7 +147,7 @@ function SystemMessage({ content, duelInviteId, isSender, myId, onAccept }: {
         <div className="px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-mono text-center max-w-sm">
           {content}
           <div className="mt-1.5 text-amber-400/70 text-[10px]">
-            ⏱ Scade tra {mins}:{secs.toString().padStart(2, '0')}
+            {t('expiresIn', { time: `${mins}:${secs.toString().padStart(2, '0')}` })}
           </div>
           {isInvited && (
             <div className="mt-2">
@@ -152,13 +156,13 @@ function SystemMessage({ content, duelInviteId, isSender, myId, onAccept }: {
                 disabled={accepting}
                 className="px-4 py-1.5 rounded-lg bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 hover:bg-emerald-400/30 transition-all text-xs font-semibold disabled:opacity-50"
               >
-                {accepting ? '...' : '⚔️ Accetta sfida'}
+                {accepting ? '...' : t('acceptDuel')}
               </button>
               {acceptErr && <p className="text-red-400 mt-1 text-[10px]">{acceptErr}</p>}
             </div>
           )}
           {isChallenger && (
-            <div className="mt-1 text-zinc-500 text-[10px]">In attesa che l'avversario accetti...</div>
+            <div className="mt-1 text-zinc-500 text-[10px]">{t('waitingAccept')}</div>
           )}
         </div>
       </div>
@@ -170,13 +174,13 @@ function SystemMessage({ content, duelInviteId, isSender, myId, onAccept }: {
     return (
       <div className="flex justify-center my-2">
         <div className="px-4 py-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-mono text-center max-w-sm">
-          ⚔️ Sfida in corso!
+          {t('duelActive')}
           <div className="mt-2">
             <button
               onClick={handleGoToDuel}
               className="px-4 py-1.5 rounded-lg bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 hover:bg-cyan-400/30 transition-all text-xs font-semibold"
             >
-              🎮 Vai alla sfida →
+              {t('goToDuel')}
             </button>
           </div>
         </div>
@@ -194,7 +198,7 @@ function SystemMessage({ content, duelInviteId, isSender, myId, onAccept }: {
     return (
       <div className="flex justify-center my-2">
         <div className="px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs font-mono text-center max-w-sm">
-          <div className="text-emerald-400 font-bold text-sm mb-1">🏆 Sfida conclusa!</div>
+          <div className="text-emerald-400 font-bold text-sm mb-1">{t('duelCompleted')}</div>
           <div className="flex items-center justify-center gap-3 mt-2">
             <div className={`flex flex-col items-center px-3 py-1.5 rounded-lg ${isWinner ? 'bg-amber-500/15 border border-amber-400/30' : 'bg-zinc-800/50 border border-zinc-700/50'}`}>
               <span className={`text-[10px] ${isWinner ? 'text-amber-400' : 'text-zinc-500'}`}>
@@ -211,7 +215,7 @@ function SystemMessage({ content, duelInviteId, isSender, myId, onAccept }: {
             </div>
           </div>
           <div className="mt-2 text-emerald-400/70 text-[10px]">
-            Vincitore: {winnerName}
+            {t('winner', { name: winnerName })}
           </div>
         </div>
       </div>
@@ -229,12 +233,13 @@ function SystemMessage({ content, duelInviteId, isSender, myId, onAccept }: {
 }
 
 function ReplyPreview({ msg, onClear }: { msg: ChatMessageItem; onClear: () => void }) {
+  const t = useTranslations('Chat')
   return (
     <div className="flex items-center gap-2 px-4 py-2 bg-zinc-900/80 border-t border-zinc-800">
       <div className="flex-1 min-w-0">
-        <p className="text-[10px] text-cyan-400 font-mono mb-0.5">Risposta a</p>
+        <p className="text-[10px] text-cyan-400 font-mono mb-0.5">{t('replyTo')}</p>
         <p className="text-xs text-zinc-400 font-mono truncate">
-          {msg.imageUrl ? '📷 Immagine' : msg.content}
+          {msg.imageUrl ? t('replyImage') : msg.content}
         </p>
       </div>
       <button onClick={onClear} className="text-zinc-600 hover:text-zinc-400 text-sm">✕</button>
@@ -250,6 +255,8 @@ export default function ChatPage() {
 
   const { profile } = useProfile()
   const { messages, isLoading, send, sendImage, sendSystemMessage } = useChat(matchId, profile?.id ?? '')
+  const t = useTranslations('Chat')
+  const { locale } = useLanguage()
 
   const [input, setInput] = useState('')
   const [isSending, setIsSending] = useState(false)
@@ -323,7 +330,7 @@ export default function ChatPage() {
   }
 
   const handleArchive = async () => {
-    if (!confirm('Rimuovere questo match? Non potrai più inviare messaggi.')) return
+    if (!confirm(t('removeConfirm'))) return
     try {
       const matchRepo = new MatchRepository()
       await matchRepo.archiveMatch(matchId)
@@ -358,8 +365,8 @@ export default function ChatPage() {
       {showLangPicker && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
           <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-6 w-full max-w-sm">
-            <h3 className="text-sm font-semibold font-mono text-zinc-100 mb-1">Scegli il linguaggio</h3>
-            <p className="text-xs text-zinc-500 font-mono mb-4">Con cui sfidare il developer</p>
+            <h3 className="text-sm font-semibold font-mono text-zinc-100 mb-1">{t('selectLanguage')}</h3>
+            <p className="text-xs text-zinc-500 font-mono mb-4">{t('selectLanguageDesc')}</p>
             <div className="grid grid-cols-3 gap-2 max-h-64 overflow-y-auto">
               {LANGUAGES.map(lang => (
                 <button
@@ -375,7 +382,7 @@ export default function ChatPage() {
               onClick={() => setShowLangPicker(false)}
               className="mt-4 w-full text-xs font-mono text-zinc-600 hover:text-zinc-400 transition-colors"
             >
-              Annulla
+              {t('cancel')}
             </button>
           </div>
         </div>
@@ -385,10 +392,10 @@ export default function ChatPage() {
       <nav className="relative z-10 flex items-center justify-between max-w-4xl w-full mx-auto px-4 sm:px-6 py-4 border-b border-zinc-900 shrink-0">
         <div className="flex items-center gap-3">
           <Link href="/match" className="text-zinc-500 hover:text-zinc-300 transition-colors font-mono text-xs">
-            ← match
+            {t('backToMatch')}
           </Link>
           <span className="text-zinc-700 hidden sm:inline">/</span>
-          <span className="text-xs text-zinc-500 font-mono hidden sm:inline">chat</span>
+          <span className="text-xs text-zinc-500 font-mono hidden sm:inline">{t('title')}</span>
         </div>
         <div className="flex items-center gap-2">
           {!isArchived && (
@@ -402,12 +409,12 @@ export default function ChatPage() {
                     : 'text-zinc-400 border-zinc-700 hover:text-cyan-400 hover:border-cyan-400/30 hover:bg-cyan-400/5 disabled:opacity-40'
                 }`}
               >
-                {challengeSent ? '✔ Sfida inviata!' : challenging ? '...' : '⚔️ Sfida'}
+                {challengeSent ? t('challengeSent') : challenging ? '...' : t('challengeBtn')}
               </button>
               <button
                 onClick={handleArchive}
                 className="text-xs font-mono px-3 py-1.5 rounded-lg border border-zinc-800 text-zinc-600 hover:text-red-400 hover:border-red-400/30 hover:bg-red-400/5 transition-all"
-                title="Rimuovi match"
+                title={t('removeMatch')}
               >
                 🗑
               </button>
@@ -419,7 +426,7 @@ export default function ChatPage() {
       {/* Archived banner */}
       {isArchived && (
         <div className="text-center py-3 bg-zinc-900/80 border-b border-zinc-800">
-          <p className="text-xs text-zinc-500 font-mono">Match rimosso. Non puoi più inviare messaggi.</p>
+          <p className="text-xs text-zinc-500 font-mono">{t('matchRemoved')}</p>
         </div>
       )}
 
@@ -431,7 +438,7 @@ export default function ChatPage() {
           </div>
         ) : messages.length === 0 ? (
           <div className="flex-1 flex items-center justify-center text-sm text-zinc-600 font-mono text-center py-16">
-            Nessun messaggio ancora.<br />Rompete il ghiaccio! 🧊
+            {t('empty')}<br />{t('iceBreaker')}
           </div>
         ) : (
           (() => {
@@ -460,7 +467,7 @@ export default function ChatPage() {
                     <div className={`px-3 py-1.5 rounded-xl text-[10px] font-mono border-l-2 bg-zinc-900/60 ${
                       isMe ? 'border-cyan-400/40 text-zinc-400 self-end' : 'border-zinc-500/40 text-zinc-500 self-start'
                     }`}>
-                      {replyMsg.imageUrl ? '📷 Immagine' : (replyMsg.content ?? '').slice(0, 60)}
+                      {replyMsg.imageUrl ? t('replyImage') : (replyMsg.content ?? '').slice(0, 60)}
                     </div>
                   )}
                   <div className="flex items-end gap-1">
@@ -469,7 +476,7 @@ export default function ChatPage() {
                       <button
                         onClick={() => { setReplyTo(msg); inputRef.current?.focus() }}
                         className="opacity-0 group-hover:opacity-100 transition-opacity text-zinc-700 hover:text-zinc-400 text-xs pb-2"
-                        title="Rispondi"
+                        title={t('reply')}
                       >
                         ↩
                       </button>
@@ -484,7 +491,7 @@ export default function ChatPage() {
                       {msg.imageUrl ? (
                         <img
                           src={`${msg.imageUrl}`}
-                          alt="immagine"
+                          alt={t('image')}
                           className="max-w-full rounded-lg cursor-pointer"
                           style={{ maxHeight: 240 }}
                           onClick={() => window.open(`${msg.imageUrl}`, '_blank')}
@@ -493,7 +500,7 @@ export default function ChatPage() {
                         msg.content
                       )}
                       <div className={`text-[10px] mt-1 ${isMe ? 'text-cyan-400/50 text-right' : 'text-zinc-600'}`}>
-                        {new Date(msg.createdAt).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
+                        {new Date(msg.createdAt).toLocaleTimeString(LOCALE_DATE_MAP[locale] || 'it-IT', { hour: '2-digit', minute: '2-digit' })}
                       </div>
                     </div>
                     {/* Reply button on hover (my side) */}
@@ -501,7 +508,7 @@ export default function ChatPage() {
                       <button
                         onClick={() => { setReplyTo(msg); inputRef.current?.focus() }}
                         className="opacity-0 group-hover:opacity-100 transition-opacity text-zinc-700 hover:text-zinc-400 text-xs pb-2"
-                        title="Rispondi"
+                        title={t('reply')}
                       >
                         ↩
                       </button>
@@ -555,7 +562,7 @@ export default function ChatPage() {
               onClick={() => fileInputRef.current?.click()}
               disabled={isSending}
               className="shrink-0 px-2.5 py-2.5 rounded-xl text-lg text-zinc-500 hover:text-zinc-300 transition-colors disabled:opacity-40"
-              title="Invia immagine"
+              title={t('sendImage')}
             >
               📎
             </button>
@@ -571,7 +578,7 @@ export default function ChatPage() {
               ref={inputRef}
               value={input}
               onChange={e => setInput(e.target.value)}
-              placeholder="Scrivi un messaggio..."
+              placeholder={t('inputPlaceholder')}
               className="flex-1 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-zinc-100 font-mono placeholder-zinc-700 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 transition-colors"
             />
             <button

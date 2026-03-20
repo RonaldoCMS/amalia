@@ -2,10 +2,12 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { useAuthContext } from '../context/AuthContext'
 import { useChallenge } from '../../hooks/useChallenge'
 import { useConfigurationChallenge } from '../../hooks/useConfigurationChallenge'
 import { useStats } from '../../hooks/useStats'
+import { useLanguage } from '../../i18n/LanguageProvider'
 import { UserService } from '../../services/user.service'
 import { ChallengeHeader } from './components/ChallengeHeader'
 import { CodeDisplay } from './components/CodeDisplay'
@@ -27,6 +29,8 @@ export default function ChallengePage() {
   const { configuration } = useConfigurationChallenge()
   const { challenge, evaluation, isGenerating, isEvaluating, error, generate, evaluate, reset } = useChallenge()
   const { stats, refresh: refreshStats } = useStats()
+  const { locale } = useLanguage()
+  const t = useTranslations('Challenge')
   const userService = useRef(new UserService())
   const [completedCount, setCompletedCount] = useState(0)
   const [showAdInterstitial, setShowAdInterstitial] = useState(false)
@@ -45,7 +49,7 @@ export default function ChallengePage() {
   if (!isAuthenticated) return null
 
   const handleGenerate = (langOverride?: ChallengeLanguage) =>
-    generate({ ...configuration, language: langOverride ?? configuration.language })
+    generate({ ...configuration, language: langOverride ?? configuration.language }, locale)
 
   const handleAnswer = (userAnswer: string) => {
     if (!challenge) return
@@ -55,7 +59,7 @@ export default function ChallengePage() {
       level: configuration.level,
       language: configuration.language,
       userAnswer,
-    }).then(() => refreshStats())
+    }, locale).then(() => refreshStats())
   }
 
   const handleNext = () => {
@@ -65,14 +69,14 @@ export default function ChallengePage() {
       setShowAdInterstitial(true)
     } else {
       reset()
-      generate(configuration)
+      generate(configuration, locale)
     }
   }
 
   const handleAdClose = () => {
     setShowAdInterstitial(false)
     reset()
-    generate(configuration)
+    generate(configuration, locale)
   }
 
   const handleNewConfig = () => {
@@ -98,8 +102,8 @@ export default function ChallengePage() {
         {!challenge && !isGenerating && !error && (
           <div className="max-w-xl mx-auto">
             <div className="mb-8">
-              <h2 className="text-lg font-semibold text-zinc-100 mb-1">Configura la sfida</h2>
-              <p className="text-sm text-zinc-500">Scegli tipo, livello e linguaggio.</p>
+              <h2 className="text-lg font-semibold text-zinc-100 mb-1">{t('configTitle')}</h2>
+              <p className="text-sm text-zinc-500">{t('configSubtitle')}</p>
             </div>
             <ConfigurationPanel onStart={handleGenerate} />
           </div>
@@ -124,7 +128,7 @@ export default function ChallengePage() {
               onClick={handleNewConfig}
               className="mt-4 text-xs text-zinc-500 hover:text-zinc-300 transition-colors font-mono"
             >
-              ← Torna alla configurazione
+              ← {t('backToConfig')}
             </button>
           </div>
         )}
@@ -150,7 +154,7 @@ export default function ChallengePage() {
                   onClick={handleNewConfig}
                   className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors font-mono"
                 >
-                  nuova sfida
+                  {t('newChallenge')}
                 </button>
               </div>
 

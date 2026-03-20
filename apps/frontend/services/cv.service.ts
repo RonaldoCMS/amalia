@@ -4,8 +4,8 @@ import { CvSession, CvSendMessageResponse, PublicCvItem } from '@amalia/shared'
 export class CvService {
   private readonly repository = new CvRepository()
 
-  getMyCv(): Promise<CvSession | null> {
-    return this.repository.getMyCv()
+  getMyCv(lang?: string): Promise<CvSession | null> {
+    return this.repository.getMyCv(lang)
   }
 
   startInterview(): Promise<CvSession> {
@@ -24,11 +24,11 @@ export class CvService {
     return this.repository.deleteMyCv()
   }
 
-  getGallery(): Promise<PublicCvItem[]> {
-    return this.repository.getGallery()
+  getGallery(lang?: string): Promise<PublicCvItem[]> {
+    return this.repository.getGallery(lang)
   }
 
-  getPublicByUsername(username: string): Promise<CvSession> {
-    return this.repository.getPublicByUsername(username)
+  getPublicByUsername(username: string, lang?: string): Promise<CvSession> {
+    return this.repository.getPublicByUsername(username, lang)
   }
 }

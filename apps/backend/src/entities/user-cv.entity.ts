@@ -26,6 +26,9 @@ export class UserCv {
   @Column({ type: 'jsonb', nullable: true })
   cvData: CvData | null
 
+  @Column({ type: 'jsonb', nullable: true, default: '{}' })
+  translations: Record<string, CvData>
+
   @Column({ type: 'jsonb', nullable: true })
   amaliaStats: CvAmaliaStats | null
 

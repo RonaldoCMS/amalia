@@ -31,6 +31,9 @@ export class Challenge {
   @Column()
   answer: string
 
+  @Column({ type: 'jsonb', nullable: true, default: '{}' })
+  translations: Record<string, { title: string; description: string; options: string[] }>
+
   @CreateDateColumn()
   createdAt: Date
 

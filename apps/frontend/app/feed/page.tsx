@@ -2,6 +2,7 @@
 
 import { useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { useAuthContext } from '../context/AuthContext'
 import { useProfile } from '../../hooks/useProfile'
 import { useFeed } from '../../hooks/useFeed'
@@ -15,6 +16,7 @@ export default function FeedPage() {
   const { profile, isLoading: profileLoading } = useProfile()
   const { posts, isLoading, hasMore, loadFeed, createPost, toggleLike, deletePost } = useFeed()
   const sentinelRef = useRef<HTMLDivElement>(null)
+  const t = useTranslations('Feed')
 
   useEffect(() => {
     if (!token && !profileLoading) router.replace('/login')
@@ -45,7 +47,7 @@ export default function FeedPage() {
   }
 
   const handleDelete = async (postId: string) => {
-    if (!confirm('Eliminare questo post?')) return
+    if (!confirm(t('deleteConfirm'))) return
     await deletePost(postId)
   }
 
@@ -95,12 +97,12 @@ export default function FeedPage() {
           </div>
         )}
         {!isLoading && !hasMore && posts.length > 0 && (
-          <p className="text-center text-zinc-700 text-xs font-mono py-6">— fine del feed —</p>
+          <p className="text-center text-zinc-700 text-xs font-mono py-6">{t('endOfFeed')}</p>
         )}
         {!isLoading && posts.length === 0 && (
           <div className="text-center py-16">
-            <p className="text-zinc-600 text-sm">Nessun post ancora.</p>
-            <p className="text-zinc-700 text-xs mt-1">Scrivi il primo!</p>
+            <p className="text-zinc-600 text-sm">{t('empty')}</p>
+            <p className="text-zinc-700 text-xs mt-1">{t('emptyAction')}</p>
           </div>
         )}
 

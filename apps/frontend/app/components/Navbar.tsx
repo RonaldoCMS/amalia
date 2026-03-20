@@ -2,7 +2,11 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
+import { useState, useRef, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { useAuthContext } from '../context/AuthContext'
+import { useLanguage } from '../../i18n/LanguageProvider'
+import { SUPPORTED_LOCALES, LOCALE_FLAGS, LOCALE_LABELS } from '../../i18n/config'
 import { NotificationBell } from './NotificationBell'
 
 interface NavItem {
@@ -15,7 +19,7 @@ interface NavItem {
 const items: NavItem[] = [
   {
     href: '/feed',
-    label: 'Feed',
+    label: 'feed',
     match: p => p === '/feed',
     icon: (
       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -25,7 +29,7 @@ const items: NavItem[] = [
   },
   {
     href: '/search',
-    label: 'Cerca',
+    label: 'search',
     match: p => p === '/search',
     icon: (
       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -35,7 +39,7 @@ const items: NavItem[] = [
   },
   {
     href: '/challenge',
-    label: 'Challenge',
+    label: 'challenge',
     match: p => p.startsWith('/challenge'),
     icon: (
       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,7 +49,7 @@ const items: NavItem[] = [
   },
   {
     href: '/duel',
-    label: 'Duelli',
+    label: 'duel',
     match: p => p.startsWith('/duel'),
     icon: (
       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -55,7 +59,7 @@ const items: NavItem[] = [
   },
   {
     href: '/match',
-    label: 'Chat',
+    label: 'chat',
     match: p => p.startsWith('/match') || p.startsWith('/chat'),
     icon: (
       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -65,7 +69,7 @@ const items: NavItem[] = [
   },
   {
     href: '/profile',
-    label: 'Profilo',
+    label: 'profile',
     match: p => p === '/profile',
     icon: (
       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -75,7 +79,7 @@ const items: NavItem[] = [
   },
   {
     href: '/jobs',
-    label: 'Jobs',
+    label: 'jobs',
     match: p => p.startsWith('/jobs'),
     icon: (
       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -92,6 +96,18 @@ export function Navbar() {
   const pathname = usePathname()
   const router = useRouter()
   const { isAuthenticated, logout } = useAuthContext()
+  const { locale, setLocale } = useLanguage()
+  const t = useTranslations('Nav')
+  const [langOpen, setLangOpen] = useState(false)
+  const langRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (langRef.current && !langRef.current.contains(e.target as Node)) setLangOpen(false)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
 
   if (!isAuthenticated) return null
 
@@ -121,7 +137,7 @@ export function Navbar() {
                     href={item.href}
                     className={`transition-colors ${active ? 'text-cyan-400' : 'text-zinc-500 hover:text-zinc-300'}`}
                   >
-                    {item.label.toLowerCase()}
+                    {t(item.label)}
                   </Link>
                 )
               })}
@@ -129,30 +145,55 @@ export function Navbar() {
                 href="/duel/leaderboard"
                 className={`transition-colors ${pathname === '/duel/leaderboard' ? 'text-amber-400' : 'text-zinc-500 hover:text-amber-400'}`}
               >
-                🏆 classifica
+                🏆 {t('leaderboard')}
               </Link>
               <Link
                 href="/cv"
                 className={`transition-colors ${pathname.startsWith('/cv') ? 'text-violet-400' : 'text-zinc-500 hover:text-violet-400'}`}
               >
-                ✨ myCV
+                ✨ {t('myCV')}
               </Link>
               <Link
                 href="/jobs"
                 className={`transition-colors ${pathname.startsWith('/jobs') ? 'text-cyan-400' : 'text-zinc-500 hover:text-cyan-400'}`}
               >
-                💼 jobs
+                💼 {t('jobBoard')}
               </Link>
             </div>
 
             {/* Right */}
             <div className="flex items-center gap-4">
+              <div className="relative" ref={langRef}>
+                <button
+                  onClick={() => setLangOpen(o => !o)}
+                  className="font-mono text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
+                  aria-label="Language"
+                >
+                  {LOCALE_FLAGS[locale]}
+                </button>
+                {langOpen && (
+                  <div className="absolute right-0 top-8 w-40 bg-zinc-950 border border-zinc-800 rounded-lg shadow-2xl z-50 py-1">
+                    {SUPPORTED_LOCALES.map(l => (
+                      <button
+                        key={l}
+                        onClick={() => { setLocale(l); setLangOpen(false) }}
+                        className={`w-full text-left px-3 py-1.5 text-xs font-mono transition-colors flex items-center gap-2 ${
+                          l === locale ? 'text-cyan-400 bg-cyan-400/5' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900'
+                        }`}
+                      >
+                        <span>{LOCALE_FLAGS[l]}</span>
+                        <span>{LOCALE_LABELS[l]}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
               <NotificationBell />
               <button
                 onClick={handleLogout}
                 className="font-mono text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
               >
-                logout
+                {t('logout')}
               </button>
             </div>
           </div>
@@ -173,7 +214,7 @@ export function Navbar() {
                 }`}
               >
                 <span className="[&>svg]:w-6 [&>svg]:h-6">{item.icon}</span>
-                <span className={`text-[9px] font-mono ${active ? 'text-cyan-400' : 'text-zinc-600'}`}>{item.label.toLowerCase()}</span>
+                <span className={`text-[9px] font-mono ${active ? 'text-cyan-400' : 'text-zinc-600'}`}>{t(item.label)}</span>
               </Link>
             )
           })}

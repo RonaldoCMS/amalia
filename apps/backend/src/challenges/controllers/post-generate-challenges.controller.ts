@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards, Request } from '@nestjs/common'
+import { Body, Controller, Post, UseGuards, Request, Query } from '@nestjs/common'
 import { ChallengesService } from '../challenges.service'
 import { GenerateChallengeRequest, ChallengeResponse } from '@amalia/shared'
 import { JwtGuard } from '../../auth/guards/jwt.guard'
@@ -12,7 +12,8 @@ export class PostGenerateChallengesController {
   generate(
     @Body() body: GenerateChallengeRequest,
     @Request() req: { user: { id: string } },
+    @Query('lang') lang?: string,
   ): Promise<ChallengeResponse> {
-    return this.challengesService.generate(body, req.user.id)
+    return this.challengesService.generate(body, req.user.id, lang)
   }
 }

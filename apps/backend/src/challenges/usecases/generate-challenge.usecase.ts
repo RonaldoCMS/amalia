@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common'
 import { ClaudeRepository } from '../../shared/repositories/claude.repository'
 import { ChallengeRepository } from '../../shared/repositories/pg/challenge.repository'
 import { UserChallengeRepository } from '../../shared/repositories/pg/user-challenge.repository'
+import { UserRepository } from '../../shared/repositories/pg/user.repository'
+import { TranslateChallengeUseCase } from './translate-challenge.usecase'
 import {
   GenerateChallengeRequest,
   ChallengeResponse,
@@ -14,9 +16,11 @@ export class GenerateChallengeUseCase {
     private readonly claudeRepository: ClaudeRepository,
     private readonly challengeRepository: ChallengeRepository,
     private readonly userChallengeRepository: UserChallengeRepository,
+    private readonly userRepository: UserRepository,
+    private readonly translateChallengeUseCase: TranslateChallengeUseCase,
   ) {}
 
-  async execute(request: GenerateChallengeRequest, userId: string): Promise<ChallengeResponse> {
+  async execute(request: GenerateChallengeRequest, userId: string, lang?: string): Promise<ChallengeResponse> {
     const existing = await this.challengeRepository.findUnseen(
       userId,
       request.type,
@@ -24,9 +28,14 @@ export class GenerateChallengeUseCase {
       request.language,
     )
 
+    if (!lang) {
+      const user = await this.userRepository.findById(userId)
+      lang = user?.preferredLanguage ?? 'en'
+    }
+
     if (existing) {
       await this.userChallengeRepository.save(userId, existing.id)
-      return {
+      const response: ChallengeResponse = {
         id: existing.id,
         title: existing.title,
         description: existing.description,
@@ -34,6 +43,7 @@ export class GenerateChallengeUseCase {
         options: existing.options,
         answer: existing.answer,
       }
+      return this.translateChallengeUseCase.execute(existing.id, response, lang, existing.translations ?? {})
     }
 
     const raw = await this.claudeRepository.sendMessage(
@@ -51,37 +61,38 @@ export class GenerateChallengeUseCase {
     })
 
     await this.userChallengeRepository.save(userId, saved.id)
-    return { id: saved.id, ...parsed }
+    const response: ChallengeResponse = { id: saved.id, ...parsed }
+    return this.translateChallengeUseCase.execute(saved.id, response, lang, {})
   }
 
   private buildSystemPrompt(): string {
-    return `Sei amalia, una maestra di programmazione.
-Generi esercizi di codice reali e didattici.
-Rispondi SEMPRE e SOLO con JSON valido. Nessun testo extra, nessun markdown, nessun backtick.`
+    return `You are Amalia, a programming teacher.
+You generate real, educational coding exercises.
+ALWAYS respond with valid JSON only. No extra text, no markdown, no backticks.`
   }
 
   private buildUserPrompt(request: GenerateChallengeRequest): string {
     const typeDesc: Record<ChallengeType, string> = {
-      [ChallengeType.Fill]: 'Completa il codice mancante — sostituisci una parte con ___BLANK___',
-      [ChallengeType.Quiz]: 'Risposta multipla — cosa produce o cosa fa questo codice? Dai 4 opzioni (A,B,C,D)',
-      [ChallengeType.Bug]: 'Trova il bug — inserisci UN solo errore intenzionale nel codice',
-      [ChallengeType.Write]: 'Scrivi la funzione — mostra solo la firma e la descrizione',
+      [ChallengeType.Fill]: 'Fill in the missing code — replace a part with ___BLANK___',
+      [ChallengeType.Quiz]: 'Multiple choice — what does this code produce or do? Give 4 options (A,B,C,D)',
+      [ChallengeType.Bug]: 'Find the bug — insert ONE intentional error in the code',
+      [ChallengeType.Write]: 'Write the function — show only the signature and description',
     }
 
-    return `Genera un esercizio di programmazione in ${request.language}.
-Tipo: ${typeDesc[request.type]}
-Livello: ${request.level}
+    return `Generate a programming exercise in ${request.language}.
+Type: ${typeDesc[request.type]}
+Level: ${request.level}
 
-Rispondi con questo JSON:
+Respond with this JSON:
 {
-  "title": "titolo breve",
-  "description": "descrizione in italiano, 1-2 frasi",
-  "code": "codice da mostrare (usa \\n per newline)",
+  "title": "short title",
+  "description": "description in English, 1-2 sentences",
+  "code": "code to display (use \\n for newline)",
   "options": ["A. ...", "B. ...", "C. ...", "D. ..."],
-  "answer": "risposta corretta"
+  "answer": "correct answer"
 }
 
-IMPORTANTE: ogni opzione DEVE essere una singola stringa nell'array. Non spezzare mai un'opzione su più elementi. Se un'opzione contiene virgole (es. "D. [2, 4, 6, 8]"), deve restare UN solo elemento stringa.
+IMPORTANT: each option MUST be a single string in the array. Never split an option across multiple elements. If an option contains commas (e.g. "D. [2, 4, 6, 8]"), it must remain ONE single string element.
 `
 
   }
@@ -95,7 +106,7 @@ IMPORTANTE: ogni opzione DEVE essere una singola stringa nell'array. Non spezzar
       }
       return result
     } catch {
-      throw new Error(`Risposta Claude non parsabile: ${raw}`)
+      throw new Error(`Unparseable Claude response: ${raw}`)
     }
   }
 

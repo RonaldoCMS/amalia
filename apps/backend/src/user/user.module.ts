@@ -8,6 +8,7 @@ import { GetHistoryUseCase } from './usecases/get-history.usecase'
 import { UpdateProfilePhotoUseCase } from './usecases/update-profile-photo.usecase'
 import { SearchUsersUseCase } from './usecases/search-users.usecase'
 import { GetPublicProfileUseCase } from './usecases/get-public-profile.usecase'
+import { UpdateLanguageUseCase } from './usecases/update-language.usecase'
 
 @Module({
   controllers: [UserController],
@@ -20,6 +21,7 @@ import { GetPublicProfileUseCase } from './usecases/get-public-profile.usecase'
     UpdateProfilePhotoUseCase,
     SearchUsersUseCase,
     GetPublicProfileUseCase,
+    UpdateLanguageUseCase,
   ],
 })
 export class UserModule {}

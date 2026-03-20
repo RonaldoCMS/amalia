@@ -5,6 +5,7 @@ import { PostEvaluateChallengesController } from './controllers/post-evaluate-ch
 import { GetStatsChallengesController } from './controllers/get-stats-challenges.controller'
 import { GenerateChallengeUseCase } from './usecases/generate-challenge.usecase'
 import { EvaluateChallengeUseCase } from './usecases/evaluate-challenge.usecase'
+import { TranslateChallengeUseCase } from './usecases/translate-challenge.usecase'
 
 @Module({
   controllers: [
@@ -16,6 +17,8 @@ import { EvaluateChallengeUseCase } from './usecases/evaluate-challenge.usecase'
     ChallengesService,
     GenerateChallengeUseCase,
     EvaluateChallengeUseCase,
+    TranslateChallengeUseCase,
   ],
+  exports: [TranslateChallengeUseCase],
 })
 export class ChallengesModule {}

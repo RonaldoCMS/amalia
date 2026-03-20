@@ -1,5 +1,5 @@
 import {
-  Controller, Post, Get, Delete, Body, Param, Request, UseGuards, HttpCode, HttpStatus,
+  Controller, Post, Get, Delete, Body, Param, Query, Request, UseGuards, HttpCode, HttpStatus,
 } from '@nestjs/common'
 import { JwtGuard } from 'src/auth/guards/jwt.guard'
 import { CvService } from './cv.service'
@@ -12,21 +12,21 @@ export class CvController {
   // ── Public endpoints (no auth required) ─────────────────────────────────
 
   @Get('gallery')
-  getGallery(): Promise<PublicCvItem[]> {
-    return this.cvService.getAllPublic()
+  getGallery(@Query('lang') lang?: string): Promise<PublicCvItem[]> {
+    return this.cvService.getAllPublic(lang)
   }
 
   @Get('public/:username')
-  getPublicCv(@Param('username') username: string): Promise<CvSession> {
-    return this.cvService.getPublicByUsername(username)
+  getPublicCv(@Param('username') username: string, @Query('lang') lang?: string): Promise<CvSession> {
+    return this.cvService.getPublicByUsername(username, lang)
   }
 
   // ── Authenticated endpoints ──────────────────────────────────────────────
 
   @Get('me')
   @UseGuards(JwtGuard)
-  getMyCv(@Request() req: { user: { id: string } }): Promise<CvSession | null> {
-    return this.cvService.getMyCv(req.user.id)
+  getMyCv(@Request() req: { user: { id: string } }, @Query('lang') lang?: string): Promise<CvSession | null> {
+    return this.cvService.getMyCv(req.user.id, lang)
   }
 
   @Post('start')

@@ -67,7 +67,7 @@ export class GenerateCvUseCase {
       cvData = this.parseCvData(raw, user.username, onboarding?.githubUrl ?? null)
     } catch {
       await this.cvRepository.updateStatus(cvId, 'error')
-      throw new Error('Generazione CV fallita. Riprova.')
+      throw new Error('CV generation failed. Please try again.')
     }
 
     const updatedStats = {
@@ -95,50 +95,50 @@ export class GenerateCvUseCase {
     topLanguages: string[],
     onboarding: any,
   ): string {
-    const verifiedList = [...verifiedLangs].join(', ') || 'nessuno'
-    return `Sei Amalia, AI della piattaforma di sfide di programmazione Amalia.
-Hai appena concluso un'intervista dettagliata con ${username} per creare il suo CV professionale.
+    const verifiedList = [...verifiedLangs].join(', ') || 'none'
+    return `You are Amalia, AI of the Amalia programming challenge platform.
+You have just completed a detailed interview with ${username} to create their professional CV.
 
-=== TRASCRIZIONE INTERVISTA ===
+=== INTERVIEW TRANSCRIPT ===
 ${conversation}
 
-=== DATI CERTIFICATI DALLA PIATTAFORMA AMALIA ===
-- Sfide completate: ${total} (accuratezza ${accuracy}%)
-- Punteggio totale: ${stats.totalScore} punti
-- Linguaggi verificati dalla piattaforma: ${verifiedList}
-- Ruolo dichiarato: ${onboarding?.jobType ?? 'non specificato'}
-- Anni di esperienza: ${onboarding?.yearsOfExperience ?? 'non specificato'}
-- Obiettivi: ${(onboarding?.goals ?? []).join(', ') || 'non specificati'}
-- GitHub: ${onboarding?.githubUrl ?? 'non specificato'}
+=== CERTIFIED PLATFORM DATA FROM AMALIA ===
+- Challenges completed: ${total} (accuracy ${accuracy}%)
+- Total score: ${stats.totalScore} points
+- Languages verified by the platform: ${verifiedList}
+- Declared role: ${onboarding?.jobType ?? 'not specified'}
+- Years of experience: ${onboarding?.yearsOfExperience ?? 'not specified'}
+- Goals: ${(onboarding?.goals ?? []).join(', ') || 'not specified'}
+- GitHub: ${onboarding?.githubUrl ?? 'not specified'}
 
-Genera il CV professionale di ${username} come JSON puro (ZERO testo extra, ZERO markdown):
+Generate the professional CV of ${username} as pure JSON (ZERO extra text, ZERO markdown):
 {
   "name": "${username}",
-  "title": "titolo professionale preciso in max 5 parole (es. 'Full Stack Developer TypeScript')",
-  "bio": "bio professionale in prima persona, 2-3 frasi coinvolgenti che sintetizzano chi è e cosa cerca",
+  "title": "precise professional title in max 5 words (e.g. 'Full Stack TypeScript Developer')",
+  "bio": "professional bio in first person, 2-3 engaging sentences summarizing who they are and what they're looking for",
   "email": null,
   "githubUrl": "${onboarding?.githubUrl ?? null}",
-  "education": "titolo di studio o certificazioni rilevanti, stringa unica (es. 'Laurea Informatica - Università di Bologna, 2022') o null se non menzionato",
+  "education": "degree or relevant certifications, single string (e.g. 'BSc Computer Science - University of Bologna, 2022') or null if not mentioned",
   "skills": [
-    {"name": "NomeSkill", "verified": true_o_false, "level": "Base|Intermedio|Avanzato|Expert"}
+    {"name": "SkillName", "verified": true_or_false, "level": "Beginner|Intermediate|Advanced|Expert"}
   ],
   "softSkills": ["soft skill 1", "soft skill 2", "soft skill 3"],
   "projects": [
-    {"name": "Nome progetto", "description": "descrizione 1-2 frasi con impatto concreto", "technologies": ["Tech1", "Tech2"]}
+    {"name": "Project name", "description": "1-2 sentence description with concrete impact", "technologies": ["Tech1", "Tech2"]}
   ],
   "experience": [
-    {"title": "Titolo ruolo", "company": "Nome azienda o Freelance", "period": "anno-anno o anno-presente", "description": "responsabilità e risultati in 1-2 frasi"}
+    {"title": "Role title", "company": "Company name or Freelance", "period": "year-year or year-present", "description": "responsibilities and results in 1-2 sentences"}
   ]
 }
 
-REGOLE ASSOLUTE:
-- "verified": true SOLO per linguaggi in: [${verifiedList}]
-- "softSkills": estrai dalle risposte dell'intervista, 3-5 soft skill concrete (es. problem solving, comunicazione, autonomia, attenzione al dettaglio)
-- "education": null se non menzionato esplicitamente
-- bio deve riflettere il tono e gli obiettivi dell'utente, in prima persona
-- Includi TUTTE le esperienze e i progetti citati nell'intervista, anche brevemente
-- Se una sezione non ha dati → array vuoto []
-- JSON valido, nessun testo extra, nessun blocco markdown`
+ABSOLUTE RULES:
+- "verified": true ONLY for languages in: [${verifiedList}]
+- "softSkills": extract from interview answers, 3-5 concrete soft skills (e.g. problem solving, communication, autonomy, attention to detail)
+- "education": null if not explicitly mentioned
+- bio must reflect the user's tone and goals, in first person
+- Include ALL experiences and projects mentioned in the interview, even briefly
+- If a section has no data → empty array []
+- Valid JSON, no extra text, no markdown blocks`
   }
 
   private parseCvData(raw: string, username: string, githubUrl: string | null): CvData {

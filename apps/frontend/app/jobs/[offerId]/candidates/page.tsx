@@ -2,6 +2,7 @@
 
 import { use, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { useCandidates } from '../../../../hooks/useJobs'
 import { useAuthContext } from '../../../context/AuthContext'
 import { Footer } from '../../../components/Footer'
@@ -34,7 +35,7 @@ function Avatar({ url, name, px = 40 }: { url?: string | null; name: string; px?
   )
 }
 
-function CandidateCard({ c, selected, onToggle }: { c: JobCandidateItem; selected: boolean; onToggle: () => void }) {
+function CandidateCard({ c, selected, onToggle, t }: { c: JobCandidateItem; selected: boolean; onToggle: () => void; t: (key: string) => string }) {
   return (
     <div className={`border rounded-xl p-5 transition-colors cursor-pointer ${
       selected
@@ -56,7 +57,7 @@ function CandidateCard({ c, selected, onToggle }: { c: JobCandidateItem; selecte
             <MatchBadge score={c.matchPercentage} />
           </div>
           <p className="text-xs text-zinc-500 mt-0.5 truncate">
-            {c.yearsOfExperience} anni exp
+            {c.yearsOfExperience} {t('yearsExp')}
           </p>
         </div>
       </div>
@@ -98,6 +99,7 @@ export default function CandidatesPage({ params }: { params: Promise<{ offerId: 
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
   const router = useRouter()
+  const t = useTranslations('Jobs')
 
   if (!isAuthenticated) return null
 
@@ -132,12 +134,12 @@ export default function CandidatesPage({ params }: { params: Promise<{ offerId: 
 
       <main className="relative z-10 flex-1 max-w-3xl w-full mx-auto px-4 py-8 pb-24 sm:pb-8">
         <button onClick={() => router.push(`/jobs/${offerId}`)} className="text-xs font-mono text-zinc-500 hover:text-zinc-300 mb-4 inline-block transition-colors">
-          ← torna all&apos;offerta
+          {t('backToOffer')}
         </button>
 
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-lg font-semibold text-zinc-100 font-mono">🔍 candidati compatibili</h1>
-          <span className="text-xs font-mono text-zinc-600">{candidates.length} trovati</span>
+          <h1 className="text-lg font-semibold text-zinc-100 font-mono">{t('candidatesTitle')}</h1>
+          <span className="text-xs font-mono text-zinc-600">{candidates.length} {t('candidatesFound')}</span>
         </div>
 
         {isLoading ? (
@@ -146,31 +148,31 @@ export default function CandidatesPage({ params }: { params: Promise<{ offerId: 
           </div>
         ) : candidates.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-zinc-600 font-mono text-sm">nessun candidato trovato</p>
+            <p className="text-zinc-600 font-mono text-sm">{t('noCandidates')}</p>
           </div>
         ) : (
           <>
             {/* Toolbar */}
             <div className="flex items-center justify-between mb-4">
               <button onClick={selectAll} className="text-[11px] font-mono text-zinc-500 hover:text-zinc-300 transition-colors">
-                {selected.size === candidates.length ? 'deseleziona tutti' : 'seleziona tutti'}
+                {selected.size === candidates.length ? t('deselectAll') : t('selectAll')}
               </button>
               {selected.size > 0 && (
-                <span className="text-[11px] font-mono text-cyan-400">{selected.size} selezionati</span>
+                <span className="text-[11px] font-mono text-cyan-400">{selected.size} {t('selected')}</span>
               )}
             </div>
 
             {/* Success */}
             {sent && (
               <div className="text-xs font-mono p-3 rounded-lg border text-emerald-400 bg-emerald-400/5 border-emerald-400/20 mb-4">
-                ✓ offerta inviata con successo!
+                {t('offerSentSuccess')}
               </div>
             )}
 
             {/* List */}
             <div className="flex flex-col gap-3 mb-6">
               {candidates.map(c => (
-                <CandidateCard key={c.developerId} c={c} selected={selected.has(c.developerId)} onToggle={() => toggleDev(c.developerId)} />
+                <CandidateCard key={c.developerId} c={c} selected={selected.has(c.developerId)} onToggle={() => toggleDev(c.developerId)} t={t} />
               ))}
             </div>
 
@@ -182,7 +184,7 @@ export default function CandidatesPage({ params }: { params: Promise<{ offerId: 
                   disabled={sending}
                   className="w-full py-3 rounded-xl text-sm font-mono font-medium bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 hover:border-cyan-500/50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors backdrop-blur"
                 >
-                  {sending ? 'invio in corso...' : `📤 invia offerta a ${selected.size} developer`}
+                  {sending ? t('sendingOffer') : `📤 ${t('sendOfferTo')} ${selected.size} ${t('developers')}`}
                 </button>
               </div>
             )}

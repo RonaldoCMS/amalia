@@ -1,20 +1,10 @@
 'use client'
 
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { CommentItem } from '@amalia/shared'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? ''
-
-function timeAgo(dateStr: string): string {
-  const seconds = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000)
-  if (seconds < 60) return 'ora'
-  const minutes = Math.floor(seconds / 60)
-  if (minutes < 60) return `${minutes}m`
-  const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `${hours}h`
-  const days = Math.floor(hours / 24)
-  return `${days}g`
-}
 
 interface Props {
   comment: CommentItem
@@ -23,6 +13,19 @@ interface Props {
 }
 
 export function CommentItemView({ comment, isOwner, onDelete }: Props) {
+  const t = useTranslations('Feed')
+
+  const timeAgo = (dateStr: string): string => {
+    const seconds = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000)
+    if (seconds < 60) return t('timeNow')
+    const minutes = Math.floor(seconds / 60)
+    if (minutes < 60) return `${minutes}${t('timeMinutes')}`
+    const hours = Math.floor(minutes / 60)
+    if (hours < 24) return `${hours}${t('timeHours')}`
+    const days = Math.floor(hours / 24)
+    return `${days}${t('timeDays')}`
+  }
+
   return (
     <div className="flex gap-2.5 px-4 py-2.5 hover:bg-zinc-900/50">
       <Link href={`/user/${comment.authorId}`} className="shrink-0">
@@ -46,7 +49,7 @@ export function CommentItemView({ comment, isOwner, onDelete }: Props) {
           <span className="text-zinc-600 text-xs">{timeAgo(comment.createdAt)}</span>
           {isOwner && (
             <button onClick={onDelete} className="text-zinc-700 hover:text-red-400 transition text-xs ml-auto">
-              Elimina
+              {t('deleteComment')}
             </button>
           )}
         </div>
