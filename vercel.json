@@ -5,11 +5,5 @@
       "use": "@vercel/next"
     }
   ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "apps/frontend/$1"
-    }
-  ],
   "installCommand": "npm install && cd packages/shared && npx tsc"
 }
