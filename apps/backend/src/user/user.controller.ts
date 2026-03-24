@@ -3,13 +3,16 @@ import { UpdatePasswordRequest, UserProfile, ChallengeHistoryItem, UserSearchRes
 import { JwtGuard } from 'src/auth/guards/jwt.guard'
 import { UserService } from './user.service'
 import { FileInterceptor } from '@nestjs/platform-express'
-import { diskStorage } from 'multer'
-import { extname, join } from 'path'
+import { memoryStorage } from 'multer'
+import { FirebaseStorageService } from 'src/shared/firebase/firebase-storage.service'
 
 @Controller('user')
 @UseGuards(JwtGuard)
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly firebaseStorage: FirebaseStorageService,
+  ) {}
 
   @Get('me')
   getProfile(@Request() req: { user: { id: string } }): Promise<UserProfile> {
@@ -60,13 +63,7 @@ export class UserController {
 
   @Post('photo')
   @UseInterceptors(FileInterceptor('photo', {
-    storage: diskStorage({
-      destination: join(process.cwd(), 'uploads', 'profile-photos'),
-      filename: (req: any, file: any, cb: any) => {
-        const ext = extname(file.originalname)
-        cb(null, `${req.user.id}${ext}`)
-      },
-    }),
+    storage: memoryStorage(),
     fileFilter: (_req: any, file: any, cb: any) => {
       if (/^image\/(jpeg|png|webp|gif)$/.test(file.mimetype)) {
         cb(null, true)
@@ -76,11 +73,24 @@ export class UserController {
     },
     limits: { fileSize: 5 * 1024 * 1024 },
   }))
-  uploadPhoto(
-    @UploadedFile() file: any,
+  async uploadPhoto(
+    @UploadedFile() file: Express.Multer.File,
     @Request() req: { user: { id: string } },
   ): Promise<{ profilePhotoUrl: string }> {
-    return this.userService.updateProfilePhoto(req.user.id, file)
+    // Delete old profile photo if exists
+    const profile = await this.userService.getProfile(req.user.id)
+    if (profile.profilePhotoUrl) {
+      await this.firebaseStorage.deleteFile(profile.profilePhotoUrl)
+    }
+
+    // Upload new photo to Firebase Storage
+    const imageUrl = await this.firebaseStorage.uploadFile(
+      file.buffer,
+      file.originalname,
+      'profile-photos',
+    )
+
+    return this.userService.updateProfilePhoto(req.user.id, imageUrl)
   }
 
   @Delete()

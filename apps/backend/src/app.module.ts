@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ChallengesModule } from './challenges/challenges.module';
 import { SharedModule } from './shared/shared.module';
+import { FirebaseModule } from './shared/firebase/firebase.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from './entities/user.entity';
 import { Challenge } from './entities/challenge.entity';
@@ -19,8 +20,7 @@ import { Friendship } from './entities/friendship.entity';
 import { UserCv } from './entities/user-cv.entity';
 import { JobOffer } from './entities/job-offer.entity';
 import { JobApplication } from './entities/job-application.entity';
-import { JobMessage } from './entities/job-message.entity';
-import { TypeOrmModule } from '@nestjs/typeorm'
+import { JobMessage } from './entities/job-message.entity';import { FCMToken } from './entities/fcm-token.entity';import { TypeOrmModule } from '@nestjs/typeorm'
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { OnboardingModule } from './onboarding/onboarding.module';
@@ -41,11 +41,12 @@ import { JobsModule } from './jobs/jobs.module';
       useFactory: (config: ConfigService) => ({
         type: 'postgres',
         url: config.get<string>('DATABASE_URL'),
-        entities: [User, Challenge, UserChallenge, UserOnboarding, DevMatch, ChatMessage, Notification, Duel, DuelRound, AppConfig, Post, PostLike, PostComment, Friendship, UserCv, JobOffer, JobApplication, JobMessage],
+        entities: [User, Challenge, UserChallenge, UserOnboarding, DevMatch, ChatMessage, Notification, Duel, DuelRound, AppConfig, Post, PostLike, PostComment, Friendship, UserCv, JobOffer, JobApplication, JobMessage, FCMToken],
         synchronize: true,
       }),
     }),
     SharedModule,
+    FirebaseModule,
     AuthModule,
     ChallengesModule,
     UserModule,
