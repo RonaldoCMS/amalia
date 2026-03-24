@@ -177,6 +177,42 @@ NEXT_PUBLIC_FIREBASE_VAPID_KEY=...
 
 The build process will automatically generate the service worker with these values.
 
+#### Vercel Setup (Step-by-step)
+
+1. **Go to your Vercel project** → Settings → Environment Variables
+
+2. **Add all Firebase variables**:
+   - Click "Add New"
+   - Enter key: `NEXT_PUBLIC_FIREBASE_API_KEY`
+   - Enter value: `AIzaSy...` (your actual API key)
+   - Select environments: Production, Preview, Development
+   - Click "Save"
+   
+3. **Repeat for all 9 variables**:
+   ```
+   NEXT_PUBLIC_BACKEND_URL
+   NEXT_PUBLIC_FIREBASE_API_KEY
+   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+   NEXT_PUBLIC_FIREBASE_PROJECT_ID
+   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+   NEXT_PUBLIC_FIREBASE_APP_ID
+   NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+   NEXT_PUBLIC_FIREBASE_VAPID_KEY
+   ```
+
+4. **Redeploy** (if already deployed):
+   - Go to Deployments tab
+   - Click "..." on latest deployment → Redeploy
+   - Or push a new commit
+
+5. **Verify** service worker generation in build logs:
+   ```
+   📦 Using environment variables from process.env (production mode)
+   ✅ firebase-messaging-sw.js generated successfully
+   ✅ All Firebase environment variables are configured
+   ```
+
 **Backend Variables** (Railway/Render/etc.):
 See [firebase-env-migration.md](firebase-env-migration.md)
 
@@ -221,17 +257,28 @@ NEXT_PUBLIC_FIREBASE_VAPID_KEY=...
 
 ## Troubleshooting
 
+### Build Error on Vercel: ".env.local file not found"
+**Cause**: The script was looking for `.env.local` which doesn't exist in production.
+
+**Solution**: Already fixed! The script now uses `process.env` in production. Make sure:
+1. All `NEXT_PUBLIC_FIREBASE_*` variables are set in Vercel dashboard
+2. Redeploy after adding environment variables
+3. Check build logs for: `📦 Using environment variables from process.env (production mode)`
+
 ### Service Worker Not Working
 ```bash
 # Regenerate manually
 npm run generate-sw
 
-# Check if .env.local has all variables
+# Check if .env.local has all variables (local dev)
 cat .env.local | grep FIREBASE
+
+# Or check Vercel environment variables (production)
 ```
 
 ### "VAPID key not configured" Error
-- Check `.env.local` has `NEXT_PUBLIC_FIREBASE_VAPID_KEY`
+- **Local Dev**: Check `.env.local` has `NEXT_PUBLIC_FIREBASE_VAPID_KEY`
+- **Production**: Check Vercel/platform has the variable configured
 - Restart dev server: `npm run dev`
 
 ### Missing Environment Variables Warning
@@ -239,10 +286,11 @@ cat .env.local | grep FIREBASE
 ⚠️  Warning: Missing environment variables:
    - FIREBASE API KEY
 ```
-→ Add the missing variable to `.env.local` and regenerate:
+→ **Local**: Add to `.env.local` and regenerate:
 ```bash
 npm run generate-sw
 ```
+→ **Production**: Add to Vercel/platform dashboard and redeploy
 
 ### Git Still Shows firebase-messaging-sw.js
 ```bash

@@ -4,7 +4,9 @@
  * Generate Firebase Service Worker from template
  * 
  * This script reads firebase-messaging-sw.template.js and replaces
- * placeholders with environment variables from .env.local
+ * placeholders with environment variables.
+ * 
+ * Works in both local dev (reads .env.local) and production (uses process.env from Vercel/Railway/etc.)
  * 
  * Run this before starting the dev server or building for production
  */
@@ -12,30 +14,37 @@
 const fs = require('fs');
 const path = require('path');
 
-// Load environment variables from .env.local
-const envPath = path.join(__dirname, '..', '.env.local');
 const templatePath = path.join(__dirname, '..', 'public', 'firebase-messaging-sw.template.js');
 const outputPath = path.join(__dirname, '..', 'public', 'firebase-messaging-sw.js');
 
 console.log('🔧 Generating firebase-messaging-sw.js from template...');
 
-// Check if .env.local exists
-if (!fs.existsSync(envPath)) {
-  console.error('❌ Error: .env.local file not found');
-  console.log('Please create apps/frontend/.env.local with Firebase configuration');
-  process.exit(1);
+// Load environment variables
+// Priority: process.env (for production) > .env.local (for local dev)
+const env = {};
+
+// First, try to load from .env.local (local development)
+const envPath = path.join(__dirname, '..', '.env.local');
+if (fs.existsSync(envPath)) {
+  console.log('📄 Loading from .env.local');
+  const envContent = fs.readFileSync(envPath, 'utf8');
+  envContent.split('\n').forEach(line => {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith('#')) {
+      const [key, ...valueParts] = trimmed.split('=');
+      if (key && valueParts.length > 0) {
+        env[key.trim()] = valueParts.join('=').trim().replace(/^["']|["']$/g, ''); // Remove quotes
+      }
+    }
+  });
+} else {
+  console.log('📦 Using environment variables from process.env (production mode)');
 }
 
-// Parse .env.local
-const envContent = fs.readFileSync(envPath, 'utf8');
-const env = {};
-envContent.split('\n').forEach(line => {
-  const trimmed = line.trim();
-  if (trimmed && !trimmed.startsWith('#')) {
-    const [key, ...valueParts] = trimmed.split('=');
-    if (key && valueParts.length > 0) {
-      env[key.trim()] = valueParts.join('=').trim();
-    }
+// Override with process.env (always takes priority - for Vercel/Railway/etc.)
+Object.keys(process.env).forEach(key => {
+  if (key.startsWith('NEXT_PUBLIC_FIREBASE_')) {
+    env[key] = process.env[key];
   }
 });
 
@@ -70,7 +79,8 @@ for (const [placeholder, value] of Object.entries(replacements)) {
 if (missing.length > 0) {
   console.warn('⚠️  Warning: Missing environment variables:');
   missing.forEach(m => console.warn(`   - ${m}`));
-  console.warn('Please add these to your .env.local file');
+  console.warn('In local dev: Add these to .env.local');
+  console.warn('In production: Configure these in your hosting platform (Vercel/Railway/etc.)');
 }
 
 // Write output
