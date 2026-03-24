@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { getToken, onMessage, MessagePayload } from 'firebase/messaging';
 import { getFirebaseMessaging, isPushNotificationSupported } from '../lib/firebase';
 
-const VAPID_KEY = 'BLiH_2bkbUgVnKk0Z0iySRjw3r0hrLmjN5oR5p8th5uWr9TEsvxBv4qX1nqEqrQEotSEyOtm2L_WkUgSDkMoSj0'; // TODO: Replace with actual VAPID key from Firebase Console
+const VAPID_KEY = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
 const FCM_TOKEN_KEY = 'fcm-token';
 const FCM_PERMISSION_ASKED_KEY = 'fcm-permission-asked';
 
@@ -96,6 +96,11 @@ export const useFCM = (): UseFCMResult => {
   const requestPermission = useCallback(async (): Promise<boolean> => {
     if (!isSupported) {
       console.warn('Push notifications are not supported');
+      return false;
+    }
+
+    if (!VAPID_KEY) {
+      console.error('VAPID key not configured. Set NEXT_PUBLIC_FIREBASE_VAPID_KEY in .env.local');
       return false;
     }
 

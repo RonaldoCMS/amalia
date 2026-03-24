@@ -231,28 +231,47 @@ Tutte le notifiche esistenti ora supportano automaticamente push notifications:
 
 ### ⚠️ CRITICAL: Before Testing
 
-#### 1. Generate VAPID Key from Firebase Console
-1. Firebase Console → Cloud Messaging → Web Push certificates
-2. Generate key pair
-3. Copy the key (starts with `B...`)
+#### 1. Backend: Firebase Admin Credentials (Environment Variables)
 
-#### 2. Update Frontend
-File: `apps/frontend/hooks/useFCM.ts` (line ~45)
+See [firebase-env-migration.md](firebase-env-migration.md) for complete guide.
 
-Replace:
-```typescript
-vapidKey: 'YOUR_ACTUAL_VAPID_KEY_HERE'
+Add to `apps/backend/.env` or root `.env`:
+```bash
+FIREBASE_TYPE=service_account
+FIREBASE_PROJECT_ID=your-project-id
+FIREBASE_PRIVATE_KEY_ID=your-key-id
+FIREBASE_PRIVATE_KEY="your-private-key-with-\n"
+FIREBASE_CLIENT_EMAIL=your-client-email
+FIREBASE_CLIENT_ID=your-client-id
+FIREBASE_CLIENT_CERT_URL=your-cert-url
+FIREBASE_STORAGE_BUCKET=your-bucket.firebasestorage.app
 ```
 
-With:
-```typescript
-vapidKey: 'BCxyz...' // Your actual key
+#### 2. Frontend: Firebase Web Config + VAPID Key (Environment Variables)
+
+Add to `apps/frontend/.env.local`:
+```bash
+# Backend API
+NEXT_PUBLIC_BACKEND_URL=http://localhost:3000
+
+# Firebase Web Config (from Firebase Console > Project Settings > Your apps)
+NEXT_PUBLIC_FIREBASE_API_KEY=your-api-key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project.firebasestorage.app
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your-sender-id
+NEXT_PUBLIC_FIREBASE_APP_ID=your-app-id
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your-measurement-id
+
+# FCM VAPID Key (from Firebase Console > Cloud Messaging > Web Push certificates)
+NEXT_PUBLIC_FIREBASE_VAPID_KEY=your-vapid-key
 ```
 
-#### 3. Verify Backend Credentials
-Ensure `apps/backend/firebase_admin.json` exists with valid service account.
+**Where to find these values:**
+1. Firebase Console → Project Settings → General → Scroll to "Your apps" → Web app config
+2. Firebase Console → Cloud Messaging → Web Push certificates → Generate key pair (if needed)
 
-#### 4. Install Dependencies
+#### 3. Install Dependencies
 ```bash
 # Frontend
 cd apps/frontend
