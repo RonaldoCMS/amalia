@@ -3,6 +3,8 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react'
 import { NotificationItem } from '@amalia/shared'
 import { NotificationService } from '../../services/notification.service'
+import { useFCM } from '../../hooks/useFCM'
+import { FCMTokenService } from '../../services/fcm-token.service'
 
 interface Snack {
   id: string
@@ -17,12 +19,18 @@ interface NotificationContextType {
   refresh: () => Promise<void>
   markAllRead: () => Promise<void>
   dismissSnack: (id: string) => void
+  requestPushPermission: () => Promise<boolean>
+  pushPermissionStatus: NotificationPermission | null
+  isPushSupported: boolean
 }
 
 const NotificationContext = createContext<NotificationContextType>({
   notifications: [],
   unreadCount: 0,
   snacks: [],
+  requestPushPermission: async () => false,
+  pushPermissionStatus: null,
+  isPushSupported: false,
   refresh: async () => {},
   markAllRead: async () => {},
   dismissSnack: () => {},
@@ -36,6 +44,16 @@ export function NotificationProvider({ children, isAuthenticated }: { children: 
   const service = useRef(new NotificationService())
   const [notifications, setNotifications] = useState<NotificationItem[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
+  const tokenRegistered = useRef(false)
+
+  // FCM integration
+  const { 
+    token: fcmToken, 
+    isSupported: isPushSupported, 
+    permissionStatus: pushPermissionStatus,
+    requestPermission,
+    onForegroundMessage,
+  } = useFCM()
   const [snacks, setSnacks] = useState<Snack[]>([])
   const prevUnread = useRef(0)
   const seenIds = useRef(new Set<string>())
@@ -101,8 +119,63 @@ export function NotificationProvider({ children, isAuthenticated }: { children: 
     setSnacks(prev => prev.filter(s => s.id !== id))
   }, [])
 
+  const requestPushPermission = useCallback(async (): Promise<boolean> => {
+    const granted = await requestPermission()
+    return granted
+  }, [requestPermission])
+
+  // Register FCM token with backend when available
+  useEffect(() => {
+    if (!isAuthenticated || !fcmToken || tokenRegistered.current) return
+
+    const registerToken = async () => {
+      try {
+        await FCMTokenService.registerToken(fcmToken)
+        tokenRegistered.current = true
+        console.log('✅ FCM token registered with backend')
+      } catch (error) {
+        console.error('Failed to register FCM token with backend:', error)
+      }
+    }
+
+    registerToken()
+  }, [isAuthenticated, fcmToken])
+
+  // Listen to foreground messages
+  useEffect(() => {
+    if (!isPushSupported) return
+
+    const unsubscribe = onForegroundMessage((payload) => {
+      console.log('Foreground FCM message received:', payload)
+      
+      // Show snackbar for foreground notification
+      const title = payload.notification?.title || 'Nuova notifica'
+      const body = payload.notification?.body || ''
+      const id = payload.data?.referenceId || Date.now().toString()
+
+      setSnacks(prev => [...prev, { id, title, body }])
+      
+      // Refresh notifications list
+      refresh()
+    })
+
+    return unsubscribe
+  }, [isPushSupported, onForegroundMessage, refresh])
+
   return (
-    <NotificationContext.Provider value={{ notifications, unreadCount, snacks, refresh, markAllRead, dismissSnack }}>
+    <NotificationContext.Provider 
+      value={{ 
+        notifications, 
+        unreadCount, 
+        snacks, 
+        refresh, 
+        markAllRead, 
+        dismissSnack,
+        requestPushPermission,
+        pushPermissionStatus,
+        isPushSupported,
+      }}
+    >
       {children}
     </NotificationContext.Provider>
   )
