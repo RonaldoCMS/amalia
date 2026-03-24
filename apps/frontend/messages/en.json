@@ -1,4 +1,21 @@
 {
+  "Cookies": {
+    "title": "This site uses cookies",
+    "description": "We use cookies to enhance your experience, analyze site traffic, and personalize content. You can customize your preferences or accept all cookies.",
+    "acceptAll": "Accept all",
+    "rejectAll": "Reject all",
+    "customize": "Customize",
+    "customizeTitle": "Cookie preferences",
+    "necessaryTitle": "Necessary cookies",
+    "necessaryDesc": "Essential for the site to function. Cannot be disabled.",
+    "analyticsTitle": "Analytics cookies",
+    "analyticsDesc": "Help us understand how visitors interact with the site by collecting anonymous data.",
+    "marketingTitle": "Marketing cookies",
+    "marketingDesc": "Used to show relevant ads based on your interests.",
+    "alwaysActive": "always active",
+    "savePreferences": "Save preferences"
+  },
+
   "Common": {
     "loading": "$ loading_",
     "error": "✗ {error}",

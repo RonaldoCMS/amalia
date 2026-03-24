@@ -6,6 +6,7 @@ import { ChallengeConfigurationProvider } from "./context/ChallengeConfiguration
 import { AuthProvider } from "./context/AuthContext";
 import { AppShell } from "./components/AppShell";
 import { LanguageProvider } from "../i18n/LanguageProvider";
+import { CookieBanner } from "./components/CookieBanner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +38,7 @@ export default function RootLayout({
           <LanguageProvider>
             <ChallengeConfigurationProvider>
               <AppShell>{children}</AppShell>
+              <CookieBanner />
             </ChallengeConfigurationProvider>
           </LanguageProvider>
         </AuthProvider>

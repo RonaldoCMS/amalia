@@ -15,6 +15,23 @@
     "or": "oppure"
   },
 
+  "Cookies": {
+    "title": "Questo sito utilizza i cookie",
+    "description": "Utilizziamo i cookie per migliorare la tua esperienza, analizzare il traffico del sito e personalizzare i contenuti. Puoi personalizzare le tue preferenze o accettare tutti i cookie.",
+    "acceptAll": "Accetta tutti",
+    "rejectAll": "Rifiuta tutti",
+    "customize": "Personalizza",
+    "customizeTitle": "Preferenze cookie",
+    "necessaryTitle": "Cookie necessari",
+    "necessaryDesc": "Essenziali per il funzionamento del sito. Non possono essere disabilitati.",
+    "analyticsTitle": "Cookie analitici",
+    "analyticsDesc": "Ci aiutano a capire come i visitatori interagiscono con il sito raccogliendo dati anonimi.",
+    "marketingTitle": "Cookie di marketing",
+    "marketingDesc": "Utilizzati per mostrare pubblicità rilevanti per te e i tuoi interessi.",
+    "alwaysActive": "sempre attivi",
+    "savePreferences": "Salva preferenze"
+  },
+
   "Nav": {
     "feed": "Feed",
     "search": "Cerca",
