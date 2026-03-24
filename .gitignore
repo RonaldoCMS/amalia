@@ -10,6 +10,7 @@ apps/frontend/.next/
 
 # nest
 apps/backend/dist/
+apps/backend/firebase_admin.json
 
 # os
 .DS_Store

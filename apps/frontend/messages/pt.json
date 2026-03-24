@@ -1,4 +1,21 @@
 {
+  "Cookies": {
+    "title": "Este site utiliza cookies",
+    "description": "Utilizamos cookies para melhorar sua experiência, analisar o tráfego do site e personalizar o conteúdo. Você pode personalizar suas preferências ou aceitar todos os cookies.",
+    "acceptAll": "Aceitar todos",
+    "rejectAll": "Rejeitar todos",
+    "customize": "Personalizar",
+    "customizeTitle": "Preferências de cookies",
+    "necessaryTitle": "Cookies necessários",
+    "necessaryDesc": "Essenciais para o funcionamento do site. Não podem ser desativados.",
+    "analyticsTitle": "Cookies analíticos",
+    "analyticsDesc": "Nos ajudam a entender como os visitantes interagem com o site coletando dados anônimos.",
+    "marketingTitle": "Cookies de marketing",
+    "marketingDesc": "Utilizados para mostrar anúncios relevantes com base em seus interesses.",
+    "alwaysActive": "sempre ativos",
+    "savePreferences": "Salvar preferências"
+  },
+
   "Common": {
     "loading": "$ carregando_",
     "error": "✗ {error}",
