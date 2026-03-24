@@ -8,13 +8,13 @@ importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-comp
 // Initialize Firebase in the service worker
 // These placeholders will be replaced during build with values from .env.local
 firebase.initializeApp({
-  apiKey: "AIzaSyBW0av7SMOhLemxfjWuAwQ6Sm_nIRh2sXA",
-  authDomain: "amalia-1d651.firebaseapp.com",
-  projectId: "amalia-1d651",
-  storageBucket: "amalia-1d651.firebasestorage.app",
-  messagingSenderId: "359096464555",
-  appId: "1:359096464555:web:41394f75d3c560910373ee",
-  measurementId: "G-29CELL3S9F"
+  apiKey: "__FIREBASE_API_KEY__",
+  authDomain: "__FIREBASE_AUTH_DOMAIN__",
+  projectId: "__FIREBASE_PROJECT_ID__",
+  storageBucket: "__FIREBASE_STORAGE_BUCKET__",
+  messagingSenderId: "__FIREBASE_MESSAGING_SENDER_ID__",
+  appId: "__FIREBASE_APP_ID__",
+  measurementId: "__FIREBASE_MEASUREMENT_ID__"
 });
 
 const messaging = firebase.messaging();
