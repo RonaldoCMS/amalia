@@ -4,8 +4,7 @@ import { useState, useCallback, useRef } from 'react'
 import { ModerationService } from '../services/moderation.service'
 import {
   CreateReportRequest,
-  ReportItem,
-  ModerationLogItem,
+  ReportItem,  ReportStatus,  ModerationLogItem,
   BanUserRequest,
   MuteUserRequest,
 } from '@amalia/shared'
@@ -36,12 +35,12 @@ export function useModeration() {
 
   const resolveReport = useCallback(async (id: string, resolution: string) => {
     await service.resolveReport(id, { resolution })
-    setReports(prev => prev.map(r => r.id === id ? { ...r, status: 'resolved' as const } : r))
+    setReports(prev => prev.map(r => r.id === id ? { ...r, status: ReportStatus.Resolved } : r))
   }, [service])
 
   const dismissReport = useCallback(async (id: string, resolution?: string) => {
     await service.dismissReport(id, resolution)
-    setReports(prev => prev.map(r => r.id === id ? { ...r, status: 'dismissed' as const } : r))
+    setReports(prev => prev.map(r => r.id === id ? { ...r, status: ReportStatus.Dismissed } : r))
   }, [service])
 
   const banUser = useCallback(async (userId: string, data: BanUserRequest) => {
