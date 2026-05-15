@@ -6,6 +6,7 @@ import { useAuthContext } from '../context/AuthContext'
 import { NotificationProvider } from '../context/NotificationContext'
 import { Navbar } from './Navbar'
 import { SnackBar } from './SnackBar'
+import { IOSInstallBanner } from './IOSInstallBanner'
 import { backendClient } from '@/lib/backend'
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -43,6 +44,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       {showNavbar && <Navbar />}
       {children}
       <SnackBar />
+      <IOSInstallBanner />
     </NotificationProvider>
   )
 }

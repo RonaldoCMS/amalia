@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { NotificationRepository } from '../shared/repositories/pg/notification.repository';
 import { FCMTokenRepository } from '../shared/repositories/pg/fcm-token.repository';
 import { FirebaseMessagingService } from '../shared/firebase/firebase-messaging.service';
+import { WebPushService } from './web-push.service';
 import { NotificationItem, NotificationType } from '@amalia/shared';
 
 @Injectable()
@@ -12,6 +13,7 @@ export class NotificationService {
     private readonly notificationRepository: NotificationRepository,
     private readonly fcmTokenRepository: FCMTokenRepository,
     private readonly firebaseMessagingService: FirebaseMessagingService,
+    private readonly webPushService: WebPushService,
   ) {}
 
   async getNotifications(userId: string): Promise<NotificationItem[]> {
@@ -74,6 +76,15 @@ export class NotificationService {
       // Log error but don't fail the notification creation
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(`Failed to send push notification to user ${userId}: ${errorMessage}`);
+    }
+
+    // Send Web Push (iOS) — runs independently of FCM
+    try {
+      const clickAction = this.getClickActionUrl(type, referenceId);
+      await this.webPushService.sendToUser(userId, { title, body, data: { type, referenceId: referenceId || '' }, clickAction });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Failed to send Web Push to user ${userId}: ${errorMessage}`);
     }
   }
 

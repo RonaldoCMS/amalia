@@ -37,6 +37,28 @@ class FCMTokenRepositoryImpl {
       data: { token },
     });
   }
+
+  /**
+   * Register a Web Push subscription (iOS) with backend
+   */
+  async registerWebPushSubscription(subscription: PushSubscription, deviceInfo?: string): Promise<void> {
+    const json = subscription.toJSON();
+    await this.client.post('/web-push-subscription', {
+      endpoint: json.endpoint,
+      p256dh: json.keys?.p256dh,
+      auth: json.keys?.auth,
+      deviceInfo: deviceInfo ?? navigator.userAgent,
+    });
+  }
+
+  /**
+   * Delete a Web Push subscription from backend
+   */
+  async deleteWebPushSubscription(endpoint: string): Promise<void> {
+    await this.client.delete('/web-push-subscription', {
+      data: { endpoint },
+    });
+  }
 }
 
 export const FCMTokenRepository = new FCMTokenRepositoryImpl();

@@ -22,6 +22,7 @@ import { JobOffer } from './entities/job-offer.entity';
 import { JobApplication } from './entities/job-application.entity';
 import { JobMessage } from './entities/job-message.entity';
 import { FCMToken } from './entities/fcm-token.entity';
+import { WebPushSubscription } from './entities/web-push-subscription.entity';
 import { Permission } from './entities/permission.entity';
 import { UserPermission } from './entities/user-permission.entity';
 import { Report } from './entities/report.entity';
@@ -48,7 +49,7 @@ import { ModerationModule } from './moderation/moderation.module';
       useFactory: (config: ConfigService) => ({
         type: 'postgres',
         url: config.get<string>('DATABASE_URL'),
-        entities: [User, Challenge, UserChallenge, UserOnboarding, DevMatch, ChatMessage, Notification, Duel, DuelRound, AppConfig, Post, PostLike, PostComment, Friendship, UserCv, JobOffer, JobApplication, JobMessage, FCMToken, Permission, UserPermission, Report, ModerationLog],
+        entities: [User, Challenge, UserChallenge, UserOnboarding, DevMatch, ChatMessage, Notification, Duel, DuelRound, AppConfig, Post, PostLike, PostComment, Friendship, UserCv, JobOffer, JobApplication, JobMessage, FCMToken, WebPushSubscription, Permission, UserPermission, Report, ModerationLog],
         synchronize: true,
       }),
     }),

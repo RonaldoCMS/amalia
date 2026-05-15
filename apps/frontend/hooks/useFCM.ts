@@ -1,10 +1,24 @@
 import { useEffect, useState, useCallback } from 'react';
 import { getToken, onMessage, MessagePayload } from 'firebase/messaging';
 import { getFirebaseMessaging, isPushNotificationSupported } from '../lib/firebase';
+import { supportsIOSWebPush } from '../lib/ios-pwa';
+import { FCMTokenRepository } from '../repositories/fcm-token.repository';
 
 const VAPID_KEY = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
+const IOS_VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
 const FCM_TOKEN_KEY = 'fcm-token';
 const FCM_PERMISSION_ASKED_KEY = 'fcm-permission-asked';
+const WEB_PUSH_ENDPOINT_KEY = 'web-push-endpoint';
+
+function urlBase64ToUint8Array(base64String: string): ArrayBuffer {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
+  const raw = atob(base64)
+  const buffer = new ArrayBuffer(raw.length)
+  const view = new Uint8Array(buffer)
+  for (let i = 0; i < raw.length; i++) view[i] = raw.charCodeAt(i)
+  return buffer
+}
 
 export interface UseFCMResult {
   token: string | null;
@@ -43,20 +57,38 @@ export const useFCM = (): UseFCMResult => {
     checkSupport();
   }, []);
 
-  // Get existing token from localStorage or Firebase
+  // Get existing token / subscription
   useEffect(() => {
     const getExistingToken = async () => {
       if (!isSupported || permissionStatus !== 'granted') return;
 
       try {
-        // Check localStorage first
+        // iOS PWA path: use standard Web Push
+        if (supportsIOSWebPush()) {
+          const storedEndpoint = localStorage.getItem(WEB_PUSH_ENDPOINT_KEY);
+          if (storedEndpoint) {
+            setToken(storedEndpoint);
+            return;
+          }
+          if (!IOS_VAPID_PUBLIC_KEY) return;
+          const swReg = await navigator.serviceWorker.getRegistration();
+          if (!swReg) return;
+          const existing = await swReg.pushManager.getSubscription();
+          if (existing) {
+            localStorage.setItem(WEB_PUSH_ENDPOINT_KEY, existing.endpoint);
+            setToken(existing.endpoint);
+            await FCMTokenRepository.registerWebPushSubscription(existing).catch(() => {});
+          }
+          return;
+        }
+
+        // Non-iOS: FCM path
         const storedToken = localStorage.getItem(FCM_TOKEN_KEY);
         if (storedToken) {
           setToken(storedToken);
           return;
         }
 
-        // Get token from Firebase
         const messaging = await getFirebaseMessaging();
         if (!messaging) return;
 
@@ -73,7 +105,7 @@ export const useFCM = (): UseFCMResult => {
           localStorage.setItem(FCM_TOKEN_KEY, currentToken);
         }
       } catch (error) {
-        console.error('Error getting FCM token:', error);
+        console.error('Error getting token:', error);
       }
     };
 
@@ -108,7 +140,25 @@ export const useFCM = (): UseFCMResult => {
         return false;
       }
 
-      // Get FCM token
+      // iOS PWA: subscribe via standard Web Push
+      if (supportsIOSWebPush()) {
+        if (!IOS_VAPID_PUBLIC_KEY) {
+          console.error('NEXT_PUBLIC_VAPID_PUBLIC_KEY not set — iOS Web Push disabled');
+          return false;
+        }
+        const swReg = await navigator.serviceWorker.getRegistration();
+        if (!swReg) { console.error('No SW registration'); return false; }
+        const subscription = await swReg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(IOS_VAPID_PUBLIC_KEY),
+        });
+        localStorage.setItem(WEB_PUSH_ENDPOINT_KEY, subscription.endpoint);
+        setToken(subscription.endpoint);
+        await FCMTokenRepository.registerWebPushSubscription(subscription);
+        return true;
+      }
+
+      // Non-iOS: FCM
       const messaging = await getFirebaseMessaging();
       if (!messaging) {
         console.error('Failed to get messaging instance');
@@ -126,7 +176,6 @@ export const useFCM = (): UseFCMResult => {
       if (currentToken) {
         setToken(currentToken);
         localStorage.setItem(FCM_TOKEN_KEY, currentToken);
-        console.log('FCM Token:', currentToken);
         return true;
       } else {
         console.error('No registration token available');
