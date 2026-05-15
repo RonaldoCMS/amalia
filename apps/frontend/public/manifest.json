@@ -48,7 +48,7 @@
       "purpose": "any"
     },
     {
-      "src": "/icons/icon-512x512-maskable.png",
+      "src": "/icons/android/launchericon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
@@ -57,13 +57,13 @@
   "screenshots": [
     {
       "src": "/screenshots/mobile.jpeg",
-      "sizes": "390x844",
+      "sizes": "736x1600",
       "type": "image/jpeg",
       "label": "amalia — Sfide di codice"
     },
     {
       "src": "/screenshots/desktop.png",
-      "sizes": "1280x800",
+      "sizes": "1909x934",
       "type": "image/png",
       "form_factor": "wide",
       "label": "amalia — Dashboard sfide"
@@ -74,7 +74,14 @@
       "name": "Sfide",
       "short_name": "Sfide",
       "description": "Vai alle sfide di codice",
-      "url": "/challenge"
+      "url": "/challenge",
+      "icons": [
+        {
+          "src": "/icons/android/launchericon-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
     }
   ]
 }

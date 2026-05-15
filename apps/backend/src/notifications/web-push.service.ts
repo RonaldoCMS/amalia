@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import webPush, { PushSubscription, SendResult } from 'web-push';
-import { WebPushSubscriptionRepository } from '../../shared/repositories/pg/web-push-subscription.repository';
+import { WebPushSubscriptionRepository } from '../shared/repositories/pg/web-push-subscription.repository';
 
 @Injectable()
 export class WebPushService {
