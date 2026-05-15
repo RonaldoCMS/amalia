@@ -43,20 +43,6 @@ export const useFCM = (): UseFCMResult => {
     checkSupport();
   }, []);
 
-  // Register service worker
-  useEffect(() => {
-    if (typeof window !== 'undefined' && 'serviceWorker' in navigator && isSupported) {
-      navigator.serviceWorker
-        .register('/firebase-messaging-sw.js')
-        .then((registration) => {
-          console.log('Service Worker registered:', registration);
-        })
-        .catch((error) => {
-          console.error('Service Worker registration failed:', error);
-        });
-    }
-  }, [isSupported]);
-
   // Get existing token from localStorage or Firebase
   useEffect(() => {
     const getExistingToken = async () => {
@@ -74,8 +60,12 @@ export const useFCM = (): UseFCMResult => {
         const messaging = await getFirebaseMessaging();
         if (!messaging) return;
 
+        const swReg = 'serviceWorker' in navigator
+          ? await navigator.serviceWorker.getRegistration()
+          : undefined
         const currentToken = await getToken(messaging, {
           vapidKey: VAPID_KEY,
+          ...(swReg && { serviceWorkerRegistration: swReg }),
         });
 
         if (currentToken) {
@@ -125,8 +115,12 @@ export const useFCM = (): UseFCMResult => {
         return false;
       }
 
+      const swReg = 'serviceWorker' in navigator
+        ? await navigator.serviceWorker.getRegistration()
+        : undefined
       const currentToken = await getToken(messaging, {
         vapidKey: VAPID_KEY,
+        ...(swReg && { serviceWorkerRegistration: swReg }),
       });
 
       if (currentToken) {
