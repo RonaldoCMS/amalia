@@ -36,7 +36,7 @@ export default function RegisterPage() {
 
       <div className="relative z-10 w-full max-w-sm">
         <Link href="/" className="inline-flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-300 transition-colors mb-8">
-          ← {tCommon('backToHome')}
+          {tCommon('backToHome')}
         </Link>
 
         <div className="mb-8">

@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuthContext } from '@/app/context/AuthContext'
 
-export default function AuthCallbackPage() {
+function AuthCallbackInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { setToken } = useAuthContext()
@@ -24,5 +24,17 @@ export default function AuthCallbackPage() {
     <main className="max-w-sm mx-auto px-4 py-16 text-center">
       <p className="text-sm text-gray-500">Accesso in corso...</p>
     </main>
+  )
+}
+
+export default function AuthCallbackPage() {
+  return (
+    <Suspense fallback={
+      <main className="max-w-sm mx-auto px-4 py-16 text-center">
+        <p className="text-sm text-gray-500">Accesso in corso...</p>
+      </main>
+    }>
+      <AuthCallbackInner />
+    </Suspense>
   )
 }
