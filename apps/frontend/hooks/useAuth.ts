@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useMemo } from 'react'
+import { useState, useCallback, useRef, useMemo, useEffect } from 'react'
 import { AuthService } from '../services/auth.service'
 import { LoginRequest, RegisterRequest, UserRole } from '@amalia/shared'
 export interface BanInfo {
@@ -38,12 +38,16 @@ function decodeJwtRole(token: string | null): UserRole {
 
 export function useAuth() {
   const service = useRef(new AuthService())
-  const [token, setTokenState] = useState<string | null>(
-    typeof window !== 'undefined' ? localStorage.getItem('token') : null
-  )
-  const [banInfo, setBanInfo] = useState<BanInfo | null>(() => readBanInfo())
+  const [token, setTokenState] = useState<string | null>(null)
+  const [banInfo, setBanInfo] = useState<BanInfo | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Load from localStorage only on the client after mount to avoid SSR hydration mismatch
+  useEffect(() => {
+    setTokenState(localStorage.getItem('token'))
+    setBanInfo(readBanInfo())
+  }, [])
 
   const userRole = useMemo(() => decodeJwtRole(token), [token])
 
