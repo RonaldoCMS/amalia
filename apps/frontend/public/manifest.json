@@ -1,0 +1,80 @@
+{
+  "id": "/challenge",
+  "name": "amalia — La tua maestra di codice",
+  "short_name": "amalia",
+  "description": "Allena le tue skill con sfide di programmazione generate dall'AI.",
+  "start_url": "/challenge",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#22d3ee",
+  "orientation": "portrait-primary",
+  "categories": ["education", "developer tools"],
+  "lang": "it",
+  "icons": [
+    {
+      "src": "/icons/android/launchericon-48x48.png",
+      "sizes": "48x48",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/android/launchericon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/android/launchericon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/android/launchericon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/android/launchericon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/android/launchericon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512x512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/mobile.jpeg",
+      "sizes": "390x844",
+      "type": "image/jpeg",
+      "label": "amalia — Sfide di codice"
+    },
+    {
+      "src": "/screenshots/desktop.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "amalia — Dashboard sfide"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Sfide",
+      "short_name": "Sfide",
+      "description": "Vai alle sfide di codice",
+      "url": "/challenge"
+    }
+  ]
+}

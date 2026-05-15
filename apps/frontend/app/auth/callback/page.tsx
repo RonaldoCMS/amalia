@@ -1,14 +1,24 @@
-import { Suspense } from 'react'
-import { CallbackContent } from './CallbackContent'
 
-export default function AuthCallbackPage() {
-  return (
-    <Suspense fallback={
-      <div className="text-center py-16 text-sm text-gray-500">
-        Caricamento...
-      </div>
-    }>
-      <CallbackContent />
-    </Suspense>
-  )
-}
+'use client'
+
+import { Suspense, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useAuthContext } from '@/app/context/AuthContext'
+
+function AuthCallbackInner() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const { setToken } = useAuthContext()
+
+  useEffect(() => {
+    const token = searchParams.get('token')
+    if (token) {
+      localStorage.setItem('token', token)
+      setToken(token)
+      router.push('/')
+    } else {
+      router.push('/login')
+    }
+  }, [])
+
+  
