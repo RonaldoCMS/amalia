@@ -372,6 +372,20 @@ export enum NotificationType {
   NewPostLike = 'new_post_like',
   NewComment = 'new_comment',
   JobOffer = 'job_offer',
+  // Moderation
+  ReportSubmitted = 'report_submitted',
+  ReportResolved = 'report_resolved',
+  UserBanned = 'user_banned',
+  UserUnbanned = 'user_unbanned',
+  UserMuted = 'user_muted',
+  UserUnmuted = 'user_unmuted',
+  PostDeletedByMod = 'post_deleted_by_mod',
+  CommentDeletedByMod = 'comment_deleted_by_mod',
+  MessageDeletedByMod = 'message_deleted_by_mod',
+  RoleAssigned = 'role_assigned',
+  RoleRemoved = 'role_removed',
+  PermissionGranted = 'permission_granted',
+  PermissionRevoked = 'permission_revoked',
 }
 
 export interface NotificationItem {
@@ -597,6 +611,7 @@ export interface UserProfile {
   username: string
   email: string | null
   profilePhotoUrl: string | null
+  role: UserRole
   createdAt: string
   onboardingCompleted: boolean
   preferredLanguage: string | null
@@ -727,6 +742,7 @@ export interface PostItem {
   authorId: string
   authorUsername: string
   authorProfilePhotoUrl: string | null
+  authorRole: UserRole
   content: string
   imageUrl: string | null
   likesCount: number
@@ -744,6 +760,7 @@ export interface CommentItem {
   authorId: string
   authorUsername: string
   authorProfilePhotoUrl: string | null
+  authorRole: UserRole
   content: string
   createdAt: string
 }
@@ -789,6 +806,7 @@ export interface PublicUserProfile {
   id: string
   username: string
   profilePhotoUrl: string | null
+  role: UserRole
   bio: string | null
   languages: string[]
   goals: string[]
@@ -1031,4 +1049,236 @@ export interface SendJobMessageRequest {
 
 export interface SendOfferToDevsRequest {
   developerIds: string[]
+}
+
+// ── Roles & Permissions ──────────────────────────────────────────────────
+
+export enum UserRole {
+  User = 'user',
+  Moderator = 'moderator',
+  Admin = 'admin',
+  Founder = 'founder',
+}
+
+export const ROLE_HIERARCHY: Record<UserRole, number> = {
+  [UserRole.User]: 0,
+  [UserRole.Moderator]: 1,
+  [UserRole.Admin]: 2,
+  [UserRole.Founder]: 3,
+}
+
+export enum PermissionKey {
+  ManageReports = 'manage_reports',
+  BanUsers = 'ban_users',
+  MuteUsers = 'mute_users',
+  DeletePosts = 'delete_posts',
+  ManageChat = 'manage_chat',
+  ManageUsers = 'manage_users',
+  ManageJobs = 'manage_jobs',
+  AssignModerator = 'assign_moderator',
+  AssignAdmin = 'assign_admin',
+  ViewStats = 'view_stats',
+  ViewAdvancedStats = 'view_advanced_stats',
+  ManagePermissions = 'manage_permissions',
+  ManageChallenges = 'manage_challenges',
+}
+
+export enum PermissionCategory {
+  Moderation = 'moderation',
+  Admin = 'admin',
+  Founder = 'founder',
+}
+
+export interface PermissionItem {
+  id: string
+  key: PermissionKey
+  description: string
+  category: PermissionCategory
+}
+
+export interface UserPermissionItem {
+  id: string
+  permission: PermissionItem
+  grantedBy: { id: string; username: string } | null
+  grantedAt: string
+}
+
+// ── Reports ──────────────────────────────────────────────────────────────
+
+export enum ReportTargetType {
+  Post = 'post',
+  Comment = 'comment',
+  ChatMessage = 'chat_message',
+  UserProfile = 'user_profile',
+  JobOffer = 'job_offer',
+}
+
+export enum ReportReason {
+  Spam = 'spam',
+  Harassment = 'harassment',
+  HateSpeech = 'hate_speech',
+  InappropriateContent = 'inappropriate_content',
+  Impersonation = 'impersonation',
+  Other = 'other',
+}
+
+export enum ReportStatus {
+  Pending = 'pending',
+  Reviewing = 'reviewing',
+  Resolved = 'resolved',
+  Dismissed = 'dismissed',
+}
+
+export interface CreateReportRequest {
+  targetType: ReportTargetType
+  targetId: string
+  reportedUserId?: string
+  reason: ReportReason
+  description?: string
+}
+
+export interface ReportItem {
+  id: string
+  reporter: { id: string; username: string; profilePhotoUrl: string | null }
+  reportedUser: { id: string; username: string; profilePhotoUrl: string | null } | null
+  targetType: ReportTargetType
+  targetId: string
+  reason: ReportReason
+  description: string | null
+  status: ReportStatus
+  resolvedBy: { id: string; username: string } | null
+  resolution: string | null
+  createdAt: string
+  resolvedAt: string | null
+}
+
+export interface ReportListResponse {
+  reports: ReportItem[]
+  total: number
+  page: number
+  limit: number
+}
+
+// ── Moderation ───────────────────────────────────────────────────────────
+
+export enum ModerationAction {
+  Ban = 'ban',
+  Unban = 'unban',
+  Mute = 'mute',
+  Unmute = 'unmute',
+  DeletePost = 'delete_post',
+  DeleteComment = 'delete_comment',
+  DeleteMessage = 'delete_message',
+  DeleteJob = 'delete_job',
+  ResolveReport = 'resolve_report',
+  DismissReport = 'dismiss_report',
+  AssignRole = 'assign_role',
+  RemoveRole = 'remove_role',
+  GrantPermission = 'grant_permission',
+  RevokePermission = 'revoke_permission',
+}
+
+export interface BanUserRequest {
+  reason: string
+  durationHours?: number | null // null = permanent
+  banChat?: boolean
+  banChallenge?: boolean
+  banDuel?: boolean
+}
+
+export interface MuteUserRequest {
+  durationHours?: number | null // null = permanent
+  muteChat?: boolean
+  muteGlobal?: boolean
+}
+
+export interface AssignRoleRequest {
+  role: UserRole
+}
+
+export interface GrantPermissionRequest {
+  permissionKey: PermissionKey
+}
+
+export interface ResolveReportRequest {
+  resolution: string
+}
+
+export interface ModerationLogItem {
+  id: string
+  moderator: { id: string; username: string }
+  targetUser: { id: string; username: string } | null
+  action: ModerationAction
+  details: Record<string, unknown> | null
+  createdAt: string
+}
+
+export interface ModerationLogListResponse {
+  logs: ModerationLogItem[]
+  total: number
+  page: number
+  limit: number
+}
+
+// ── Admin ────────────────────────────────────────────────────────────────
+
+export interface AdminUserItem {
+  id: string
+  username: string
+  email: string | null
+  profilePhotoUrl: string | null
+  role: UserRole
+  bannedUntil: string | null
+  isMuted: boolean
+  createdAt: string
+}
+
+export interface AdminUserListResponse {
+  users: AdminUserItem[]
+  total: number
+  page: number
+  limit: number
+}
+
+export interface AdminUserDetail extends AdminUserItem {
+  banReason: string | null
+  mutedUntil: string | null
+  chatBanUntil: string | null
+  challengeBanUntil: string | null
+  duelBanUntil: string | null
+  permissions: UserPermissionItem[]
+}
+
+export interface PlatformStats {
+  totalUsers: number
+  totalPosts: number
+  totalDuels: number
+  totalChallenges: number
+  totalJobs: number
+  totalReports: number
+  pendingReports: number
+  activeBans: number
+  activeModerators: number
+  activeAdmins: number
+}
+
+export interface TrendPoint {
+  date: string
+  count: number
+}
+
+export interface PlatformTrends {
+  newUsers: TrendPoint[]
+  newPosts: TrendPoint[]
+  newReports: TrendPoint[]
+  newDuels: TrendPoint[]
+}
+
+// ── Ban Info (returned to banned users) ──────────────────────────────────
+
+export interface BanInfo {
+  banned: boolean
+  bannedUntil: string | null
+  banReason: string | null
+  permanent: boolean
 }

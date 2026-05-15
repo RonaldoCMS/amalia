@@ -40,6 +40,10 @@ export class ChatMessageRepository {
     return this.repository.findOne({ where: { id }, relations: ['sender'] })
   }
 
+  async deleteById(id: string): Promise<void> {
+    await this.repository.delete(id)
+  }
+
   async markRead(matchId: string, userId: string): Promise<void> {
     await this.repository
       .createQueryBuilder()

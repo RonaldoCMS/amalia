@@ -22,6 +22,7 @@ export class GetUserPostsUseCase {
         authorId: p.author.id,
         authorUsername: p.author.username,
         authorProfilePhotoUrl: p.author.profilePhotoUrl,
+        authorRole: p.author.role,
         content: p.content,
         imageUrl: p.imageUrl,
         likesCount: p.likesCount,

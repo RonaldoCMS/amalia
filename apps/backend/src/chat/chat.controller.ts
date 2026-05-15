@@ -6,11 +6,12 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { memoryStorage } from 'multer'
 import { ChatService } from './chat.service'
 import { JwtGuard } from 'src/auth/guards/jwt.guard'
+import { BanGuard } from 'src/auth/guards/ban.guard'
 import { ChatMessageItem, SendMessageRequest } from '@amalia/shared'
 import { FirebaseStorageService } from 'src/shared/firebase/firebase-storage.service'
 
 @Controller('chat')
-@UseGuards(JwtGuard)
+@UseGuards(JwtGuard, BanGuard)
 export class ChatController {
   constructor(
     private readonly chatService: ChatService,

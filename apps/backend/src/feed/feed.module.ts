@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { FeedService } from './feed.service'
 import { NotificationModule } from '../notifications/notification.module'
+import { AuthModule } from '../auth/auth.module'
 import { PostCreateFeedController } from './controllers/post-create-feed.controller'
 import { GetFeedController } from './controllers/get-feed.controller'
 import { GetUserPostsController } from './controllers/get-user-posts.controller'
@@ -19,7 +20,7 @@ import { GetCommentsUseCase } from './usecases/get-comments.usecase'
 import { DeleteCommentUseCase } from './usecases/delete-comment.usecase'
 
 @Module({
-  imports: [NotificationModule],
+  imports: [NotificationModule, AuthModule],
   controllers: [
     PostCreateFeedController,
     GetFeedController,

@@ -63,4 +63,34 @@ export class UserRepository {
       .limit(limit)
       .getMany()
   }
+
+  async updateFields(id: string, fields: Record<string, unknown>): Promise<void> {
+    await this.repository.update(id, fields)
+  }
+
+  async count(): Promise<number> {
+    return this.repository.count()
+  }
+
+  async countWhere(where: Record<string, unknown>): Promise<number> {
+    return this.repository.count({ where })
+  }
+
+  async findAllPaginated(options: { page: number; limit: number; search?: string }): Promise<{ users: User[]; total: number }> {
+    const qb = this.repository.createQueryBuilder('user')
+      .leftJoinAndSelect('user.onboarding', 'onboarding')
+      .orderBy('user.createdAt', 'DESC')
+
+    if (options.search) {
+      qb.andWhere('user.username ILIKE :search', { search: `%${options.search}%` })
+    }
+
+    const total = await qb.getCount()
+    const users = await qb
+      .skip((options.page - 1) * options.limit)
+      .take(options.limit)
+      .getMany()
+
+    return { users, total }
+  }
 }

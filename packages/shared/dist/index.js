@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.JobApplicationStatus = exports.JobOfferStatus = exports.WorkMode = exports.ContractType = exports.FriendshipStatus = exports.DuelStatus = exports.EXPERIENCE_LEVELS = exports.Availability = exports.DevGoal = exports.WorkStyle = exports.JobType = exports.DevLanguage = exports.NotificationType = exports.ChallengeLanguage = exports.TOPICS = exports.ChallengeCategory = exports.ChallengeLevel = exports.ChallengeType = void 0;
+exports.ModerationAction = exports.ReportStatus = exports.ReportReason = exports.ReportTargetType = exports.PermissionCategory = exports.PermissionKey = exports.ROLE_HIERARCHY = exports.UserRole = exports.JobApplicationStatus = exports.JobOfferStatus = exports.WorkMode = exports.ContractType = exports.FriendshipStatus = exports.DuelStatus = exports.EXPERIENCE_LEVELS = exports.Availability = exports.DevGoal = exports.WorkStyle = exports.JobType = exports.DevLanguage = exports.NotificationType = exports.ChallengeLanguage = exports.TOPICS = exports.ChallengeCategory = exports.ChallengeLevel = exports.ChallengeType = void 0;
 exports.getTopicsByCategory = getTopicsByCategory;
 exports.getTopicById = getTopicById;
 exports.getRandomTopic = getRandomTopic;
@@ -358,6 +358,20 @@ var NotificationType;
     NotificationType["NewPostLike"] = "new_post_like";
     NotificationType["NewComment"] = "new_comment";
     NotificationType["JobOffer"] = "job_offer";
+    // Moderation
+    NotificationType["ReportSubmitted"] = "report_submitted";
+    NotificationType["ReportResolved"] = "report_resolved";
+    NotificationType["UserBanned"] = "user_banned";
+    NotificationType["UserUnbanned"] = "user_unbanned";
+    NotificationType["UserMuted"] = "user_muted";
+    NotificationType["UserUnmuted"] = "user_unmuted";
+    NotificationType["PostDeletedByMod"] = "post_deleted_by_mod";
+    NotificationType["CommentDeletedByMod"] = "comment_deleted_by_mod";
+    NotificationType["MessageDeletedByMod"] = "message_deleted_by_mod";
+    NotificationType["RoleAssigned"] = "role_assigned";
+    NotificationType["RoleRemoved"] = "role_removed";
+    NotificationType["PermissionGranted"] = "permission_granted";
+    NotificationType["PermissionRevoked"] = "permission_revoked";
 })(NotificationType || (exports.NotificationType = NotificationType = {}));
 // ── Onboarding ──────────────────────────────────────────────────────────
 var DevLanguage;
@@ -461,3 +475,82 @@ var JobApplicationStatus;
     JobApplicationStatus["Replied"] = "replied";
     JobApplicationStatus["Ignored"] = "ignored";
 })(JobApplicationStatus || (exports.JobApplicationStatus = JobApplicationStatus = {}));
+// ── Roles & Permissions ──────────────────────────────────────────────────
+var UserRole;
+(function (UserRole) {
+    UserRole["User"] = "user";
+    UserRole["Moderator"] = "moderator";
+    UserRole["Admin"] = "admin";
+    UserRole["Founder"] = "founder";
+})(UserRole || (exports.UserRole = UserRole = {}));
+exports.ROLE_HIERARCHY = {
+    [UserRole.User]: 0,
+    [UserRole.Moderator]: 1,
+    [UserRole.Admin]: 2,
+    [UserRole.Founder]: 3,
+};
+var PermissionKey;
+(function (PermissionKey) {
+    PermissionKey["ManageReports"] = "manage_reports";
+    PermissionKey["BanUsers"] = "ban_users";
+    PermissionKey["MuteUsers"] = "mute_users";
+    PermissionKey["DeletePosts"] = "delete_posts";
+    PermissionKey["ManageChat"] = "manage_chat";
+    PermissionKey["ManageUsers"] = "manage_users";
+    PermissionKey["ManageJobs"] = "manage_jobs";
+    PermissionKey["AssignModerator"] = "assign_moderator";
+    PermissionKey["AssignAdmin"] = "assign_admin";
+    PermissionKey["ViewStats"] = "view_stats";
+    PermissionKey["ViewAdvancedStats"] = "view_advanced_stats";
+    PermissionKey["ManagePermissions"] = "manage_permissions";
+    PermissionKey["ManageChallenges"] = "manage_challenges";
+})(PermissionKey || (exports.PermissionKey = PermissionKey = {}));
+var PermissionCategory;
+(function (PermissionCategory) {
+    PermissionCategory["Moderation"] = "moderation";
+    PermissionCategory["Admin"] = "admin";
+    PermissionCategory["Founder"] = "founder";
+})(PermissionCategory || (exports.PermissionCategory = PermissionCategory = {}));
+// ── Reports ──────────────────────────────────────────────────────────────
+var ReportTargetType;
+(function (ReportTargetType) {
+    ReportTargetType["Post"] = "post";
+    ReportTargetType["Comment"] = "comment";
+    ReportTargetType["ChatMessage"] = "chat_message";
+    ReportTargetType["UserProfile"] = "user_profile";
+    ReportTargetType["JobOffer"] = "job_offer";
+})(ReportTargetType || (exports.ReportTargetType = ReportTargetType = {}));
+var ReportReason;
+(function (ReportReason) {
+    ReportReason["Spam"] = "spam";
+    ReportReason["Harassment"] = "harassment";
+    ReportReason["HateSpeech"] = "hate_speech";
+    ReportReason["InappropriateContent"] = "inappropriate_content";
+    ReportReason["Impersonation"] = "impersonation";
+    ReportReason["Other"] = "other";
+})(ReportReason || (exports.ReportReason = ReportReason = {}));
+var ReportStatus;
+(function (ReportStatus) {
+    ReportStatus["Pending"] = "pending";
+    ReportStatus["Reviewing"] = "reviewing";
+    ReportStatus["Resolved"] = "resolved";
+    ReportStatus["Dismissed"] = "dismissed";
+})(ReportStatus || (exports.ReportStatus = ReportStatus = {}));
+// ── Moderation ───────────────────────────────────────────────────────────
+var ModerationAction;
+(function (ModerationAction) {
+    ModerationAction["Ban"] = "ban";
+    ModerationAction["Unban"] = "unban";
+    ModerationAction["Mute"] = "mute";
+    ModerationAction["Unmute"] = "unmute";
+    ModerationAction["DeletePost"] = "delete_post";
+    ModerationAction["DeleteComment"] = "delete_comment";
+    ModerationAction["DeleteMessage"] = "delete_message";
+    ModerationAction["DeleteJob"] = "delete_job";
+    ModerationAction["ResolveReport"] = "resolve_report";
+    ModerationAction["DismissReport"] = "dismiss_report";
+    ModerationAction["AssignRole"] = "assign_role";
+    ModerationAction["RemoveRole"] = "remove_role";
+    ModerationAction["GrantPermission"] = "grant_permission";
+    ModerationAction["RevokePermission"] = "revoke_permission";
+})(ModerationAction || (exports.ModerationAction = ModerationAction = {}));

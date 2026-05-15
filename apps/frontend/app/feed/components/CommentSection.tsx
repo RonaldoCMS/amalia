@@ -50,6 +50,7 @@ export function CommentSection({ postId, currentUserId, onCommentCountChange }: 
           <CommentItemView
             key={c.id}
             comment={c}
+            currentUserId={currentUserId}
             isOwner={c.authorId === currentUserId}
             onDelete={() => handleDelete(c.id)}
           />

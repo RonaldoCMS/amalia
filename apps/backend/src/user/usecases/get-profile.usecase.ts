@@ -14,6 +14,7 @@ export class GetProfileUseCase {
       username: user.username,
       email: user.email,
       profilePhotoUrl: user.profilePhotoUrl,
+      role: user.role,
       createdAt: user.createdAt.toISOString(),
       onboardingCompleted: user.onboarding?.completed ?? false,
       preferredLanguage: user.preferredLanguage ?? null,

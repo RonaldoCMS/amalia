@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl'
 import { useAuthContext } from '../context/AuthContext'
 import { useProfile } from '../../hooks/useProfile'
 import { Footer } from '../components/Footer'
+import { RoleBadge } from '../components/RoleBadge'
 import { AdBanner } from '../components/AdBanner'
 import { useLanguage } from '../../i18n/LanguageProvider'
 import { LOCALE_DATE_MAP } from '../../i18n/config'
@@ -200,6 +201,7 @@ export default function ProfilePage() {
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-zinc-600 font-mono">username</span>
                   <span className="text-sm text-zinc-100 font-mono">{profile?.username}</span>
+                  {profile?.role && <RoleBadge role={profile.role} />}
                 </div>
                 <div className="h-px bg-zinc-800" />
                 <div className="flex items-center justify-between">

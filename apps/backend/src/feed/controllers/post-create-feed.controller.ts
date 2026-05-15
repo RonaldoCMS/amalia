@@ -3,11 +3,12 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { memoryStorage } from 'multer'
 import { FeedService } from '../feed.service'
 import { JwtGuard } from 'src/auth/guards/jwt.guard'
+import { BanGuard } from 'src/auth/guards/ban.guard'
 import { PostItem, CreatePostRequest } from '@amalia/shared'
 import { FirebaseStorageService } from 'src/shared/firebase/firebase-storage.service'
 
 @Controller('feed')
-@UseGuards(JwtGuard)
+@UseGuards(JwtGuard, BanGuard)
 export class PostCreateFeedController {
   constructor(
     private readonly feedService: FeedService,

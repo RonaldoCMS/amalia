@@ -2,6 +2,13 @@ import { Column, CreateDateColumn, Entity, OneToMany, OneToOne, PrimaryGenerated
 import { UserChallenge } from './user-challenge.entity'
 import { UserOnboarding } from './user-onboarding.entity'
 
+export enum UserRoleEnum {
+  User = 'user',
+  Moderator = 'moderator',
+  Admin = 'admin',
+  Founder = 'founder',
+}
+
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -19,8 +26,29 @@ export class User {
   @Column({ nullable: true })
   profilePhotoUrl: string | null
 
+  @Column({ type: 'varchar', default: UserRoleEnum.User })
+  role: UserRoleEnum
+
   @Column({ type: 'timestamptz', nullable: true })
   duelBanUntil: Date | null
+
+  @Column({ type: 'timestamptz', nullable: true })
+  bannedUntil: Date | null
+
+  @Column({ type: 'text', nullable: true })
+  banReason: string | null
+
+  @Column({ type: 'boolean', default: false })
+  isMuted: boolean
+
+  @Column({ type: 'timestamptz', nullable: true })
+  mutedUntil: Date | null
+
+  @Column({ type: 'timestamptz', nullable: true })
+  chatBanUntil: Date | null
+
+  @Column({ type: 'timestamptz', nullable: true })
+  challengeBanUntil: Date | null
 
   @CreateDateColumn()
   createdAt: Date
