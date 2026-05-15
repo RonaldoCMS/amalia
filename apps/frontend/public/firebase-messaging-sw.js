@@ -1,67 +1,16 @@
-// Firebase Cloud Messaging Service Worker TEMPLATE
-// This file will be used to generate firebase-messaging-sw.js with your env variables
-// DO NOT EDIT firebase-messaging-sw.js directly - it's auto-generated
+// Firebase Messaging is now handled by sw.js (next-pwa).
+// This file unregisters itself so browsers with a cached registration migrate cleanly.
+self.addEventListener('install', () => self.skipWaiting());
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    self.registration.unregister().then(() =>
+      self.clients.matchAll({ type: 'window' }).then((clients) =>
+        clients.forEach((client) => client.navigate(client.url))
+      )
+    )
+  );
+});
 
-importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js');
 
 // Initialize Firebase in the service worker
 // These placeholders will be replaced during build with values from .env.local
-firebase.initializeApp({
-  apiKey: "AIzaSyBW0av7SMOhLemxfjWuAwQ6Sm_nIRh2sXA",
-  authDomain: "amalia-1d651.firebaseapp.com",
-  projectId: "amalia-1d651",
-  storageBucket: "amalia-1d651.firebasestorage.app",
-  messagingSenderId: "359096464555",
-  appId: "1:359096464555:web:41394f75d3c560910373ee",
-  measurementId: "G-29CELL3S9F"
-});
-
-const messaging = firebase.messaging();
-
-// Handle background messages
-messaging.onBackgroundMessage((payload) => {
-  console.log('[firebase-messaging-sw.js] Received background message:', payload);
-
-  const notificationTitle = payload.notification?.title || 'Nuova notifica';
-  const notificationOptions = {
-    body: payload.notification?.body || '',
-    icon: '/icon-192.png',
-    badge: '/badge-72.png',
-    tag: payload.data?.type || 'default',
-    data: {
-      url: payload.data?.url || '/',
-      referenceId: payload.data?.referenceId,
-      type: payload.data?.type,
-    },
-    requireInteraction: false,
-  };
-
-  self.registration.showNotification(notificationTitle, notificationOptions);
-});
-
-// Handle notification click
-self.addEventListener('notificationclick', (event) => {
-  console.log('[firebase-messaging-sw.js] Notification clicked:', event);
-  
-  event.notification.close();
-
-  // Get the URL from notification data or default to homepage
-  const urlToOpen = event.notification.data?.url || '/';
-
-  event.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-      // Check if there's already a window open
-      for (const client of clientList) {
-        if (client.url === urlToOpen && 'focus' in client) {
-          return client.focus();
-        }
-      }
-
-      // Open new window
-      if (clients.openWindow) {
-        return clients.openWindow(urlToOpen);
-      }
-    })
-  );
-});

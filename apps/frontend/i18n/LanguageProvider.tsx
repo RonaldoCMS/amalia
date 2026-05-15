@@ -63,7 +63,19 @@ async function detectLocaleByIP(): Promise<SupportedLocale> {
 }
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<SupportedLocale>(getInitialLocale)
+  const [locale, setLocaleState] = useState<SupportedLocale>(DEFAULT_LOCALE)
+
+  // Load locale from localStorage only after mount (avoids SSR hydration mismatch)
+  useEffect(() => {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (stored && isValidLocale(stored)) {
+      setLocaleState(stored as SupportedLocale)
+    } else {
+      detectLocaleByIP().then(detected => {
+        setLocale(detected)
+      })
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const setLocale = useCallback((newLocale: SupportedLocale) => {
     if (!SUPPORTED_LOCALES.includes(newLocale)) return
@@ -83,15 +95,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  // IP detection on first visit (no stored locale)
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (!stored) {
-      detectLocaleByIP().then(detected => {
-        setLocale(detected)
-      })
-    }
-  }, [setLocale])
+  // IP detection on first visit (no stored locale) — handled in mount effect above
 
   // Sync html lang attribute
   useEffect(() => {
