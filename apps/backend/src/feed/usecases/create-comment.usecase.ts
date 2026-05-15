@@ -37,6 +37,7 @@ export class CreateCommentUseCase {
       authorId: saved!.author.id,
       authorUsername: saved!.author.username,
       authorProfilePhotoUrl: saved!.author.profilePhotoUrl,
+      authorRole: saved!.author.role,
       content: saved!.content,
       createdAt: saved!.createdAt.toISOString(),
     }

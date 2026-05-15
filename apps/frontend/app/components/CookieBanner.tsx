@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 
 const COOKIE_CONSENT_KEY = 'cookie-consent'
@@ -15,6 +16,7 @@ interface CookiePreferences {
 
 export function CookieBanner() {
   const t = useTranslations('Cookies')
+  const pathname = usePathname()
   const [consent, setConsent] = useState<CookieConsent>(null)
   const [showDetails, setShowDetails] = useState(false)
   const [preferences, setPreferences] = useState<CookiePreferences>({
@@ -69,6 +71,9 @@ export function CookieBanner() {
 
   // Don't show banner if consent was already given
   if (consent !== null) return null
+
+  // Only show on login page
+  if (pathname !== '/login') return null
 
   return (
     <div className="fixed inset-0 z-[200] flex items-end justify-center pointer-events-none">

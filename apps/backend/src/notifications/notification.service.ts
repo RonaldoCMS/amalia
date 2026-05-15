@@ -97,6 +97,26 @@ export class NotificationService {
         return referenceId ? `${baseUrl}/duel/${referenceId}` : `${baseUrl}/duel`;
       case 'job':
         return referenceId ? `${baseUrl}/jobs/${referenceId}` : `${baseUrl}/jobs`;
+      // Moderation
+      case NotificationType.ReportSubmitted:
+        return referenceId ? `${baseUrl}/admin/reports?id=${referenceId}` : `${baseUrl}/admin/reports`;
+      case NotificationType.ReportResolved:
+        return `${baseUrl}/profile`;
+      case NotificationType.UserBanned:
+      case NotificationType.UserUnbanned:
+      case NotificationType.UserMuted:
+      case NotificationType.UserUnmuted:
+        return `${baseUrl}/profile`;
+      case NotificationType.PostDeletedByMod:
+      case NotificationType.CommentDeletedByMod:
+        return `${baseUrl}/feed`;
+      case NotificationType.MessageDeletedByMod:
+        return `${baseUrl}/chat`;
+      case NotificationType.RoleAssigned:
+      case NotificationType.RoleRemoved:
+      case NotificationType.PermissionGranted:
+      case NotificationType.PermissionRevoked:
+        return `${baseUrl}/profile`;
       default:
         return baseUrl;
     }

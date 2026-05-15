@@ -19,9 +19,12 @@ import {
   FriendshipStatus,
   FriendshipStatusResponse,
   PostItem,
+  ReportTargetType,
 } from '@amalia/shared'
 import { PostCard } from '../../feed/components/PostCard'
 import { Footer } from '../../components/Footer'
+import { RoleBadge } from '../../components/RoleBadge'
+import { ReportButton } from '../../components/ReportButton'
 
 type Tab = 'overview' | 'challenge' | 'duelli' | 'post'
 
@@ -298,6 +301,7 @@ export default function UserProfilePage() {
             )}
             <div className="flex-1 min-w-0">
               <h1 className="text-lg font-semibold text-zinc-100 font-mono">{profile.username}</h1>
+              <RoleBadge role={profile.role} size="md" />
               {profile.jobType && (
                 <p className="text-xs text-zinc-500 font-mono mt-0.5">
                   {profile.jobType}{profile.yearsOfExperience ? ` · ${profile.yearsOfExperience} exp` : ''}
@@ -309,7 +313,10 @@ export default function UserProfilePage() {
             </div>
           </div>
 
-          <div className="mt-4">{renderFriendButton()}</div>
+          <div className="mt-4 flex items-center gap-2">
+            {renderFriendButton()}
+            {!isMe && <ReportButton targetType={ReportTargetType.UserProfile} targetId={userId} reportedUserId={userId} />}
+          </div>
 
           {/* Quick stats row */}
           <div className="flex gap-4 mt-4 pt-4 border-t border-zinc-800/60">

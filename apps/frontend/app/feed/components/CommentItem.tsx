@@ -2,17 +2,20 @@
 
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
-import { CommentItem } from '@amalia/shared'
+import { CommentItem, ReportTargetType } from '@amalia/shared'
+import { RoleBadge } from '../../components/RoleBadge'
+import { ReportButton } from '../../components/ReportButton'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? ''
 
 interface Props {
   comment: CommentItem
+  currentUserId: string
   isOwner: boolean
   onDelete: () => void
 }
 
-export function CommentItemView({ comment, isOwner, onDelete }: Props) {
+export function CommentItemView({ comment, currentUserId, isOwner, onDelete }: Props) {
   const t = useTranslations('Feed')
 
   const timeAgo = (dateStr: string): string => {
@@ -46,11 +49,17 @@ export function CommentItemView({ comment, isOwner, onDelete }: Props) {
           <Link href={`/user/${comment.authorId}`} className="font-semibold text-zinc-300 hover:text-cyan-400 transition text-sm">
             {comment.authorUsername}
           </Link>
+          <RoleBadge role={comment.authorRole} size="sm" />
           <span className="text-zinc-600 text-xs">{timeAgo(comment.createdAt)}</span>
           {isOwner && (
             <button onClick={onDelete} className="text-zinc-700 hover:text-red-400 transition text-xs ml-auto">
               {t('deleteComment')}
             </button>
+          )}
+          {!isOwner && comment.authorId !== currentUserId && (
+            <span className="ml-auto">
+              <ReportButton targetType={ReportTargetType.Comment} targetId={comment.id} reportedUserId={comment.authorId} />
+            </span>
           )}
         </div>
         <p className="text-zinc-400 text-sm mt-0.5 break-words">{comment.content}</p>

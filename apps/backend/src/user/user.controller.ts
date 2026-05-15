@@ -1,6 +1,7 @@
 import { Controller, Get, Patch, Delete, Post, Body, Request, UseGuards, UseInterceptors, UploadedFile, HttpCode, HttpStatus, Query, Param } from '@nestjs/common'
 import { UpdatePasswordRequest, UserProfile, ChallengeHistoryItem, UserSearchResult, PublicUserProfile } from '@amalia/shared'
 import { JwtGuard } from 'src/auth/guards/jwt.guard'
+import { BanGuard } from 'src/auth/guards/ban.guard'
 import { UserService } from './user.service'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { memoryStorage } from 'multer'
@@ -15,6 +16,7 @@ export class UserController {
   ) {}
 
   @Get('me')
+  @UseGuards(BanGuard)
   getProfile(@Request() req: { user: { id: string } }): Promise<UserProfile> {
     return this.userService.getProfile(req.user.id)
   }
