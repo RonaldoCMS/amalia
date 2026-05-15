@@ -24,7 +24,37 @@ This application uses Firebase Cloud Messaging (FCM) to send push notifications 
 
 ### 1. Firebase Console Configuration
 
-#### a. Enable Firebase Cloud Messaging
+#### a. Generate Service Account Credentials
+1. Go to [Firebase Console](https://console.firebase.google.com/)
+2. Select your project: **amalia-1d651**
+3. Navigate to **Project Settings** (gear icon) → **Service Accounts**
+4. Click **Generate New Private Key** → Download JSON file
+5. Open the downloaded JSON file and copy the values to your `.env` file:
+
+```bash
+# Backend .env file (apps/backend/.env or root .env)
+FIREBASE_TYPE=service_account
+FIREBASE_PROJECT_ID=amalia-1d651
+FIREBASE_PRIVATE_KEY_ID=<copy from JSON: private_key_id>
+FIREBASE_PRIVATE_KEY="<copy from JSON: private_key - keep the quotes and \n>"
+FIREBASE_CLIENT_EMAIL=<copy from JSON: client_email>
+FIREBASE_CLIENT_ID=<copy from JSON: client_id>
+FIREBASE_CLIENT_CERT_URL=<copy from JSON: client_x509_cert_url>
+FIREBASE_STORAGE_BUCKET=amalia-1d651.firebasestorage.app
+
+# Optional (defaults provided if omitted)
+FIREBASE_AUTH_URI=https://accounts.google.com/o/oauth2/auth
+FIREBASE_TOKEN_URI=https://oauth2.googleapis.com/token
+FIREBASE_AUTH_PROVIDER_CERT_URL=https://www.googleapis.com/oauth2/v1/certs
+FIREBASE_UNIVERSE_DOMAIN=googleapis.com
+```
+
+**Important**: 
+- Keep the quotes around `FIREBASE_PRIVATE_KEY` value
+- The private key contains `\n` characters - do NOT remove them
+- **NEVER commit the `.env` file to Git** (it's already in `.gitignore`)
+
+#### b. Enable Firebase Cloud Messaging
 1. Go to [Firebase Console](https://console.firebase.google.com/)
 2. Select your project: **amalia-1d651**
 3. Navigate to **Build → Cloud Messaging**
@@ -37,28 +67,50 @@ This application uses Firebase Cloud Messaging (FCM) to send push notifications 
 
 ### 2. Frontend Configuration
 
-#### Update VAPID Key in useFCM Hook
-File: `apps/frontend/hooks/useFCM.ts`
+#### Update VAPID Key and Firebase Config in .env.local
+File: `apps/frontend/.env.local`
 
-```typescript
-const token = await getToken(messaging, {
-  vapidKey: 'YOUR_ACTUAL_VAPID_KEY_HERE', // Replace this placeholder
-});
+```bash
+# Backend URL
+NEXT_PUBLIC_BACKEND_URL=http://localhost:3000
+
+# Firebase Web Configuration (from Firebase Console > Project Settings > General > Your apps)
+NEXT_PUBLIC_FIREBASE_API_KEY=your-api-key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project.firebasestorage.app
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your-sender-id
+NEXT_PUBLIC_FIREBASE_APP_ID=your-app-id
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your-measurement-id
+
+# Firebase Cloud Messaging VAPID Key (from Firebase Console > Cloud Messaging > Web Push certificates)
+NEXT_PUBLIC_FIREBASE_VAPID_KEY=your-vapid-key-here
 ```
 
-**Replace** `'YOUR_ACTUAL_VAPID_KEY_HERE'` with the VAPID key copied from Firebase Console.
+**Steps to get VAPID key:**
+
+1. In **Cloud Messaging** settings, scroll to **Web configuration**
+2. Under **Web Push certificates**, click **Generate key pair** (if not already generated)
+3. Copy the generated key (starts with `B...`)
+4. Paste it as `NEXT_PUBLIC_FIREBASE_VAPID_KEY` value in `.env.local`
+
+**Steps to get Firebase Web Config:**
+
+1. In **Project Settings**, scroll to **Your apps** section
+2. Select your Web app (or create one if it doesn't exist)
+3. Copy the config values to the corresponding `NEXT_PUBLIC_FIREBASE_*` variables
+
+**Important**: 
+- The `.env.local` file is already in `.gitignore` and won't be committed
+- All Firebase configuration is now stored in environment variables, not in `firebase.json`
+- Use `apps/frontend/.env.example` as a template
 
 ### 3. Backend Configuration
 
-#### Ensure Firebase Admin Credentials Exist
-File: `apps/backend/firebase_admin.json` (should already exist)
+#### Verify Environment Variables
+Ensure all Firebase variables are set in your backend `.env` file (see step 1a above).
 
-This file contains the service account credentials and is **NOT committed to Git** (.gitignored).
-
-If missing, generate it:
-1. Firebase Console → Project Settings → Service Accounts
-2. Click **Generate new private key**
-3. Save as `firebase_admin.json` in `apps/backend/` directory
+The backend now loads credentials from environment variables instead of `firebase_admin.json` file for better security.
 
 ### 4. Environment Variables (Optional)
 

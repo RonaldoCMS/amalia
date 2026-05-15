@@ -10,7 +10,11 @@ apps/frontend/.next/
 
 # nest
 apps/backend/dist/
+
+# firebase (credentials moved to .env)
 apps/backend/firebase_admin.json
+apps/frontend/firebase.json
+apps/frontend/public/firebase-messaging-sw.js
 
 # os
 .DS_Store
