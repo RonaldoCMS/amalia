@@ -1,8 +1,8 @@
 'use client'
 
 import { createContext, useContext, ReactNode } from 'react' 
-import { LoginRequest, RegisterRequest } from '@amalia/shared'
-import { useAuth } from '@/hooks/useAuth'
+import { LoginRequest, RegisterRequest, UserRole } from '@amalia/shared'
+import { useAuth, BanInfo } from '@/hooks/useAuth'
 
 interface AuthContextType {
   token: string | null
@@ -13,6 +13,9 @@ interface AuthContextType {
   logout: () => void
   isAuthenticated: boolean
   setToken: (token: string) => void
+  userRole: UserRole
+  isBanned: boolean
+  banInfo: BanInfo | null
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)

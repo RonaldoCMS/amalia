@@ -21,6 +21,7 @@ export class CreatePostUseCase {
       authorId: saved!.author.id,
       authorUsername: saved!.author.username,
       authorProfilePhotoUrl: saved!.author.profilePhotoUrl,
+      authorRole: saved!.author.role,
       content: saved!.content,
       imageUrl: saved!.imageUrl,
       likesCount: 0,

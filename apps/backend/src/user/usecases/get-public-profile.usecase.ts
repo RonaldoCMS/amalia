@@ -26,6 +26,7 @@ export class GetPublicProfileUseCase {
       id: user.id,
       username: user.username,
       profilePhotoUrl: user.profilePhotoUrl,
+      role: user.role,
       bio: user.onboarding?.bio ?? null,
       languages: user.onboarding?.languages ?? [],
       goals: user.onboarding?.goals ?? [],

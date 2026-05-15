@@ -20,7 +20,13 @@ import { Friendship } from './entities/friendship.entity';
 import { UserCv } from './entities/user-cv.entity';
 import { JobOffer } from './entities/job-offer.entity';
 import { JobApplication } from './entities/job-application.entity';
-import { JobMessage } from './entities/job-message.entity';import { FCMToken } from './entities/fcm-token.entity';import { TypeOrmModule } from '@nestjs/typeorm'
+import { JobMessage } from './entities/job-message.entity';
+import { FCMToken } from './entities/fcm-token.entity';
+import { Permission } from './entities/permission.entity';
+import { UserPermission } from './entities/user-permission.entity';
+import { Report } from './entities/report.entity';
+import { ModerationLog } from './entities/moderation-log.entity';
+import { TypeOrmModule } from '@nestjs/typeorm'
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { OnboardingModule } from './onboarding/onboarding.module';
@@ -31,7 +37,8 @@ import { DuelsModule } from './duels/duels.module';
 import { FeedModule } from './feed/feed.module';
 import { FriendshipModule } from './friendship/friendship.module'; 
 import { CvModule } from './cv/cv.module';
-import { JobsModule } from './jobs/jobs.module';
+import { JobsModule } from './jobs/jobs.module'; 
+import { ModerationModule } from './moderation/moderation.module';
 
 @Module({
   imports: [
@@ -41,7 +48,7 @@ import { JobsModule } from './jobs/jobs.module';
       useFactory: (config: ConfigService) => ({
         type: 'postgres',
         url: config.get<string>('DATABASE_URL'),
-        entities: [User, Challenge, UserChallenge, UserOnboarding, DevMatch, ChatMessage, Notification, Duel, DuelRound, AppConfig, Post, PostLike, PostComment, Friendship, UserCv, JobOffer, JobApplication, JobMessage, FCMToken],
+        entities: [User, Challenge, UserChallenge, UserOnboarding, DevMatch, ChatMessage, Notification, Duel, DuelRound, AppConfig, Post, PostLike, PostComment, Friendship, UserCv, JobOffer, JobApplication, JobMessage, FCMToken, Permission, UserPermission, Report, ModerationLog],
         synchronize: true,
       }),
     }),
@@ -59,6 +66,7 @@ import { JobsModule } from './jobs/jobs.module';
     FriendshipModule,
     CvModule,
     JobsModule,
+    ModerationModule,
   ],
 })
 export class AppModule {}

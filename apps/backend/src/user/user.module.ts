@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { TypeOrmModule } from '@nestjs/typeorm'
 import { UserController } from './user.controller'
 import { UserService } from './user.service'
 import { GetProfileUseCase } from './usecases/get-profile.usecase'
@@ -9,8 +10,11 @@ import { UpdateProfilePhotoUseCase } from './usecases/update-profile-photo.useca
 import { SearchUsersUseCase } from './usecases/search-users.usecase'
 import { GetPublicProfileUseCase } from './usecases/get-public-profile.usecase'
 import { UpdateLanguageUseCase } from './usecases/update-language.usecase'
+import { AuthModule } from '../auth/auth.module'
+import { User } from '../entities/user.entity'
 
 @Module({
+  imports: [AuthModule, TypeOrmModule.forFeature([User])],
   controllers: [UserController],
   providers: [
     UserService,

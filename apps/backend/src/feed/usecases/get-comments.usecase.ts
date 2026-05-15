@@ -13,6 +13,7 @@ export class GetCommentsUseCase {
       authorId: c.author.id,
       authorUsername: c.author.username,
       authorProfilePhotoUrl: c.author.profilePhotoUrl,
+      authorRole: c.author.role,
       content: c.content,
       createdAt: c.createdAt.toISOString(),
     }))
